@@ -1,0 +1,61 @@
+.editor-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.editor-card {
+  margin-bottom: 24px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.form-section {
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 18px;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.slider-field {
+  margin-bottom: 20px;
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 14px;
+  }
+  
+  mat-slider {
+    width: 100%;
+  }
+}
+
+.preview-section {
+  margin-top: 32px;
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 18px;
+  }
+}
+
+mat-card-actions {
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+}

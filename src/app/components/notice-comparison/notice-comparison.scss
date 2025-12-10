@@ -1,0 +1,76 @@
+.comparison-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  h1 {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.87);
+  }
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.comparison-card {
+  mat-card-content {
+    padding-top: 16px;
+  }
+}
+
+.differences-card {
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  .differences-list {
+    margin: 0;
+    padding-left: 24px;
+    
+    li {
+      padding: 8px 0;
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  .no-differences {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4caf50;
+    font-size: 16px;
+    margin: 0;
+    
+    mat-icon {
+      color: #4caf50;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+}
