@@ -1,0 +1,311 @@
+<div class="showcase-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>IRAS Design System</h1>
+    <p class="subtitle">A comprehensive design system for the Notice Designer application</p>
+  </div>
+
+  <!-- Banner Example -->
+  @if (showBanner) {
+    <iras-banner 
+      type="info" 
+      [dismissible]="true" 
+      actionText="View Documentation"
+      (action)="onBannerAction()"
+      (dismissed)="showBanner = false">
+      Welcome to the IRAS Design System. Explore reusable components and design patterns.
+    </iras-banner>
+  }
+
+  <!-- Color Palette Section -->
+  <section class="showcase-section">
+    <h2>Color Palette</h2>
+    <iras-card variant="elevated">
+      <iras-card-content>
+        <h3>Brand Colors</h3>
+        <div class="color-grid">
+          <div class="color-swatch">
+            <div class="swatch primary"></div>
+            <span class="swatch-label">Primary</span>
+            <code>#2d7bb9</code>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch teal"></div>
+            <span class="swatch-label">Teal</span>
+            <code>#20b4af</code>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch sapphire"></div>
+            <span class="swatch-label">Sapphire</span>
+            <code>#1173c0</code>
+          </div>
+        </div>
+        
+        <h3>Semantic Colors</h3>
+        <div class="color-grid">
+          <div class="color-swatch">
+            <div class="swatch success"></div>
+            <span class="swatch-label">Success</span>
+            <code>#28a745</code>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch warning"></div>
+            <span class="swatch-label">Warning</span>
+            <code>#ffc107</code>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch danger"></div>
+            <span class="swatch-label">Danger</span>
+            <code>#dc3545</code>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch info"></div>
+            <span class="swatch-label">Info</span>
+            <code>#17a2b8</code>
+          </div>
+        </div>
+      </iras-card-content>
+    </iras-card>
+  </section>
+
+  <!-- Buttons Section -->
+  <section class="showcase-section">
+    <h2>Buttons</h2>
+    
+    <iras-card variant="elevated">
+      <iras-card-header>
+        <h3>Button Variants</h3>
+      </iras-card-header>
+      <iras-card-content>
+        <div class="component-demo">
+          <div class="demo-group">
+            <h4>Primary</h4>
+            <iras-button variant="primary">Primary Button</iras-button>
+          </div>
+          
+          <div class="demo-group">
+            <h4>Secondary</h4>
+            <iras-button variant="secondary">Secondary Button</iras-button>
+          </div>
+          
+          <div class="demo-group">
+            <h4>Tertiary</h4>
+            <iras-button variant="tertiary">Tertiary Button</iras-button>
+          </div>
+          
+          <div class="demo-group">
+            <h4>Danger</h4>
+            <iras-button variant="danger">Danger Button</iras-button>
+          </div>
+          
+          <div class="demo-group">
+            <h4>Ghost</h4>
+            <iras-button variant="ghost">Ghost Button</iras-button>
+          </div>
+        </div>
+      </iras-card-content>
+    </iras-card>
+    
+    <iras-card variant="elevated">
+      <iras-card-header>
+        <h3>Button Sizes</h3>
+      </iras-card-header>
+      <iras-card-content>
+        <div class="component-demo">
+          <iras-button variant="primary" size="small">Small</iras-button>
+          <iras-button variant="primary" size="medium">Medium</iras-button>
+          <iras-button variant="primary" size="large">Large</iras-button>
+        </div>
+      </iras-card-content>
+    </iras-card>
+    
+    <iras-card variant="elevated">
+      <iras-card-header>
+        <h3>Button States</h3>
+      </iras-card-header>
+      <iras-card-content>
+        <div class="component-demo">
+          <iras-button variant="primary" icon="save">With Icon</iras-button>
+          <iras-button variant="primary" [disabled]="true">Disabled</iras-button>
+          <iras-button variant="primary" [loading]="loadingButton" (click)="simulateLoading()">
+            Loading State
+          </iras-button>
+        </div>
+      </iras-card-content>
+    </iras-card>
+  </section>
+
+  <!-- Alerts Section -->
+  <section class="showcase-section">
+    <h2>Alerts & Notifications</h2>
+    
+    <iras-card variant="elevated">
+      <iras-card-header>
+        <h3>Alert Types</h3>
+      </iras-card-header>
+      <iras-card-content>
+        <iras-alert type="info" [dismissible]="true">
+          This is an informational message.
+        </iras-alert>
+        
+        <iras-alert type="success" title="Success!" [dismissible]="true">
+          Your notice has been saved successfully.
+        </iras-alert>
+        
+        <iras-alert type="warning" title="Warning">
+          Please review the content before publishing.
+        </iras-alert>
+        
+        <iras-alert type="danger" title="Error">
+          An error occurred while processing your request.
+        </iras-alert>
+      </iras-card-content>
+    </iras-card>
+  </section>
+
+  <!-- Badges Section -->
+  <section class="showcase-section">
+    <h2>Badges & Pills</h2>
+    
+    <iras-card variant="elevated">
+      <iras-card-header>
+        <h3>Badge Variants</h3>
+      </iras-card-header>
+      <iras-card-content>
+        <div class="component-demo">
+          <iras-badge variant="primary">Primary</iras-badge>
+          <iras-badge variant="secondary">Secondary</iras-badge>
+          <iras-badge variant="success">Success</iras-badge>
+          <iras-badge variant="warning">Warning</iras-badge>
+          <iras-badge variant="danger">Danger</iras-badge>
+          <iras-badge variant="info">Info</iras-badge>
+          <iras-badge variant="neutral">Neutral</iras-badge>
+        </div>
+      </iras-card-content>
+    </iras-card>
+    
+    <iras-card variant="elevated">
+      <iras-card-header>
+        <h3>Badge Sizes</h3>
+      </iras-card-header>
+      <iras-card-content>
+        <div class="component-demo">
+          <iras-badge variant="primary" size="small">Small</iras-badge>
+          <iras-badge variant="primary" size="medium">Medium</iras-badge>
+          <iras-badge variant="primary" size="large">Large</iras-badge>
+        </div>
+      </iras-card-content>
+    </iras-card>
+    
+    <iras-card variant="elevated">
+      <iras-card-header>
+        <h3>Pills</h3>
+      </iras-card-header>
+      <iras-card-content>
+        <div class="component-demo">
+          <iras-pill variant="primary">Tax Notice</iras-pill>
+          <iras-pill variant="secondary" icon="folder">Category</iras-pill>
+          <iras-pill variant="success" [removable]="true" (remove)="onPillRemove()">
+            Removable
+          </iras-pill>
+          <iras-pill variant="neutral" [outlined]="true">Outlined</iras-pill>
+        </div>
+      </iras-card-content>
+    </iras-card>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="showcase-section">
+    <h2>Cards</h2>
+    
+    <div class="card-grid">
+      <iras-card variant="default">
+        <iras-card-header>
+          <h3>Default Card</h3>
+          <p>Standard card with default styling</p>
+        </iras-card-header>
+        <iras-card-content>
+          This is a default card with subtle shadow and border.
+        </iras-card-content>
+        <iras-card-actions align="right">
+          <iras-button variant="ghost" size="small">Cancel</iras-button>
+          <iras-button variant="primary" size="small">Action</iras-button>
+        </iras-card-actions>
+      </iras-card>
+      
+      <iras-card variant="elevated">
+        <iras-card-header>
+          <h3>Elevated Card</h3>
+          <p>Card with prominent shadow</p>
+        </iras-card-header>
+        <iras-card-content>
+          This card has a more prominent shadow for emphasis.
+        </iras-card-content>
+      </iras-card>
+      
+      <iras-card variant="outlined">
+        <iras-card-header>
+          <h3>Outlined Card</h3>
+          <p>Card with border, no shadow</p>
+        </iras-card-header>
+        <iras-card-content>
+          This card uses a border instead of shadow.
+        </iras-card-content>
+      </iras-card>
+      
+      <iras-card variant="filled">
+        <iras-card-header>
+          <h3>Filled Card</h3>
+          <p>Card with filled background</p>
+        </iras-card-header>
+        <iras-card-content>
+          This card has a filled background color.
+        </iras-card-content>
+      </iras-card>
+      
+      <iras-card variant="elevated" [hoverable]="true">
+        <iras-card-header>
+          <h3>Hoverable Card</h3>
+          <p>Hover to see effect</p>
+        </iras-card-header>
+        <iras-card-content>
+          This card responds to hover with animation.
+        </iras-card-content>
+      </iras-card>
+      
+      <iras-card variant="elevated" [clickable]="true" [hoverable]="true">
+        <iras-card-header>
+          <h3>Clickable Card</h3>
+          <p>Interactive card</p>
+        </iras-card-header>
+        <iras-card-content>
+          This card shows a pointer cursor and is clickable.
+        </iras-card-content>
+      </iras-card>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="showcase-section">
+    <h2>Typography</h2>
+    
+    <iras-card variant="elevated">
+      <iras-card-content>
+        <h1>Heading 1</h1>
+        <h2>Heading 2</h2>
+        <h3>Heading 3</h3>
+        <h4>Heading 4</h4>
+        <h5>Heading 5</h5>
+        <h6>Heading 6</h6>
+        <p>
+          This is a paragraph of body text. It demonstrates the default font family, 
+          size, and line height used throughout the application. The text should be 
+          easy to read and maintain good contrast against the background.
+        </p>
+        <p class="text-small">
+          This is smaller text, often used for secondary information, captions, or fine print.
+        </p>
+      </iras-card-content>
+    </iras-card>
+  </section>
+</div>
