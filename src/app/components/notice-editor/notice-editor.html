@@ -6,8 +6,8 @@
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div class="header-text">
-        <h1>{{ isEditMode ? 'Edit Notice' : 'Create Notice' }}</h1>
-        <p class="subtitle">{{ isEditMode ? 'Modify existing notice template' : 'Design a new notice template' }}</p>
+        <h1>{{ isTemplateEditMode ? 'Edit Master Template' : (isEditMode ? 'Edit Notice' : 'Create Notice') }}</h1>
+        <p class="subtitle">{{ isTemplateEditMode ? 'Editing the master template - changes affect all future notices' : (isEditMode ? 'Modify existing notice' : 'Create a new notice from template') }}</p>
       </div>
     </div>
     <div class="header-actions">
@@ -23,15 +23,27 @@
       <iras-button variant="tertiary" icon="refresh" (click)="resetForm()">
         Reset
       </iras-button>
-      <iras-button variant="tertiary" icon="bookmark" [disabled]="!title() || !content()" (click)="saveAsMasterTemplate()">
-        Save as Template
-      </iras-button>
-      <iras-button variant="secondary" icon="print" [disabled]="!title() || !content()" (click)="printNotice()">
-        Print / PDF
-      </iras-button>
-      <iras-button variant="primary" icon="save" [disabled]="!title() || !content()" (click)="saveNotice()">
-        {{ isEditMode ? 'Update Notice' : 'Save Notice' }}
-      </iras-button>
+      
+      @if (isTemplateEditMode) {
+        <!-- Template Edit Mode: Only show Print and Save Template -->
+        <iras-button variant="secondary" icon="print" [disabled]="!title() || !content()" (click)="printNotice()">
+          Preview Print
+        </iras-button>
+        <iras-button variant="primary" icon="save" [disabled]="!title() || !content()" (click)="saveNotice()">
+          Save Template
+        </iras-button>
+      } @else {
+        <!-- Notice Edit Mode: Show Save as Template, Print, and Save Notice -->
+        <iras-button variant="tertiary" icon="bookmark" [disabled]="!title() || !content()" (click)="saveAsMasterTemplate()">
+          Save as Template
+        </iras-button>
+        <iras-button variant="secondary" icon="print" [disabled]="!title() || !content()" (click)="printNotice()">
+          Print / PDF
+        </iras-button>
+        <iras-button variant="primary" icon="save" [disabled]="!title() || !content()" (click)="saveNotice()">
+          {{ isEditMode ? 'Update Notice' : 'Save Notice' }}
+        </iras-button>
+      }
     </div>
   </div>
 
