@@ -22,8 +22,85 @@ import { NoticePreview } from '../notice-preview/notice-preview';
   styleUrl: './notice-editor.scss',
 })
 export class NoticeEditor {
-  title = signal('');
-  content = signal('');
+  title = signal('Official Notice Template');
+  content = signal(`═══════════════════════════════════════════════════════════════
+                    COMPANY LETTERHEAD
+                       Acme Corporation
+                    123 Business Avenue
+                  City, State, ZIP 12345
+                  Phone: (555) 123-4567
+═══════════════════════════════════════════════════════════════
+
+NOTICE NO: 2024-001                                  Date: December 11, 2024
+
+TO: All Employees
+FROM: Human Resources Department
+RE: Important Company Update
+
+═══════════════════════════════════════════════════════════════
+                         MAIN CONTENT
+═══════════════════════════════════════════════════════════════
+
+Dear Team Members,
+
+This notice serves as a template demonstrating the proper structure and formatting of official company communications.
+
+SECTION 1: HEADER INFORMATION
+------------------------------
+The header contains essential identification details including:
+• Document number and tracking reference
+• Issue date and validity period
+• Recipient information
+• Subject matter
+
+SECTION 2: BODY CONTENT
+-----------------------
+Key information should be organized in clear, numbered sections:
+
+1. Primary Announcement
+   - Main point of the notice
+   - Relevant details and specifications
+   - Action items required
+
+2. Important Details
+   - Deadlines and timelines
+   - Contact information
+   - Reference materials
+
+3. Additional Information
+   - Supporting documentation
+   - FAQs and clarifications
+   - Resources available
+
+SECTION 3: BARCODE & TRACKING
+------------------------------
+Document Tracking: [BARCODE: *DOC2024001*]
+Verification Code: ABC-123-XYZ-789
+QR Code: [Scan for digital copy]
+
+═══════════════════════════════════════════════════════════════
+                         FOOTER SECTION
+═══════════════════════════════════════════════════════════════
+
+SIGNATURES:
+
+_____________________              _____________________
+Department Manager                 Date
+John Smith
+
+_____________________              _____________________
+HR Director                        Date
+Jane Doe
+
+───────────────────────────────────────────────────────────────
+CONFIDENTIALITY NOTICE: This document contains confidential 
+information intended only for the designated recipients.
+───────────────────────────────────────────────────────────────
+
+Page 1 of 1                        Document ID: DOC-2024-001
+Issued: 12/11/2024                 Valid Until: 12/31/2024
+
+═══════════════════════════════════════════════════════════════`);
   backgroundColor = signal('#ffffff');
   textColor = signal('#000000');
   fontSize = signal(16);
