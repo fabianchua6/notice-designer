@@ -148,16 +148,16 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
           icon: 'view_list',
           html: `<table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
   <tr>
-    <td style="background-color: #f5f5f5; padding: 8px 12px; border: 1px solid #ddd; width: 40%;"><strong>Label 1</strong></td>
-    <td style="padding: 8px 12px; border: 1px solid #ddd;">Value 1</td>
+    <td style="background-color: #f5f5f5; padding: 8px 12px; width: 40%;"><strong>Label 1</strong></td>
+    <td style="padding: 8px 12px;">Value 1</td>
   </tr>
   <tr>
-    <td style="background-color: #f5f5f5; padding: 8px 12px; border: 1px solid #ddd;"><strong>Label 2</strong></td>
-    <td style="padding: 8px 12px; border: 1px solid #ddd;">Value 2</td>
+    <td style="background-color: #f5f5f5; padding: 8px 12px;"><strong>Label 2</strong></td>
+    <td style="padding: 8px 12px;">Value 2</td>
   </tr>
   <tr>
-    <td style="background-color: #f5f5f5; padding: 8px 12px; border: 1px solid #ddd;"><strong>Label 3</strong></td>
-    <td style="padding: 8px 12px; border: 1px solid #ddd;">Value 3</td>
+    <td style="background-color: #f5f5f5; padding: 8px 12px;"><strong>Label 3</strong></td>
+    <td style="padding: 8px 12px;">Value 3</td>
   </tr>
 </table>`
         },
@@ -166,20 +166,20 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
           icon: 'grid_on',
           html: `<table style="width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 11px;">
   <tr style="background-color: #2d7bb9; color: white;">
-    <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Column 1</th>
-    <th style="padding: 10px; border: 1px solid #ddd; text-align: right;">Amount (S$)</th>
+    <th style="padding: 10px; text-align: left;">Column 1</th>
+    <th style="padding: 10px; text-align: right;">Amount (S$)</th>
   </tr>
   <tr>
-    <td style="padding: 8px 10px; border: 1px solid #ddd;">Item 1</td>
-    <td style="padding: 8px 10px; border: 1px solid #ddd; text-align: right;">1,000.00</td>
+    <td style="padding: 8px 10px;">Item 1</td>
+    <td style="padding: 8px 10px; text-align: right;">1,000.00</td>
   </tr>
   <tr>
-    <td style="padding: 8px 10px; border: 1px solid #ddd;">Item 2</td>
-    <td style="padding: 8px 10px; border: 1px solid #ddd; text-align: right;">2,000.00</td>
+    <td style="padding: 8px 10px;">Item 2</td>
+    <td style="padding: 8px 10px; text-align: right;">2,000.00</td>
   </tr>
   <tr style="background-color: #f5f5f5; font-weight: bold;">
-    <td style="padding: 8px 10px; border: 1px solid #ddd;">Total</td>
-    <td style="padding: 8px 10px; border: 1px solid #ddd; text-align: right;">3,000.00</td>
+    <td style="padding: 8px 10px;">Total</td>
+    <td style="padding: 8px 10px; text-align: right;">3,000.00</td>
   </tr>
 </table>`
         },
@@ -308,7 +308,7 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
         {
           name: 'IRAS Footer',
           icon: 'web',
-          html: `<div style="margin-top: 40px; text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ddd; padding-top: 15px;">
+          html: `<div style="margin-top: 40px; text-align: center; font-size: 10px; color: #666; padding-top: 15px;">
   <p style="margin: 0;">Website: <a href="https://www.iras.gov.sg" style="color: #2d7bb9;">www.iras.gov.sg</a> • myTax Portal: <a href="https://mytax.iras.gov.sg" style="color: #2d7bb9;">mytax.iras.gov.sg</a></p>
   <p style="margin: 5px 0;">Tel: 6351 3551</p>
   <p style="margin: 5px 0;">Page 1 of 1 &nbsp;&nbsp;&nbsp; {{notice.number}}</p>
@@ -507,7 +507,7 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
 <p>This notice is to inform you of your tax assessment for the Year of Assessment {{assessment.year}}.</p>
 
 <h3>Assessment Details</h3>
-<table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+<table cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
   <tr>
     <td style="background-color: #f5f5f5;"><strong>Reference Number</strong></td>
     <td>{{assessment.refNumber}}</td>
