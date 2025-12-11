@@ -23,104 +23,26 @@ export type IrasCardVariant = 'default' | 'elevated' | 'outlined' | 'filled';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div [class]="cardClasses" [class.hoverable]="hoverable" [class.clickable]="clickable">
-      <ng-content></ng-content>
-    </div>
+    <ng-content></ng-content>
   `,
   styles: [`
-    @import '../styles/variables';
-    
     :host {
       display: block;
+      background: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
     }
     
-    div {
-      background: $bg-paper;
-      border-radius: $radius-lg;
-      transition: all $duration-base $timing-ease-out;
-      
-      &.hoverable:hover {
-        transform: translateY(-2px);
-      }
-      
-      &.clickable {
-        cursor: pointer;
-        
-        &:active {
-          transform: translateY(0);
-        }
-      }
-    }
-    
-    // Default
-    .card-default {
-      box-shadow: $shadow-sm;
-      border: 1px solid $border-default;
-      
-      &.hoverable:hover {
-        box-shadow: $shadow-base;
-      }
-    }
-    
-    // Elevated
-    .card-elevated {
-      box-shadow: $shadow-base;
-      border: none;
-      
-      &.hoverable:hover {
-        box-shadow: $shadow-md;
-      }
-    }
-    
-    // Outlined
-    .card-outlined {
-      box-shadow: none;
-      border: 2px solid $border-default;
-      
-      &.hoverable:hover {
-        border-color: $iras-primary;
-      }
-    }
-    
-    // Filled
-    .card-filled {
-      box-shadow: none;
-      border: 1px solid $border-light;
-      background: $neutral-grey-100;
-    }
-    
-    // Padding sizes
-    .card-padding-sm {
-      padding: $card-padding-sm;
-    }
-    
-    .card-padding-md {
-      padding: $card-padding-md;
-    }
-    
-    .card-padding-lg {
-      padding: $card-padding-lg;
-    }
-    
-    .card-padding-none {
-      padding: 0;
+    :host(.hoverable):hover {
+      box-shadow: 0 3px 3px -2px rgba(0,0,0,.2), 0 3px 4px 0 rgba(0,0,0,.14), 0 1px 8px 0 rgba(0,0,0,.12);
     }
   `]
 })
 export class IrasCard {
   @Input() variant: IrasCardVariant = 'default';
-  @Input() padding: 'none' | 'small' | 'medium' | 'large' = 'medium';
+  @Input() padding: 'none' | 'small' | 'medium' | 'large' = 'none';
   @Input() hoverable = false;
   @Input() clickable = false;
-  
-  get cardClasses(): string {
-    const classes = [
-      `card-${this.variant}`,
-      `card-padding-${this.padding === 'small' ? 'sm' : this.padding === 'large' ? 'lg' : this.padding === 'none' ? 'none' : 'md'}`,
-    ];
-    
-    return classes.join(' ');
-  }
 }
 
 /**
@@ -135,22 +57,20 @@ export class IrasCard {
     </div>
   `,
   styles: [`
-    @import '../styles/variables';
-    
     .card-header {
-      padding: $spacing-lg;
-      border-bottom: 1px solid $border-default;
+      padding: 16px;
       
       ::ng-deep h1, ::ng-deep h2, ::ng-deep h3, ::ng-deep h4, ::ng-deep h5, ::ng-deep h6 {
         margin: 0;
-        color: $text-primary;
-        font-weight: $font-weight-semibold;
+        font-size: 16px;
+        font-weight: 500;
+        color: #1a1a2e;
       }
       
-      ::ng-deep p {
-        margin: $spacing-xs 0 0;
-        color: $text-secondary;
-        font-size: $font-size-sm;
+      ::ng-deep p, ::ng-deep .subtitle {
+        margin: 4px 0 0;
+        color: #666;
+        font-size: 13px;
       }
     }
   `]
@@ -169,10 +89,9 @@ export class IrasCardHeader {}
     </div>
   `,
   styles: [`
-    @import '../styles/variables';
-    
     .card-content {
-      padding: $spacing-lg;
+      padding: 16px;
+      padding-top: 0;
     }
   `]
 })
@@ -190,14 +109,11 @@ export class IrasCardContent {}
     </div>
   `,
   styles: [`
-    @import '../styles/variables';
-    
     .card-actions {
       display: flex;
       align-items: center;
-      gap: $spacing-sm;
-      padding: $spacing-md $spacing-lg;
-      border-top: 1px solid $border-default;
+      gap: 8px;
+      padding: 8px 16px;
       
       &.align-right {
         justify-content: flex-end;
