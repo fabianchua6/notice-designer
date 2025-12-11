@@ -8,11 +8,10 @@
   margin-bottom: 24px;
 }
 
-.form-grid {
+.editor-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
-  margin-bottom: 24px;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
 }
 
 .form-section {
@@ -21,6 +20,10 @@
     margin-bottom: 16px;
     color: rgba(0, 0, 0, 0.87);
     font-size: 18px;
+  }
+  
+  h3:not(:first-child) {
+    margin-top: 24px;
   }
 }
 
@@ -44,7 +47,8 @@
 }
 
 .preview-section {
-  margin-top: 32px;
+  position: sticky;
+  top: 24px;
   
   h3 {
     margin-top: 0;
@@ -58,4 +62,14 @@ mat-card-actions {
   padding: 16px;
   display: flex;
   gap: 12px;
+}
+
+@media (max-width: 968px) {
+  .editor-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .preview-section {
+    position: static;
+  }
 }

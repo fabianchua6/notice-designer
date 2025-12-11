@@ -4,7 +4,7 @@
       <mat-card-title>Create New Notice</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="form-grid">
+      <div class="editor-layout">
         <div class="form-section">
           <h3>Content</h3>
           
@@ -22,9 +22,7 @@
               rows="6">
             </textarea>
           </mat-form-field>
-        </div>
-        
-        <div class="form-section">
+          
           <h3>Text Styling</h3>
           
           <mat-form-field appearance="outline" class="full-width">
@@ -47,9 +45,7 @@
             <mat-label>Text Color</mat-label>
             <input matInput type="color" [(ngModel)]="textColor">
           </mat-form-field>
-        </div>
-        
-        <div class="form-section">
+          
           <h3>Background & Border</h3>
           
           <mat-form-field appearance="outline" class="full-width">
@@ -85,22 +81,22 @@
             </mat-slider>
           </div>
         </div>
-      </div>
-      
-      <div class="preview-section">
-        <h3>Preview</h3>
-        <app-notice-preview
-          [title]="title()"
-          [content]="content()"
-          [backgroundColor]="backgroundColor()"
-          [textColor]="textColor()"
-          [fontSize]="fontSize()"
-          [fontFamily]="fontFamily()"
-          [borderStyle]="borderStyle()"
-          [borderColor]="borderColor()"
-          [borderWidth]="borderWidth()"
-          [padding]="padding()">
-        </app-notice-preview>
+        
+        <div class="preview-section">
+          <h3>Preview</h3>
+          <app-notice-preview
+            [title]="title()"
+            [content]="content()"
+            [backgroundColor]="backgroundColor()"
+            [textColor]="textColor()"
+            [fontSize]="fontSize()"
+            [fontFamily]="fontFamily()"
+            [borderStyle]="borderStyle()"
+            [borderColor]="borderColor()"
+            [borderWidth]="borderWidth()"
+            [padding]="padding()">
+          </app-notice-preview>
+        </div>
       </div>
     </mat-card-content>
     <mat-card-actions>
