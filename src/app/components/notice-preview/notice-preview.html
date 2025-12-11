@@ -42,13 +42,23 @@
             <!-- IRAS Header - First Page Only -->
             @if (page.isFirstPage) {
               <div class="document-header">
-                <div class="iras-logo">
-                  <div class="logo-icon">IRAS</div>
-                  <div class="logo-text">
-                    <span class="ministry">Inland Revenue Authority of Singapore</span>
+                <div class="header-left-section">
+                  <p class="tax-ref">Tax Reference Number: <strong>S1234567A</strong></p>
+                  <p class="date-line">Date: {{ getCurrentDate() }}</p>
+                  <p class="quote-note">Please quote the Tax Reference Number (e.g. NRIC, FIN etc.) in full when corresponding with us.</p>
+                  <div class="taxpayer-info">
+                    <p><strong>MR JOHN DOE</strong></p>
+                    <p>123 SAMPLE STREET</p>
+                    <p>#01-23</p>
+                    <p>SINGAPORE 123456</p>
+                  </div>
+                  <div class="barcode-container">
+                    <svg id="preview-barcode"></svg>
                   </div>
                 </div>
-                <div class="document-date">{{ getCurrentDate() }}</div>
+                <div class="header-right-section">
+                  <img src="/assets/images/iras-logo.png" alt="IRAS Logo" class="iras-logo-img" onerror="this.style.display='none'">
+                </div>
               </div>
 
               <!-- Title -->

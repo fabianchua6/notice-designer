@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, AfterViewChecked, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import JsBarcode from 'jsbarcode';
 
 interface PageContent {
   lines: string[];
@@ -13,7 +14,7 @@ interface PageContent {
   templateUrl: './notice-preview.html',
   styleUrl: './notice-preview.scss',
 })
-export class NoticePreview implements OnChanges {
+export class NoticePreview implements OnChanges, AfterViewChecked {
   @Input() title: string = '';
   @Input() content: string = '';
   @Input() backgroundColor: string = '#ffffff';
@@ -28,6 +29,7 @@ export class NoticePreview implements OnChanges {
   @Input() showRuler: boolean = true;
   
   zoom: number = 100; // Default to 50% to fit in half-width panel
+  private barcodeInitialized = false;
 
   // A4 dimensions at 96 DPI: 794px x 1123px
   readonly pageWidth = 794;
@@ -43,6 +45,28 @@ export class NoticePreview implements OnChanges {
   readonly lineHeight = 1.6;
   
   pages: PageContent[] = [];
+  
+  ngAfterViewChecked(): void {
+    this.initializeBarcode();
+  }
+  
+  private initializeBarcode(): void {
+    const barcodeElement = document.getElementById('preview-barcode');
+    if (barcodeElement && !this.barcodeInitialized) {
+      try {
+        JsBarcode('#preview-barcode', 'S1234567A', {
+          format: 'CODE128',
+          width: 1.5,
+          height: 35,
+          displayValue: false,
+          margin: 0,
+        });
+        this.barcodeInitialized = true;
+      } catch (e) {
+        // Barcode element not ready yet
+      }
+    }
+  }
   
   zoomIn(): void {
     this.zoom = Math.min(150, this.zoom + 10);
