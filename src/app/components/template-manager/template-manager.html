@@ -4,12 +4,12 @@
     <div class="header-content">
       <div class="header-text">
         <h1>Master Templates</h1>
-        <p class="subtitle">Reusable notice templates for quick document creation</p>
+        <p class="subtitle">Select a template to create a new notice, or edit directly to modify the master</p>
       </div>
       <div class="header-actions">
         <button mat-raised-button color="primary" (click)="createNewTemplate()">
           <mat-icon>add</mat-icon>
-          Create Template
+          New Template
         </button>
       </div>
     </div>
@@ -18,45 +18,35 @@
   <!-- Templates Grid -->
   <div class="templates-grid">
     @for (template of filteredTemplates; track template.id) {
-      <mat-card class="template-card" [class.system]="template.isSystem">
-        <mat-card-header>
-          <mat-card-title>
-            <div class="card-title-row">
-              <span class="title-text">{{ template.name }}</span>
-              @if (template.isSystem) {
-                <mat-chip class="system-chip">System</mat-chip>
-              }
-            </div>
-          </mat-card-title>
-          <mat-card-subtitle>
-            <div class="subtitle-row">
-              <mat-icon class="category-icon">{{ getCategoryIcon(template.category) }}</mat-icon>
-              <span>{{ getCategoryLabel(template.category) }}</span>
-            </div>
-          </mat-card-subtitle>
-        </mat-card-header>
-        
+      <mat-card class="template-card" appearance="outlined">
         <mat-card-content>
-          <p class="template-description">{{ template.description }}</p>
-          <div class="template-preview">
-            <div class="preview-content" [innerHTML]="template.content | slice:0:200"></div>
-            <div class="preview-fade"></div>
+          <div class="card-top">
+            <div class="template-icon">
+              <mat-icon>{{ getCategoryIcon(template.category) }}</mat-icon>
+            </div>
+            <div class="template-info">
+              <h3 class="template-name">{{ template.name }}</h3>
+              <span class="template-category">{{ getCategoryLabel(template.category) }}</span>
+            </div>
+            @if (template.isSystem) {
+              <span class="system-badge">System</span>
+            }
           </div>
+          <p class="template-description">{{ template.description }}</p>
         </mat-card-content>
         
-        <mat-card-actions>
-          <button mat-raised-button color="primary" (click)="useTemplate(template)">
-            <mat-icon>add_circle_outline</mat-icon>
-            Use Template
-          </button>
-          <button mat-button (click)="editTemplate(template)">
+        <mat-card-actions align="end">
+          <button mat-button (click)="editTemplate(template)" matTooltip="Edit this master template">
             <mat-icon>edit</mat-icon>
             Edit
           </button>
+          <button mat-flat-button color="primary" (click)="useTemplate(template)" matTooltip="Create a new notice from this template">
+            <mat-icon>content_copy</mat-icon>
+            Use
+          </button>
           @if (!template.isSystem) {
-            <button mat-button color="warn" (click)="deleteTemplate(template)">
-              <mat-icon>delete</mat-icon>
-              Delete
+            <button mat-icon-button color="warn" (click)="deleteTemplate(template)" matTooltip="Delete template">
+              <mat-icon>delete_outline</mat-icon>
             </button>
           }
         </mat-card-actions>
@@ -65,10 +55,10 @@
   </div>
   
   @if (filteredTemplates.length === 0) {
-    <mat-card class="empty-state">
+    <mat-card class="empty-state" appearance="outlined">
       <mat-icon>folder_open</mat-icon>
       <h3>No Templates Found</h3>
-      <p>No templates match the selected category.</p>
+      <p>Create a new template to get started.</p>
     </mat-card>
   }
 </div>
