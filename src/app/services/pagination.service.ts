@@ -68,12 +68,12 @@ export class PaginationService {
     let currentPageNumber = 1;
     let currentPageContent: HTMLElement[] = [];
     let currentPageHeight = 0;
-    const maxHeight = firstPageContentHeight;
     
     for (let i = 0; i < measurements.length; i++) {
       const measurement = measurements[i];
       const isFirstPage = currentPageNumber === 1;
       const availableHeight = isFirstPage ? firstPageContentHeight : subsequentPageContentHeight;
+      const remainingHeight = availableHeight - currentPageHeight;
       
       // Check if element fits on current page
       if (currentPageHeight + measurement.height <= availableHeight) {
@@ -81,20 +81,50 @@ export class PaginationService {
         currentPageContent.push(measurement.element);
         currentPageHeight += measurement.height;
       } else {
-        // Element doesn't fit
-        if (measurement.canSplit && measurement.type === 'table') {
+        // Element doesn't fit - need to handle based on type
+        
+        if (measurement.type === 'heading') {
+          // Headings should not be orphaned - move to next page if near bottom
+          // Also check if next element is small enough to keep with heading
+          const keepWithNext = i < measurements.length - 1 && remainingHeight < 50;
+          
+          if (keepWithNext || currentPageHeight > availableHeight * 0.8) {
+            // Move heading to next page
+            this.finalizePage(pages, currentPageNumber, currentPageContent);
+            currentPageNumber++;
+            currentPageContent = [measurement.element];
+            currentPageHeight = measurement.height;
+          } else {
+            // Add to current page
+            currentPageContent.push(measurement.element);
+            this.finalizePage(pages, currentPageNumber, currentPageContent);
+            currentPageNumber++;
+            currentPageContent = [];
+            currentPageHeight = 0;
+          }
+        } else if (measurement.type === 'image') {
+          // Images cannot be split - move entirely to next page
+          this.finalizePage(pages, currentPageNumber, currentPageContent);
+          currentPageNumber++;
+          
+          // Check if image is too large for a single page
+          if (measurement.height > subsequentPageContentHeight) {
+            // Scale image down to fit
+            const scaledImage = this.scaleImage(measurement.element as HTMLImageElement, subsequentPageContentHeight);
+            currentPageContent = [scaledImage];
+            currentPageHeight = subsequentPageContentHeight;
+          } else {
+            currentPageContent = [measurement.element];
+            currentPageHeight = measurement.height;
+          }
+        } else if (measurement.canSplit && measurement.type === 'table') {
           // Try to split table
-          const splitResult = this.splitTable(measurement.element as HTMLTableElement, availableHeight - currentPageHeight, config);
+          const splitResult = this.splitTable(measurement.element as HTMLTableElement, remainingHeight, config);
           
           if (splitResult.firstPart) {
             currentPageContent.push(splitResult.firstPart);
             // Save current page
-            pages.push({
-              pageNumber: currentPageNumber,
-              content: this.serializeElements(currentPageContent),
-              isFirstPage: currentPageNumber === 1,
-              hasOverflow: false
-            });
+            this.finalizePage(pages, currentPageNumber, currentPageContent);
             
             // Start new page with remaining part
             currentPageNumber++;
@@ -107,15 +137,28 @@ export class PaginationService {
             currentPageContent = [measurement.element];
             currentPageHeight = measurement.height;
           }
+        } else if (measurement.canSplit && measurement.type === 'list') {
+          // Try to split list
+          const splitResult = this.splitList(measurement.element as HTMLUListElement | HTMLOListElement, remainingHeight, config);
+          
+          if (splitResult.firstPart) {
+            currentPageContent.push(splitResult.firstPart);
+            this.finalizePage(pages, currentPageNumber, currentPageContent);
+            
+            currentPageNumber++;
+            currentPageContent = splitResult.secondPart ? [splitResult.secondPart] : [];
+            currentPageHeight = splitResult.secondPart ? this.measureElement(splitResult.secondPart, config).height : 0;
+          } else {
+            // Couldn't split, move entire list to next page
+            this.finalizePage(pages, currentPageNumber, currentPageContent);
+            currentPageNumber++;
+            currentPageContent = [measurement.element];
+            currentPageHeight = measurement.height;
+          }
         } else {
-          // Save current page and start new page with this element
+          // Default: move element to next page
           if (currentPageContent.length > 0) {
-            pages.push({
-              pageNumber: currentPageNumber,
-              content: this.serializeElements(currentPageContent),
-              isFirstPage: currentPageNumber === 1,
-              hasOverflow: false
-            });
+            this.finalizePage(pages, currentPageNumber, currentPageContent);
             currentPageNumber++;
           }
           
@@ -127,12 +170,7 @@ export class PaginationService {
     
     // Add final page if there's content
     if (currentPageContent.length > 0) {
-      pages.push({
-        pageNumber: currentPageNumber,
-        content: this.serializeElements(currentPageContent),
-        isFirstPage: currentPageNumber === 1,
-        hasOverflow: false
-      });
+      this.finalizePage(pages, currentPageNumber, currentPageContent);
     }
     
     // Ensure at least one page
@@ -314,6 +352,96 @@ export class PaginationService {
     } finally {
       document.body.removeChild(tempContainer);
     }
+  }
+  
+  /**
+   * Split a list between items
+   */
+  private splitList(
+    list: HTMLUListElement | HTMLOListElement,
+    availableHeight: number,
+    config: PaginationConfig
+  ): { firstPart: HTMLElement | null; secondPart: HTMLElement | null } {
+    const items = Array.from(list.querySelectorAll(':scope > li'));
+    
+    if (items.length === 0) {
+      return { firstPart: list, secondPart: null };
+    }
+    
+    // Create temporary list to measure items
+    const tempList = list.cloneNode(true) as HTMLElement;
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.width = `${config.pageWidth - config.marginLeft - config.marginRight}px`;
+    tempContainer.appendChild(tempList);
+    document.body.appendChild(tempContainer);
+    
+    try {
+      const tempItems = Array.from(tempList.querySelectorAll(':scope > li'));
+      let cumulativeHeight = 0;
+      let splitIndex = -1;
+      
+      // Find where to split
+      for (let i = 0; i < tempItems.length; i++) {
+        const itemHeight = (tempItems[i] as HTMLElement).offsetHeight;
+        if (cumulativeHeight + itemHeight > availableHeight) {
+          splitIndex = i;
+          break;
+        }
+        cumulativeHeight += itemHeight;
+      }
+      
+      // If we can't fit even the first item, don't split
+      if (splitIndex <= 0) {
+        return { firstPart: null, secondPart: list };
+      }
+      
+      // Create two list parts
+      const firstList = list.cloneNode(false) as HTMLElement;
+      const secondList = list.cloneNode(false) as HTMLElement;
+      
+      // Split items
+      for (let i = 0; i < items.length; i++) {
+        if (i < splitIndex) {
+          firstList.appendChild(items[i].cloneNode(true));
+        } else {
+          secondList.appendChild(items[i].cloneNode(true));
+        }
+      }
+      
+      // For ordered lists, adjust the start attribute on the second part
+      if (list.tagName.toLowerCase() === 'ol') {
+        (secondList as HTMLOListElement).start = splitIndex + 1;
+      }
+      
+      return { firstPart: firstList, secondPart: secondList };
+    } finally {
+      document.body.removeChild(tempContainer);
+    }
+  }
+  
+  /**
+   * Scale an image to fit within available height
+   */
+  private scaleImage(image: HTMLImageElement, maxHeight: number): HTMLElement {
+    const scaledImage = image.cloneNode(true) as HTMLImageElement;
+    const container = document.createElement('div');
+    container.style.textAlign = 'center';
+    container.style.margin = '16px 0';
+    
+    // Calculate scale factor
+    const originalHeight = image.offsetHeight || parseInt(image.style.height) || 400;
+    const scale = maxHeight / originalHeight;
+    
+    if (scale < 1) {
+      scaledImage.style.maxHeight = `${maxHeight - 40}px`; // Leave some margin
+      scaledImage.style.height = 'auto';
+      scaledImage.style.width = 'auto';
+    }
+    
+    container.appendChild(scaledImage);
+    return container;
   }
   
   /**
