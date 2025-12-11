@@ -10,7 +10,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { TemplateService } from '../../services/template.service';
 import { MasterTemplate, TEMPLATE_CATEGORIES, TemplateCategory } from '../../models/notice.model';
-import { IrasButton, IrasCard, IrasCardHeader, IrasCardContent, IrasCardActions, IrasBadge } from '../../design-system';
 
 @Component({
   selector: 'app-template-manager',
@@ -23,12 +22,6 @@ import { IrasButton, IrasCard, IrasCardHeader, IrasCardContent, IrasCardActions,
     MatTooltipModule,
     MatTabsModule,
     MatDialogModule,
-    IrasButton,
-    IrasCard,
-    IrasCardHeader,
-    IrasCardContent,
-    IrasCardActions,
-    IrasBadge,
   ],
   templateUrl: './template-manager.html',
   styleUrl: './template-manager.scss',
@@ -75,8 +68,22 @@ export class TemplateManager {
   }
   
   editTemplate(template: MasterTemplate): void {
-    if (!template.isSystem) {
-      this.router.navigate(['/templates/edit', template.id]);
+    // For system templates, we duplicate and edit the copy
+    // For user templates, we edit directly
+    if (template.isSystem) {
+      const newTemplate = this.templateService.addTemplate({
+        name: `${template.name} (Custom)`,
+        description: template.description,
+        category: template.category,
+        content: template.content,
+      });
+      this.router.navigate(['/editor'], { 
+        queryParams: { templateId: newTemplate.id, editTemplate: 'true' } 
+      });
+    } else {
+      this.router.navigate(['/editor'], { 
+        queryParams: { templateId: template.id, editTemplate: 'true' } 
+      });
     }
   }
   
@@ -96,6 +103,8 @@ export class TemplateManager {
   }
   
   createNewTemplate(): void {
-    this.router.navigate(['/templates/new']);
+    this.router.navigate(['/editor'], { 
+      queryParams: { newTemplate: 'true' } 
+    });
   }
 }
