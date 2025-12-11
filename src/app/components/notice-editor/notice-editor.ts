@@ -4,8 +4,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSliderModule } from '@angular/material/slider';
 import { Router } from '@angular/router';
 import { NoticeService } from '../../services/notice';
 import { NoticePreview } from '../notice-preview/notice-preview';
@@ -18,8 +16,6 @@ import { NoticePreview } from '../notice-preview/notice-preview';
     MatInputModule,
     MatButtonModule,
     MatCardModule,
-    MatSelectModule,
-    MatSliderModule,
     NoticePreview,
   ],
   templateUrl: './notice-editor.html',
@@ -36,9 +32,6 @@ export class NoticeEditor {
   borderColor = signal('#000000');
   borderWidth = signal(1);
   padding = signal(16);
-  
-  fontFamilies = ['Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Courier New', 'Verdana'];
-  borderStyles = ['solid', 'dashed', 'dotted', 'double', 'none'];
   
   constructor(
     private noticeService: NoticeService,

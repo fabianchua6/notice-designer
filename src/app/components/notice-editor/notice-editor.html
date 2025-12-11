@@ -6,8 +6,6 @@
     <mat-card-content>
       <div class="editor-layout">
         <div class="form-section">
-          <h3>Content</h3>
-          
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Title</mat-label>
             <input matInput [(ngModel)]="title" placeholder="Enter notice title">
@@ -19,67 +17,9 @@
               matInput 
               [(ngModel)]="content" 
               placeholder="Enter notice content"
-              rows="6">
+              rows="20">
             </textarea>
           </mat-form-field>
-          
-          <h3>Text Styling</h3>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Font Family</mat-label>
-            <mat-select [(ngModel)]="fontFamily">
-              @for (font of fontFamilies; track font) {
-                <mat-option [value]="font">{{ font }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-          
-          <div class="slider-field">
-            <label>Font Size: {{ fontSize() }}px</label>
-            <mat-slider min="10" max="48" step="1">
-              <input matSliderThumb [(ngModel)]="fontSize">
-            </mat-slider>
-          </div>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Text Color</mat-label>
-            <input matInput type="color" [(ngModel)]="textColor">
-          </mat-form-field>
-          
-          <h3>Background & Border</h3>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Background Color</mat-label>
-            <input matInput type="color" [(ngModel)]="backgroundColor">
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Border Style</mat-label>
-            <mat-select [(ngModel)]="borderStyle">
-              @for (style of borderStyles; track style) {
-                <mat-option [value]="style">{{ style }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Border Color</mat-label>
-            <input matInput type="color" [(ngModel)]="borderColor">
-          </mat-form-field>
-          
-          <div class="slider-field">
-            <label>Border Width: {{ borderWidth() }}px</label>
-            <mat-slider min="0" max="10" step="1">
-              <input matSliderThumb [(ngModel)]="borderWidth">
-            </mat-slider>
-          </div>
-          
-          <div class="slider-field">
-            <label>Padding: {{ padding() }}px</label>
-            <mat-slider min="0" max="50" step="2">
-              <input matSliderThumb [(ngModel)]="padding">
-            </mat-slider>
-          </div>
         </div>
         
         <div class="preview-section">
