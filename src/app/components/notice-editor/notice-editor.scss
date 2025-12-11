@@ -415,6 +415,11 @@
     &.a4-preview {
       padding: 24px;
     }
+    
+    &.enhanced-preview {
+      padding: 0;
+      background: #e0e0e0;
+    }
   }
   
   .pages-wrapper {

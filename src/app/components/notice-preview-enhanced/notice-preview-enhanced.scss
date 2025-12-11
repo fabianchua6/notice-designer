@@ -1,0 +1,375 @@
+// Document Preview Container - Enhanced with HTML support
+.document-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// Preview Toolbar
+.preview-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  
+  .zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    .zoom-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid #ccc;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      
+      &:hover {
+        background: #e8e8e8;
+        border-color: #999;
+      }
+    }
+    
+    .zoom-level {
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      min-width: 45px;
+      text-align: center;
+    }
+  }
+  
+  .page-info {
+    .page-count {
+      font-size: 12px;
+      color: #666;
+      background: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+    }
+  }
+}
+
+// Pages Wrapper
+.pages-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  padding: 16px 0;
+  transition: transform 0.2s ease;
+}
+
+// Page Container with Shadow
+.page-container {
+  position: relative;
+  
+  .page-shadow {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: -4px;
+    bottom: -4px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 2px;
+  }
+}
+
+// A4 Page - Actual page styling
+.a4-page {
+  position: relative;
+  width: 794px; // A4 at 96 DPI
+  min-height: 1123px;
+  background: white;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
+  border: 1px solid #d0d0d0;
+  overflow: hidden;
+  
+  // Print-like paper texture
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 27px,
+        rgba(0, 0, 0, 0.02) 27px,
+        rgba(0, 0, 0, 0.02) 28px
+      );
+    pointer-events: none;
+  }
+}
+
+// Page Content
+.page-content {
+  position: relative;
+  min-height: calc(1123px - 40px); // Full height minus footer
+}
+
+// Document Header (IRAS branding)
+.document-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--iras-primary, #2d7bb9);
+  
+  .iras-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    .logo-icon {
+      background: linear-gradient(135deg, var(--iras-primary, #2d7bb9), var(--iras-teal, #20b4af));
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+    
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      
+      .ministry {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1a1a2e;
+        letter-spacing: 0.3px;
+      }
+    }
+  }
+  
+  .document-date {
+    font-size: 12px;
+    color: #666;
+    text-align: right;
+  }
+}
+
+// Document Title
+.document-title {
+  margin-bottom: 24px;
+  
+  h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a2e;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 16px 0;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background: #fafafa;
+  }
+}
+
+// Document Body - Enhanced for HTML content
+.document-body {
+  &.continued {
+    padding-top: 16px;
+  }
+  
+  .continuation-marker {
+    font-size: 10px;
+    font-style: italic;
+    color: #999;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  // HTML content styling
+  .html-content {
+    // Preserve styles from TinyMCE
+    :deep(table) {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      
+      td, th {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      
+      th {
+        background-color: #f5f5f5;
+        font-weight: 600;
+      }
+    }
+    
+    :deep(p) {
+      margin: 0 0 12px 0;
+      line-height: 1.6;
+    }
+    
+    :deep(h1), :deep(h2), :deep(h3), :deep(h4), :deep(h5), :deep(h6) {
+      margin: 16px 0 8px 0;
+      line-height: 1.3;
+    }
+    
+    :deep(ul), :deep(ol) {
+      margin: 12px 0;
+      padding-left: 20px;
+    }
+    
+    :deep(li) {
+      margin: 4px 0;
+    }
+    
+    :deep(img) {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    // Variable styling
+    :deep(.variable-value) {
+      font-weight: 500;
+      color: #2d7bb9;
+    }
+    
+    :deep(.variable-placeholder) {
+      background-color: #e3f2fd;
+      border: 1px solid #2196f3;
+      border-radius: 3px;
+      padding: 1px 4px;
+      color: #1565c0;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+  }
+  
+  .placeholder-content {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    padding: 40px 0;
+  }
+  
+  .overflow-warning {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    border-radius: 4px;
+    
+    span {
+      font-size: 11px;
+      color: #856404;
+      font-weight: 500;
+    }
+  }
+}
+
+// Page Footer
+.page-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 96px 16px;
+  
+  .page-number {
+    font-size: 11px;
+    color: #666;
+  }
+  
+  .footer-line {
+    width: 100%;
+    height: 1px;
+    background: #ddd;
+    margin-top: 8px;
+  }
+}
+
+// Page Break Indicator
+.page-break-indicator {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e8f4fd;
+  border: 1px dashed var(--iras-primary, #2d7bb9);
+  padding: 2px 12px;
+  border-radius: 10px;
+  z-index: 10;
+  
+  span {
+    font-size: 10px;
+    color: var(--iras-primary, #2d7bb9);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// Print Styles
+@media print {
+  .preview-toolbar {
+    display: none !important;
+  }
+  
+  .pages-wrapper {
+    transform: none !important;
+    gap: 0;
+    padding: 0;
+  }
+  
+  .page-container {
+    page-break-after: always;
+    
+    .page-shadow {
+      display: none;
+    }
+    
+    &:last-child {
+      page-break-after: auto;
+    }
+  }
+  
+  .a4-page {
+    box-shadow: none;
+    border: none;
+    width: 100%;
+    min-height: auto;
+    
+    &::before {
+      display: none;
+    }
+  }
+  
+  .page-break-indicator {
+    display: none;
+  }
+  
+  .overflow-warning {
+    display: none;
+  }
+}

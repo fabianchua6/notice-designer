@@ -18,7 +18,8 @@ import { NoticeService } from '../../services/notice';
 import { TemplateService } from '../../services/template.service';
 import { DocumentRendererService, DocumentHeaderData } from '../../services/document-renderer.service';
 import { TEMPLATE_VARIABLES, TemplateVariable, LetterHeader } from '../../models/notice.model';
-import { IrasButton } from '../../design-system';
+import { IrasButton, IrasCard, IrasCardHeader, IrasCardContent, IrasAlert } from '../../design-system';
+import { NoticePreviewEnhanced } from '../notice-preview-enhanced/notice-preview-enhanced';
 import JsBarcode from 'jsbarcode';
 
 @Component({
@@ -39,6 +40,11 @@ import JsBarcode from 'jsbarcode';
     MatSlideToggleModule,
     EditorModule,
     IrasButton,
+    IrasCard,
+    IrasCardHeader,
+    IrasCardContent,
+    IrasAlert,
+    NoticePreviewEnhanced,
   ],
   providers: [
     // Self-hosted TinyMCE - no API key required, fully open source (LGPL)

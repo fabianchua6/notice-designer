@@ -1,0 +1,87 @@
+<div class="document-preview-container">
+  <!-- Zoom Controls -->
+  <div class="preview-toolbar">
+    <div class="zoom-controls">
+      <button class="zoom-btn" (click)="zoomOut()">
+        <span>−</span>
+      </button>
+      <span class="zoom-level">{{ zoom }}%</span>
+      <button class="zoom-btn" (click)="zoomIn()">
+        <span>+</span>
+      </button>
+    </div>
+    <div class="page-info">
+      <span class="page-count">{{ pages.length }} page{{ pages.length !== 1 ? 's' : '' }}</span>
+    </div>
+  </div>
+
+  <!-- Document Pages -->
+  <div class="pages-wrapper" [style.transform]="'scale(' + (zoom/100) + ')'" [style.transform-origin]="'top center'">
+    @for (page of pages; track page.pageNumber) {
+      <div class="page-container">
+        <!-- Page Shadow Effect -->
+        <div class="page-shadow"></div>
+        
+        <!-- The Page -->
+        <div class="a4-page" [ngStyle]="getPageStyle()">
+          <!-- Page Content Area -->
+          <div class="page-content" [ngStyle]="getContentStyle()">
+            <!-- IRAS Header - First Page Only -->
+            @if (page.isFirstPage) {
+              <div class="document-header">
+                <div class="iras-logo">
+                  <div class="logo-icon">IRAS</div>
+                  <div class="logo-text">
+                    <span class="ministry">Inland Revenue Authority of Singapore</span>
+                  </div>
+                </div>
+                <div class="document-date">{{ getCurrentDate() }}</div>
+              </div>
+
+              <!-- Title -->
+              <div class="document-title">
+                <h1>{{ title || 'Untitled Notice' }}</h1>
+              </div>
+            }
+
+            <!-- Content with HTML rendering -->
+            <div class="document-body" [class.continued]="!page.isFirstPage">
+              @if (!page.isFirstPage) {
+                <div class="continuation-marker">(continued from previous page)</div>
+              }
+              
+              <!-- Render HTML content -->
+              <div class="html-content" [innerHTML]="sanitizeHtml(page.content)"></div>
+              
+              @if (page.content === '' && page.isFirstPage) {
+                <div class="placeholder-content">No content yet...</div>
+              }
+              
+              <!-- Overflow warning -->
+              @if (page.hasOverflow) {
+                <div class="overflow-warning">
+                  <span>⚠️ Content overflow detected</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Page Footer -->
+          <div class="page-footer">
+            @if (showPageNumbers) {
+              <div class="page-number">Page {{ page.pageNumber }} of {{ pages.length }}</div>
+            }
+            <div class="footer-line"></div>
+          </div>
+
+          <!-- Page Break Indicator -->
+          @if (page.pageNumber < pages.length) {
+            <div class="page-break-indicator">
+              <span>Page Break</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
