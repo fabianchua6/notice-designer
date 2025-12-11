@@ -19,7 +19,7 @@
   
   <!-- Stats Cards -->
   <div class="stats-row">
-    <iras-card variant="elevated" class="stat-card">
+    <iras-card class="stat-card">
       <div class="stat-icon primary">
         <mat-icon>description</mat-icon>
       </div>
@@ -28,7 +28,7 @@
         <span class="stat-label">Total Notices</span>
       </div>
     </iras-card>
-    <iras-card variant="elevated" class="stat-card">
+    <iras-card class="stat-card">
       <div class="stat-icon teal">
         <mat-icon>check_circle</mat-icon>
       </div>
@@ -37,7 +37,7 @@
         <span class="stat-label">Published</span>
       </div>
     </iras-card>
-    <iras-card variant="elevated" class="stat-card">
+    <iras-card class="stat-card">
       <div class="stat-icon warning">
         <mat-icon>edit_note</mat-icon>
       </div>
@@ -46,7 +46,7 @@
         <span class="stat-label">Drafts</span>
       </div>
     </iras-card>
-    <iras-card variant="elevated" class="stat-card">
+    <iras-card class="stat-card">
       <div class="stat-icon grey">
         <mat-icon>archive</mat-icon>
       </div>
@@ -59,7 +59,7 @@
   
   @if (notices().length === 0) {
     <!-- Empty State -->
-    <iras-card variant="elevated" class="empty-state">
+    <iras-card class="empty-state">
       <div class="empty-illustration">
         <mat-icon>note_add</mat-icon>
       </div>
@@ -85,7 +85,7 @@
     
     <div class="notices-grid">
       @for (notice of notices(); track notice.id) {
-        <iras-card variant="elevated" [hoverable]="true" class="notice-card" [class.selected]="isSelected(notice.id)">
+        <iras-card class="notice-card" [class.selected]="isSelected(notice.id)">
           <div class="card-selection">
             <mat-checkbox
               [checked]="isSelected(notice.id)"
