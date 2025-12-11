@@ -15,35 +15,58 @@ export interface Notice {
   status?: 'draft' | 'published';
 }
 
-// Template variables that can be inserted into notices
+// Template Categories
+export type TemplateCategory = 'assessment' | 'statement' | 'notification' | 'acknowledgment' | 'reminder' | 'general' | 'other';
+
 export interface TemplateVariable {
   key: string;
   label: string;
+  description: string;
   category: string;
   sampleValue: string;
 }
 
+export interface MasterTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: TemplateCategory;
+  content: string;
+  isSystem: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const TEMPLATE_CATEGORIES: { value: TemplateCategory; label: string; icon: string }[] = [
+  { value: 'assessment', label: 'Tax Assessment', icon: 'assessment' },
+  { value: 'statement', label: 'Statement', icon: 'receipt_long' },
+  { value: 'notification', label: 'Notification', icon: 'notifications' },
+  { value: 'acknowledgment', label: 'Acknowledgment', icon: 'check_circle' },
+  { value: 'reminder', label: 'Reminder', icon: 'schedule' },
+  { value: 'general', label: 'General', icon: 'mail' },
+  { value: 'other', label: 'Other', icon: 'description' }
+];
+
+// Template Variables for dynamic content
 export const TEMPLATE_VARIABLES: TemplateVariable[] = [
   // Taxpayer Information
-  { key: '{{taxpayer.name}}', label: 'Taxpayer Name', category: 'Taxpayer', sampleValue: 'John Doe' },
-  { key: '{{taxpayer.nric}}', label: 'NRIC/FIN', category: 'Taxpayer', sampleValue: 'S1234567A' },
-  { key: '{{taxpayer.address}}', label: 'Address', category: 'Taxpayer', sampleValue: '123 Orchard Road, #12-34, Singapore 238888' },
-  { key: '{{taxpayer.email}}', label: 'Email', category: 'Taxpayer', sampleValue: 'john.doe@email.com' },
+  { key: '{{taxpayer.name}}', label: 'Taxpayer Name', description: 'Full name of the taxpayer', category: 'Taxpayer', sampleValue: 'TAN AH KOW' },
+  { key: '{{taxpayer.nric}}', label: 'NRIC/FIN', description: 'Identification number', category: 'Taxpayer', sampleValue: 'S1234567A' },
+  { key: '{{taxpayer.address}}', label: 'Address', description: 'Mailing address', category: 'Taxpayer', sampleValue: '123 Orchard Road #12-34, Singapore 238888' },
+  { key: '{{taxpayer.email}}', label: 'Email', description: 'Email address', category: 'Taxpayer', sampleValue: 'tanah.kow@email.com' },
   
-  // Assessment Details
-  { key: '{{assessment.year}}', label: 'Year of Assessment', category: 'Assessment', sampleValue: '2024' },
-  { key: '{{assessment.type}}', label: 'Assessment Type', category: 'Assessment', sampleValue: 'Income Tax' },
-  { key: '{{assessment.amount}}', label: 'Tax Amount', category: 'Assessment', sampleValue: '$5,234.00' },
-  { key: '{{assessment.dueDate}}', label: 'Due Date', category: 'Assessment', sampleValue: '15 January 2025' },
-  { key: '{{assessment.refNumber}}', label: 'Reference Number', category: 'Assessment', sampleValue: 'NOA-2024-123456' },
+  // Assessment Information
+  { key: '{{assessment.year}}', label: 'Year of Assessment', description: 'The tax year', category: 'Assessment', sampleValue: '2024' },
+  { key: '{{assessment.totalIncome}}', label: 'Total Income', description: 'Total assessable income', category: 'Assessment', sampleValue: '$85,000' },
+  { key: '{{assessment.taxPayable}}', label: 'Tax Payable', description: 'Total tax amount', category: 'Assessment', sampleValue: '$3,350' },
+  { key: '{{assessment.dueDate}}', label: 'Due Date', description: 'Payment due date', category: 'Assessment', sampleValue: '15 Apr 2024' },
   
-  // Notice Details
-  { key: '{{notice.date}}', label: 'Notice Date', category: 'Notice', sampleValue: '11 December 2024' },
-  { key: '{{notice.number}}', label: 'Notice Number', category: 'Notice', sampleValue: 'IRAS/IT/2024/001234' },
-  { key: '{{notice.validUntil}}', label: 'Valid Until', category: 'Notice', sampleValue: '31 December 2025' },
+  // Notice Information
+  { key: '{{notice.date}}', label: 'Notice Date', description: 'Date of the notice', category: 'Notice', sampleValue: '15 Mar 2024' },
+  { key: '{{notice.refNumber}}', label: 'Reference Number', description: 'Notice reference', category: 'Notice', sampleValue: 'NOA/2024/123456' },
   
-  // Payment Details
-  { key: '{{payment.bankName}}', label: 'Bank Name', category: 'Payment', sampleValue: 'DBS Bank' },
-  { key: '{{payment.accountNo}}', label: 'Account Number', category: 'Payment', sampleValue: '001-234567-8' },
-  { key: '{{payment.payNowRef}}', label: 'PayNow Reference', category: 'Payment', sampleValue: 'IRAS12345678' },
+  // Payment Information
+  { key: '{{payment.amount}}', label: 'Payment Amount', description: 'Amount to pay', category: 'Payment', sampleValue: '$3,350.00' },
+  { key: '{{payment.dueDate}}', label: 'Payment Due Date', description: 'When payment is due', category: 'Payment', sampleValue: '15 Apr 2024' },
+  { key: '{{payment.method}}', label: 'Payment Method', description: 'How to pay', category: 'Payment', sampleValue: 'GIRO, Internet Banking, or AXS' }
 ];

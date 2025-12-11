@@ -1,0 +1,95 @@
+<div class="template-manager-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Master Templates</h1>
+        <p class="subtitle">Reusable notice templates for quick document creation</p>
+      </div>
+      <div class="header-actions">
+        <button mat-flat-button color="primary" (click)="createNewTemplate()">
+          <mat-icon>add</mat-icon>
+          Create Template
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Category Filter -->
+  <div class="category-filter">
+    <button 
+      mat-stroked-button 
+      [class.active]="selectedCategory() === 'all'"
+      (click)="selectCategory('all')">
+      <mat-icon>apps</mat-icon>
+      All Templates
+    </button>
+    @for (cat of categories; track cat.value) {
+      <button 
+        mat-stroked-button 
+        [class.active]="selectedCategory() === cat.value"
+        (click)="selectCategory(cat.value)">
+        <mat-icon>{{ cat.icon }}</mat-icon>
+        {{ cat.label }}
+      </button>
+    }
+  </div>
+  
+  <!-- Templates Grid -->
+  <div class="templates-grid">
+    @for (template of filteredTemplates; track template.id) {
+      <mat-card class="template-card" [class.system]="template.isSystem">
+        <!-- Category Badge -->
+        <div class="card-badge" [attr.data-category]="template.category">
+          <mat-icon>{{ getCategoryIcon(template.category) }}</mat-icon>
+          {{ getCategoryLabel(template.category) }}
+        </div>
+        
+        @if (template.isSystem) {
+          <div class="system-badge">
+            <mat-icon>lock</mat-icon>
+            System
+          </div>
+        }
+        
+        <mat-card-header>
+          <mat-card-title>{{ template.name }}</mat-card-title>
+          <mat-card-subtitle>{{ template.description }}</mat-card-subtitle>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <div class="template-preview">
+            <div class="preview-content" [innerHTML]="template.content | slice:0:300"></div>
+            <div class="preview-fade"></div>
+          </div>
+        </mat-card-content>
+        
+        <mat-card-actions>
+          <button mat-flat-button color="primary" (click)="useTemplate(template)">
+            <mat-icon>add_circle</mat-icon>
+            Use Template
+          </button>
+          <button mat-button (click)="duplicateTemplate(template)" matTooltip="Duplicate">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+          @if (!template.isSystem) {
+            <button mat-button (click)="editTemplate(template)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-button color="warn" (click)="deleteTemplate(template)" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
+        </mat-card-actions>
+      </mat-card>
+    }
+  </div>
+  
+  @if (filteredTemplates.length === 0) {
+    <div class="empty-state">
+      <mat-icon>folder_open</mat-icon>
+      <h3>No Templates Found</h3>
+      <p>No templates match the selected category.</p>
+    </div>
+  }
+</div>
