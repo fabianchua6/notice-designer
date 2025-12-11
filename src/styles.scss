@@ -79,9 +79,9 @@ html, body {
 .text-primary { color: $iras-primary !important; }
 .text-teal { color: $iras-teal !important; }
 .text-muted { color: #6c757d !important; }
-.text-success { color: $iras-success !important; }
-.text-warning { color: $iras-warning !important; }
-.text-danger { color: $iras-danger !important; }
+.text-success { color: $success !important; }
+.text-warning { color: $warning !important; }
+.text-danger { color: $danger !important; }
 
 // Background utilities
 .bg-primary { background-color: $iras-primary !important; }
@@ -119,7 +119,7 @@ html, body {
 // Selection styling
 ::selection {
   background-color: rgba($iras-primary, 0.2);
-  color: $iras-dark;
+  color: $neutral-black;
 }
 
 // Focus ring
@@ -153,12 +153,12 @@ html, body {
   }
   
   &.published {
-    background-color: rgba($iras-success, 0.1);
-    color: $iras-success;
+    background-color: rgba($success, 0.1);
+    color: $success;
   }
   
   &.archived {
-    background-color: rgba($iras-warning, 0.1);
-    color: darken($iras-warning, 15%);
+    background-color: rgba($warning, 0.1);
+    color: darken($warning, 15%);
   }
 }
