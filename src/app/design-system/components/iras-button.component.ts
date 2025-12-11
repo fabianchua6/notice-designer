@@ -30,7 +30,7 @@ export type IrasButtonSize = 'small' | 'medium' | 'large';
       @if (loading) {
         <mat-spinner diameter="16" class="button-spinner"></mat-spinner>
       } @else if (icon && iconPosition === 'left') {
-        <mat-icon [class.icon-only]="!hasContent">{{ icon }}</mat-icon>
+        <mat-icon>{{ icon }}</mat-icon>
       }
       
       <span class="button-content" #content>
@@ -250,9 +250,5 @@ export class IrasButton {
     }
     
     return classes.join(' ');
-  }
-  
-  get hasContent(): boolean {
-    return true; // Will be checked via template ref
   }
 }

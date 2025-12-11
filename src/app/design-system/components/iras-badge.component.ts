@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -288,6 +288,3 @@ export class IrasPill {
     this.remove.emit();
   }
 }
-
-// Export EventEmitter for IrasPill
-import { EventEmitter, Output } from '@angular/core';

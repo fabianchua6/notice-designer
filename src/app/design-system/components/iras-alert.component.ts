@@ -21,7 +21,7 @@ export type IrasAlertType = 'info' | 'success' | 'warning' | 'danger';
   standalone: true,
   imports: [CommonModule, MatIconModule, MatButtonModule],
   template: `
-    @if (!dismissed) {
+    @if (!dismissed_) {
       <div [class]="alertClasses" role="alert">
         <div class="alert-icon">
           <mat-icon>{{ iconName }}</mat-icon>
@@ -200,7 +200,7 @@ export class IrasAlert {
   standalone: true,
   imports: [CommonModule, MatIconModule, MatButtonModule],
   template: `
-    @if (!dismissed) {
+    @if (!dismissed_) {
       <div [class]="bannerClasses" role="banner">
         <div class="banner-content">
           <mat-icon class="banner-icon">{{ iconName }}</mat-icon>
