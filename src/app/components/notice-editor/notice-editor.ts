@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -11,12 +11,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { CommonModule } from '@angular/common';
 import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { NoticeService } from '../../services/notice';
 import { TemplateService } from '../../services/template.service';
-import { TEMPLATE_VARIABLES, TemplateVariable } from '../../models/notice.model';
-import { IrasButton, IrasCard, IrasCardHeader, IrasCardContent, IrasAlert } from '../../design-system';
+import { DocumentRendererService, DocumentHeaderData } from '../../services/document-renderer.service';
+import { TEMPLATE_VARIABLES, TemplateVariable, LetterHeader } from '../../models/notice.model';
+import { IrasButton } from '../../design-system';
+import JsBarcode from 'jsbarcode';
 
 @Component({
   selector: 'app-notice-editor',
@@ -33,12 +36,9 @@ import { IrasButton, IrasCard, IrasCardHeader, IrasCardContent, IrasAlert } from
     MatMenuModule,
     MatChipsModule,
     MatTabsModule,
+    MatSlideToggleModule,
     EditorModule,
     IrasButton,
-    IrasCard,
-    IrasCardHeader,
-    IrasCardContent,
-    IrasAlert,
   ],
   providers: [
     // Self-hosted TinyMCE - no API key required, fully open source (LGPL)
@@ -49,10 +49,13 @@ import { IrasButton, IrasCard, IrasCardHeader, IrasCardContent, IrasAlert } from
   // Use None to allow TinyMCE inline styles to render in preview
   encapsulation: ViewEncapsulation.None,
 })
-export class NoticeEditor implements OnInit {
+export class NoticeEditor implements OnInit, AfterViewChecked {
   // Editor state
   isEditMode = false;
   noticeId: string | null = null;
+  isTemplateEditMode = false;
+  templateId: string | null = null;
+  private barcodeInitialized = false;
   
   // Form fields
   title = signal('');
@@ -65,6 +68,25 @@ export class NoticeEditor implements OnInit {
   borderColor = signal('#000000');
   borderWidth = signal(0);
   padding = signal(0);
+  
+  // Header settings
+  showHeaderSettings = false;
+  headerConfig = signal<LetterHeader>({
+    showHeader: true,
+    taxRef: 'S1234567A',
+    date: new Date().toLocaleDateString('en-SG', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    }),
+    recipientName: 'MR JOHN DOE',
+    addressLine1: '123 SAMPLE STREET',
+    addressLine2: '#01-23',
+    addressLine3: 'SINGAPORE 123456',
+    addressLine4: '',
+    showQuoteNote: true,
+    showBarcode: true
+  });
   
   // Preview zoom
   zoom = 100; // Start at 100% for accurate preview
@@ -351,6 +373,7 @@ export class NoticeEditor implements OnInit {
   constructor(
     private noticeService: NoticeService,
     private templateService: TemplateService,
+    private documentRenderer: DocumentRendererService,
     private router: Router,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer
@@ -368,10 +391,24 @@ export class NoticeEditor implements OnInit {
         this.noticeId = id;
         this.loadNotice(id);
       } else {
-        // Check for template to use
+        // Check for template-related operations
         this.route.queryParams.subscribe(queryParams => {
           const templateId = queryParams['templateId'];
-          if (templateId) {
+          const editTemplate = queryParams['editTemplate'];
+          const newTemplate = queryParams['newTemplate'];
+          
+          if (editTemplate === 'true' && templateId) {
+            // Editing an existing template
+            this.isTemplateEditMode = true;
+            this.templateId = templateId;
+            this.loadTemplateForEdit(templateId);
+          } else if (newTemplate === 'true') {
+            // Creating a new template
+            this.isTemplateEditMode = true;
+            this.templateId = null;
+            this.setDefaultTemplateContent();
+          } else if (templateId) {
+            // Using a template to create a new notice
             this.loadFromTemplate(templateId);
           } else {
             // Set default content for new notices
@@ -382,11 +419,58 @@ export class NoticeEditor implements OnInit {
     });
   }
   
+  ngAfterViewChecked(): void {
+    this.initializeBarcode();
+  }
+  
+  private initializeBarcode(): void {
+    const barcodeElement = document.getElementById('editor-barcode');
+    if (barcodeElement && !this.barcodeInitialized) {
+      try {
+        JsBarcode('#editor-barcode', 'S1234567A', {
+          format: 'CODE128',
+          width: 1.5,
+          height: 35,
+          displayValue: false,
+          margin: 0,
+        });
+        this.barcodeInitialized = true;
+      } catch (e) {
+        // Barcode element not ready yet
+      }
+    }
+  }
+  
+  loadTemplateForEdit(templateId: string): void {
+    const template = this.templateService.getTemplateById(templateId);
+    if (template) {
+      this.title.set(template.name);
+      this.content.set(template.content);
+      if (template.header) {
+        this.headerConfig.set(template.header);
+      }
+    } else {
+      this.router.navigate(['/templates']);
+    }
+  }
+  
+  setDefaultTemplateContent(): void {
+    this.title.set('New Template');
+    this.content.set(`<p>Dear <strong>{{taxpayer.name}}</strong>,</p>
+
+<p>Enter your template content here...</p>
+
+<p>Yours faithfully,<br><strong>IRAS</strong></p>`);
+  }
+  
   loadFromTemplate(templateId: string): void {
     const template = this.templateService.getTemplateById(templateId);
     if (template) {
       this.title.set(`New ${template.name}`);
       this.content.set(template.content);
+      if (template.header) {
+        this.headerConfig.set(template.header);
+      }
     } else {
       this.setDefaultContent();
     }
@@ -397,6 +481,9 @@ export class NoticeEditor implements OnInit {
     if (notice) {
       this.title.set(notice.title);
       this.content.set(notice.content);
+      if (notice.header) {
+        this.headerConfig.set(notice.header);
+      }
       this.backgroundColor.set(notice.backgroundColor || '#ffffff');
       this.textColor.set(notice.textColor || '#000000');
       this.fontSize.set(notice.fontSize || 12);
@@ -497,6 +584,7 @@ export class NoticeEditor implements OnInit {
     this.showVariablePanel = !this.showVariablePanel;
     if (this.showVariablePanel) {
       this.showComponentsPanel = false;
+      this.showHeaderSettings = false;
     }
   }
   
@@ -504,7 +592,43 @@ export class NoticeEditor implements OnInit {
     this.showComponentsPanel = !this.showComponentsPanel;
     if (this.showComponentsPanel) {
       this.showVariablePanel = false;
+      this.showHeaderSettings = false;
     }
+  }
+  
+  toggleHeaderSettings(): void {
+    this.showHeaderSettings = !this.showHeaderSettings;
+    if (this.showHeaderSettings) {
+      this.showVariablePanel = false;
+      this.showComponentsPanel = false;
+    }
+  }
+  
+  updateHeaderConfig(field: keyof LetterHeader, value: any): void {
+    const current = this.headerConfig();
+    this.headerConfig.set({ ...current, [field]: value });
+    // Re-initialize barcode if barcode settings changed
+    if (field === 'showBarcode' || field === 'taxRef') {
+      this.barcodeInitialized = false;
+    }
+  }
+  
+  getHeaderDataFromConfig(): DocumentHeaderData {
+    const config = this.headerConfig();
+    const addressLines: string[] = [
+      config.addressLine1,
+      config.addressLine2 || '',
+      config.addressLine3 || '',
+      config.addressLine4 || ''
+    ].filter(line => line && line.trim() !== '');
+    
+    return {
+      taxRef: config.taxRef,
+      date: config.date,
+      recipientName: config.recipientName,
+      recipientAddress: addressLines,
+      showQuoteNote: config.showQuoteNote
+    };
   }
   
   insertComponent(component: { name: string; html: string }): void {
@@ -518,11 +642,12 @@ export class NoticeEditor implements OnInit {
     return temp.textContent || temp.innerText || '';
   }
   
-  getPreviewContent(): SafeHtml {
+  // For editor preview - shows variables with highlighting
+  getPreviewContentForPrint(): string {
     let content = this.content();
     
     if (this.showSampleData) {
-      // Replace template variables with sample values
+      // Replace template variables with sample values (highlighted for preview)
       for (const variable of this.templateVariables) {
         content = content.replace(new RegExp(this.escapeRegex(variable.key), 'g'), 
           `<span class="variable-value">${variable.sampleValue}</span>`);
@@ -535,8 +660,25 @@ export class NoticeEditor implements OnInit {
       }
     }
     
+    return content;
+  }
+  
+  // For actual print/PDF - clean output without highlighting
+  getContentForPrint(): string {
+    let content = this.content();
+    
+    // Replace template variables with sample values (no highlighting for print)
+    for (const variable of this.templateVariables) {
+      content = content.replace(new RegExp(this.escapeRegex(variable.key), 'g'), 
+        variable.sampleValue);
+    }
+    
+    return content;
+  }
+  
+  getPreviewContent(): SafeHtml {
     // Use DomSanitizer to trust the HTML and preserve inline styles
-    return this.sanitizer.bypassSecurityTrustHtml(content);
+    return this.sanitizer.bypassSecurityTrustHtml(this.getPreviewContentForPrint());
   }
   
   toggleSampleData(): void {
@@ -552,9 +694,16 @@ export class NoticeEditor implements OnInit {
       return;
     }
     
+    // If we're in template edit mode, save as template
+    if (this.isTemplateEditMode) {
+      this.saveTemplate();
+      return;
+    }
+    
     const noticeData = {
       title: this.title(),
       content: this.content(),
+      header: this.headerConfig(),
       backgroundColor: this.backgroundColor(),
       textColor: this.textColor(),
       fontSize: this.fontSize(),
@@ -574,6 +723,54 @@ export class NoticeEditor implements OnInit {
     this.router.navigate(['/']);
   }
   
+  saveTemplate(): void {
+    if (!this.title() || !this.content()) {
+      return;
+    }
+    
+    const templateData = {
+      name: this.title(),
+      description: 'Custom template',
+      category: 'general' as const,
+      content: this.content(),
+      header: this.headerConfig(),
+    };
+    
+    if (this.templateId) {
+      // Update existing template
+      this.templateService.updateTemplate(this.templateId, templateData);
+    } else {
+      // Add new template
+      this.templateService.addTemplate(templateData);
+    }
+    
+    this.router.navigate(['/templates']);
+  }
+  
+  saveAsMasterTemplate(): void {
+    if (!this.title() || !this.content()) {
+      return;
+    }
+    
+    // Prompt user for template name and description
+    const templateName = prompt('Enter template name:', this.title());
+    if (!templateName) return;
+    
+    const templateDescription = prompt('Enter template description:', 'Custom template');
+    if (!templateDescription) return;
+    
+    // Add as new master template
+    this.templateService.addTemplate({
+      name: templateName,
+      description: templateDescription,
+      category: 'general' as const,
+      content: this.content(),
+      header: this.headerConfig(),
+    });
+    
+    alert(`Template "${templateName}" saved successfully!`);
+  }
+  
   printNotice(): void {
     if (!this.title() || !this.content()) {
       return;
@@ -586,154 +783,71 @@ export class NoticeEditor implements OnInit {
       return;
     }
     
-    const currentDate = new Date().toLocaleDateString('en-SG', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
+    // Use clean content for print (no variable highlighting)
+    const printableContent = this.getContentForPrint();
+    const config = this.headerConfig();
+    const headerData = config.showHeader ? this.getHeaderDataFromConfig() : undefined;
+    
+    // Use DocumentRendererService for consistent print output
+    const printContent = this.documentRenderer.generatePrintHTML({
+      title: this.title(),
+      content: printableContent,
+      header: headerData,
+      showBarcode: config.showBarcode,
+      barcodeValue: config.taxRef,
+      fontSize: this.fontSize(),
+      showFooter: true
     });
     
-    const previewContent = this.getPreviewContent();
-    
-    const printContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>${this.title()}</title>
-          <style>
-            @page {
-              size: A4;
-              margin: 25mm 25mm 25mm 25mm;
-            }
-            
-            * { box-sizing: border-box; }
-            
-            body {
-              font-family: ${this.fontFamily()}, Arial, sans-serif;
-              font-size: ${this.fontSize()}pt;
-              margin: 0;
-              padding: 0;
-              color: ${this.textColor()};
-              background-color: white;
-              line-height: 1.6;
-            }
-            
-            .document-header {
-              display: flex;
-              justify-content: space-between;
-              align-items: flex-start;
-              margin-bottom: 24pt;
-              padding-bottom: 12pt;
-              border-bottom: 2pt solid #2d7bb9;
-            }
-            
-            .iras-logo {
-              display: flex;
-              align-items: center;
-              gap: 12pt;
-            }
-            
-            .logo-icon {
-              background: linear-gradient(135deg, #2d7bb9, #20b4af);
-              color: white;
-              font-weight: 700;
-              font-size: 14pt;
-              padding: 6pt 10pt;
-              border-radius: 3pt;
-              letter-spacing: 1pt;
-            }
-            
-            .ministry {
-              font-size: 11pt;
-              font-weight: 600;
-              color: #1a1a2e;
-            }
-            
-            .document-date {
-              font-size: 10pt;
-              color: #666;
-            }
-            
-            .document-title {
-              text-align: center;
-              margin-bottom: 20pt;
-            }
-            
-            .document-title h1 {
-              margin: 0;
-              font-size: 16pt;
-              font-weight: 600;
-              color: #1a1a2e;
-              text-transform: uppercase;
-              letter-spacing: 1pt;
-              padding: 12pt 0;
-              border-top: 1pt solid #ddd;
-              border-bottom: 1pt solid #ddd;
-              background: #fafafa;
-            }
-            
-            .notice-content {
-              font-size: ${this.fontSize()}pt;
-              line-height: 1.6;
-            }
-            
-            .notice-content table {
-              width: 100%;
-              border-collapse: collapse;
-            }
-            
-            .notice-content td, .notice-content th {
-              border: 1px solid #ddd;
-              padding: 8px;
-            }
-            
-            .variable-value {
-              font-weight: 500;
-            }
-            
-            @media print {
-              body {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="document-header">
-            <div class="iras-logo">
-              <div class="logo-icon">IRAS</div>
-              <div class="logo-text">
-                <span class="ministry">Inland Revenue Authority of Singapore</span>
-              </div>
-            </div>
-            <div class="document-date">${currentDate}</div>
-          </div>
-          
-          <div class="document-title">
-            <h1>${this.escapeHtml(this.title())}</h1>
-          </div>
-          
-          <div class="notice-content">${previewContent}</div>
-        </body>
-      </html>
-    `;
+    // Old inline HTML removed - using DocumentRendererService for single source of truth
+    // This ensures print output exactly matches preview
     
     printWindow.document.write(printContent);
     printWindow.document.close();
     
+    // Initialize barcode in print window after DOM is ready
     printWindow.onload = () => {
-      printWindow.focus();
-      printWindow.print();
-      setTimeout(() => {
-        printWindow.close();
-      }, 250);
+      // Initialize barcode if JsBarcode is available
+      const barcodeElements = printWindow.document.querySelectorAll('.barcode-svg');
+      if (barcodeElements.length > 0) {
+        try {
+          // Load JsBarcode script in print window
+          const script = printWindow.document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js';
+          script.onload = () => {
+            try {
+              (printWindow as any).JsBarcode('.barcode-svg', config.taxRef, {
+                format: 'CODE128',
+                width: 1.5,
+                height: 35,
+                displayValue: false,
+                margin: 0,
+              });
+            } catch (e) {
+              console.error('Barcode generation failed:', e);
+            }
+            printWindow.focus();
+            printWindow.print();
+            setTimeout(() => {
+              printWindow.close();
+            }, 250);
+          };
+          printWindow.document.head.appendChild(script);
+        } catch (e) {
+          printWindow.focus();
+          printWindow.print();
+          setTimeout(() => {
+            printWindow.close();
+          }, 250);
+        }
+      } else {
+        printWindow.focus();
+        printWindow.print();
+        setTimeout(() => {
+          printWindow.close();
+        }, 250);
+      }
     };
-  }
-  
-  private escapeHtml(text: string): string {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
   }
   
   resetForm(): void {

@@ -11,6 +11,9 @@
       </div>
     </div>
     <div class="header-actions">
+      <iras-button variant="tertiary" icon="receipt_long" [class.active]="showHeaderSettings" (click)="toggleHeaderSettings()">
+        Header Settings
+      </iras-button>
       <iras-button variant="tertiary" icon="widgets" [class.active]="showComponentsPanel" (click)="toggleComponentsPanel()">
         Components
       </iras-button>
@@ -19,6 +22,9 @@
       </iras-button>
       <iras-button variant="tertiary" icon="refresh" (click)="resetForm()">
         Reset
+      </iras-button>
+      <iras-button variant="tertiary" icon="bookmark" [disabled]="!title() || !content()" (click)="saveAsMasterTemplate()">
+        Save as Template
       </iras-button>
       <iras-button variant="secondary" icon="print" [disabled]="!title() || !content()" (click)="printNotice()">
         Print / PDF
@@ -54,6 +60,95 @@
                 </button>
               }
             </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Header Settings Panel (Collapsible) -->
+  @if (showHeaderSettings) {
+    <div class="header-panel">
+      <div class="panel-header">
+        <mat-icon>receipt_long</mat-icon>
+        <span>Letter Header Settings</span>
+        <span class="hint">Configure the IRAS header section</span>
+      </div>
+      <div class="header-form">
+        <div class="form-row">
+          <mat-slide-toggle 
+            [checked]="headerConfig().showHeader" 
+            (change)="updateHeaderConfig('showHeader', $event.checked)">
+            Show Header
+          </mat-slide-toggle>
+        </div>
+        
+        @if (headerConfig().showHeader) {
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Tax Reference Number</mat-label>
+              <input matInput [value]="headerConfig().taxRef" (input)="updateHeaderConfig('taxRef', $any($event.target).value)">
+              <mat-hint>Supports variables like {{'{{'}}taxpayer.taxRef{{'}}'}}</mat-hint>
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Date</mat-label>
+              <input matInput [value]="headerConfig().date" (input)="updateHeaderConfig('date', $any($event.target).value)">
+              <mat-hint>Format: DD Month YYYY</mat-hint>
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Recipient Name</mat-label>
+              <input matInput [value]="headerConfig().recipientName" (input)="updateHeaderConfig('recipientName', $any($event.target).value)">
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Address Line 1</mat-label>
+              <input matInput [value]="headerConfig().addressLine1" (input)="updateHeaderConfig('addressLine1', $any($event.target).value)">
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Address Line 2 (Optional)</mat-label>
+              <input matInput [value]="headerConfig().addressLine2" (input)="updateHeaderConfig('addressLine2', $any($event.target).value)">
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Address Line 3 (Optional)</mat-label>
+              <input matInput [value]="headerConfig().addressLine3" (input)="updateHeaderConfig('addressLine3', $any($event.target).value)">
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Address Line 4 (Optional)</mat-label>
+              <input matInput [value]="headerConfig().addressLine4" (input)="updateHeaderConfig('addressLine4', $any($event.target).value)">
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-slide-toggle 
+              [checked]="headerConfig().showQuoteNote" 
+              (change)="updateHeaderConfig('showQuoteNote', $event.checked)">
+              Show "Please quote..." note
+            </mat-slide-toggle>
+          </div>
+          
+          <div class="form-row">
+            <mat-slide-toggle 
+              [checked]="headerConfig().showBarcode" 
+              (change)="updateHeaderConfig('showBarcode', $event.checked)">
+              Show Barcode
+            </mat-slide-toggle>
           </div>
         }
       </div>
@@ -152,22 +247,40 @@
             <!-- Page Content -->
             <div class="page-content">
               <!-- IRAS Header -->
-              <div class="iras-header">
-                <div class="header-left">
-                  <p class="tax-ref">Tax Reference Number: <strong>S1234567A</strong></p>
-                  <p class="date">Date: {{ getCurrentDate() }}</p>
-                </div>
-                <div class="header-right">
-                  <div class="iras-logo">
-                    <img src="assets/irasLogo.png" alt="IRAS Logo" height="50">
+              @if (headerConfig().showHeader) {
+                <div class="iras-header">
+                  <div class="header-left">
+                    <p class="tax-ref">Tax Reference Number: <strong>{{ headerConfig().taxRef }}</strong></p>
+                    <p class="date">Date: {{ headerConfig().date }}</p>
+                    @if (headerConfig().showQuoteNote) {
+                      <p class="quote-note">Please quote the Tax Reference Number (e.g. NRIC, FIN etc.) in full when corresponding with us.</p>
+                    }
+                    <div class="taxpayer-info">
+                      <p><strong>{{ headerConfig().recipientName }}</strong></p>
+                      <p>{{ headerConfig().addressLine1 }}</p>
+                      @if (headerConfig().addressLine2) {
+                        <p>{{ headerConfig().addressLine2 }}</p>
+                      }
+                      @if (headerConfig().addressLine3) {
+                        <p>{{ headerConfig().addressLine3 }}</p>
+                      }
+                      @if (headerConfig().addressLine4) {
+                        <p>{{ headerConfig().addressLine4 }}</p>
+                      }
+                    </div>
+                    @if (headerConfig().showBarcode) {
+                      <div class="barcode-container">
+                        <svg id="editor-barcode"></svg>
+                      </div>
+                    }
                   </div>
-                  <div class="iras-text">
-                    <span class="iras-name">INLAND REVENUE</span>
-                    <span class="iras-name">AUTHORITY</span>
-                    <span class="iras-name">OF SINGAPORE</span>
+                  <div class="header-right">
+                    <div class="iras-logo">
+                      <img src="/assets/images/iras-logo.png" alt="IRAS Logo" class="logo-image" onerror="this.style.display='none'">
+                    </div>
                   </div>
                 </div>
-              </div>
+              }
               
               <!-- Document Title -->
               @if (title()) {

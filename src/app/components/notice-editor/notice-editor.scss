@@ -125,6 +125,60 @@
   }
 }
 
+// Header Settings Panel
+.header-panel {
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+  overflow: hidden;
+  
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #015AAD, #0171c0);
+    color: white;
+    font-weight: 500;
+    
+    mat-icon {
+      font-size: 20px;
+    }
+    
+    .hint {
+      margin-left: auto;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+  }
+  
+  .header-form {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    
+    .form-row {
+      display: flex;
+      align-items: center;
+      
+      &:has(mat-slide-toggle) {
+        padding: 8px 0;
+      }
+      
+      mat-form-field {
+        flex: 1;
+      }
+    }
+    
+    mat-hint {
+      font-size: 11px;
+      color: #666;
+    }
+  }
+}
+
 // Reusable Components Panel
 .components-panel {
   background: white;
@@ -387,30 +441,65 @@
       color: #333;
     }
     
-    // IRAS Header
+    // IRAS Header - Matching official IRAS notices
     .iras-header {
       display: flex;
       justify-content: space-between;
       margin-bottom: 30px;
       
       .header-left {
-        p {
+        flex: 1;
+        
+        .tax-ref, .date {
           margin: 0;
           font-size: 11px;
           color: #333;
+          line-height: 1.6;
           
           strong {
             font-weight: 600;
+          }
+        }
+        
+        .quote-note {
+          font-size: 10px;
+          color: #333;
+          margin: 16px 0 12px 0;
+          line-height: 1.4;
+        }
+        
+        .taxpayer-info {
+          margin: 12px 0 16px 0;
+          
+          p {
+            font-size: 11px;
+            margin: 0;
+            line-height: 1.5;
+            color: #333;
+          }
+        }
+        
+        .barcode-container {
+          margin-top: 16px;
+          
+          svg {
+            max-height: 40px;
           }
         }
       }
       
       .header-right {
         display: flex;
-        align-items: flex-start;
-        gap: 10px;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
         
         .iras-logo {
+          .logo-image {
+            height: 80px;
+            width: auto;
+          }
+          
           svg {
             display: block;
           }
@@ -419,27 +508,30 @@
         .iras-text {
           display: flex;
           flex-direction: column;
-          text-align: right;
+          align-items: flex-end;
           
           .iras-name {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             color: #2d7bb9;
             line-height: 1.3;
+            text-transform: uppercase;
           }
         }
       }
     }
     
-    // Document Title Bar
+    // Document Title Bar - Matches DocumentRendererService styles exactly
     .doc-title-bar {
-      background: linear-gradient(135deg, #2d7bb9, #1173c0);
+      background: #015AAD;
       color: white;
-      padding: 12px 20px;
-      margin: 20px 0;
-      border-radius: 4px;
+      padding: 8px 16px;
+      margin: 20px 0 24px 0;
+      border-radius: 12px;
       font-size: 16px;
       font-weight: 500;
+      font-family: 'Source Sans Pro', Arial, sans-serif;
+      text-align: left;
     }
     
     // Document Body - Match TinyMCE styles
