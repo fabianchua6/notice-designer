@@ -434,7 +434,7 @@
     
     .page-content {
       flex: 1;
-      padding: 60px 70px;
+      padding: 56px; // 20mm standard margin
       font-family: Arial, sans-serif;
       font-size: 12pt;
       line-height: 1.6;
@@ -659,7 +659,7 @@
     
     // Page Footer
     .page-footer {
-      padding: 20px 70px;
+      padding: 16px 56px; // Match standard margin
       text-align: center;
       font-size: 10px;
       color: #666;

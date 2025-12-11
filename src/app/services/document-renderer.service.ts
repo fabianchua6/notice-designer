@@ -311,7 +311,7 @@ export class DocumentRendererService {
           <style>
             @page {
               size: A4;
-              margin: 25mm;
+              margin: 20mm; // Standard office margin
             }
             
             body {
