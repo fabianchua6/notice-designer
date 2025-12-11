@@ -258,39 +258,22 @@ export class TemplateService {
         isSystem: true,
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-01'),
-        content: `<!-- IRAS Header -->
-<table style="width: 100%; border: none; margin-bottom: 20px;">
-  <tr>
-    <td style="width: 70%;">
-      <p style="margin: 0; font-size: 11px;">Tax Reference Number: <strong>{{taxpayer.taxRef}}</strong></p>
-      <p style="margin: 0; font-size: 11px;">Date: {{notice.date}}</p>
-    </td>
-    <td style="width: 30%; text-align: right; vertical-align: top;">
-      <p style="font-size: 11px; color: #666; text-align: right;">
-        <strong style="color: #2d7bb9;">INLAND REVENUE</strong><br>
-        <strong style="color: #2d7bb9;">AUTHORITY</strong><br>
-        <strong style="color: #2d7bb9;">OF SINGAPORE</strong>
-      </p>
-    </td>
-  </tr>
-</table>
-
-<ul style="font-size: 12px; line-height: 1.8;">
-  <li>Your tax assessment is based on information obtained from the relevant organisations and your last year's tax record, if any. View 'Pre-Filled Income and Deduction Statement' under 'View Notices' at myTax Portal for the breakdown of your pre-filled income and reliefs. Please notify us of any understatement or omission of any income or of any excessive tax relief as there are penalties for failing to do so.</li>
+        content: `<ul style="font-size: 12px; line-height: 1.8; padding-left: 20px; margin: 0;">
+  <li style="margin-bottom: 12px;">Your tax assessment is based on information obtained from the relevant organisations and your last year's tax record, if any. View 'Pre-Filled Income and Deduction Statement' under 'View Notices' at <a href="https://mytax.iras.gov.sg" style="color: #2d7bb9;">myTax Portal</a> for the breakdown of your pre-filled income and reliefs. Please notify us of any understatement or omission of any income or of any excessive tax relief as there are penalties for failing to do so.</li>
   
-  <li>To amend your assessment, use <a href="#" style="color: #2d7bb9;">Amend Tax Bill</a> under 'Individuals' at myTax Portal within 30 days, i.e. by <strong>{{amendment.deadline}}</strong>. Please pay the amount, if any, in this Notice by the due date, even if you object to this assessment. If you are unable to use the digital service, please email via myTax Mail or write in to us.</li>
+  <li style="margin-bottom: 12px;">To amend your assessment, use <a href="#" style="color: #c44536;">Amend Tax Bill</a> under 'Individuals' at <a href="https://mytax.iras.gov.sg" style="color: #2d7bb9;">myTax Portal</a> within 30 days, i.e. by <strong>{{amendment.deadline}}</strong>. Please pay the amount, if any, in this Notice by the due date, even if you object to this assessment. If you are unable to use the digital service, please email via <a href="#" style="color: #2d7bb9;">myTax Mail</a> or write in to us.</li>
   
-  <li>Please pay your taxes, if any, by the due date to avoid late payment penalties and <a href="#" style="color: #2d7bb9;">other recovery actions</a>.</li>
+  <li style="margin-bottom: 12px;">Please pay your taxes, if any, by the due date to avoid late payment penalties and <a href="#" style="color: #c44536;">other recovery actions</a>.</li>
   
-  <li><a href="#" style="color: #2d7bb9;">View Account Summary</a> under 'Account' at myTax Portal for your latest income tax balance.</li>
+  <li style="margin-bottom: 12px;"><a href="#" style="color: #c44536;">View Account Summary</a> under 'Account' at <a href="https://mytax.iras.gov.sg" style="color: #2d7bb9;">myTax Portal</a> for your latest income tax balance.</li>
 </ul>
 
-<p style="font-size: 12px; margin-top: 20px; padding: 10px; background-color: #fff3cd; border-radius: 4px;">
-  <strong>If you need help with your tax payment, please check go.gov.sg/iras-difficulty-paying-tax on how you may apply for a longer GIRO payment arrangement.</strong>
-</p>
+<div style="font-size: 12px; margin-top: 20px; padding: 12px 15px; background-color: #2d7bb9; color: white; border-radius: 4px;">
+  If you need help with your tax payment, please check go.gov.sg/iras-difficulty-paying-tax on how you may apply for a longer GIRO payment arrangement.
+</div>
 
-<div style="margin-top: 40px;">
-  <p style="font-family: 'Brush Script MT', cursive; font-size: 28px; margin: 0;">OwFookChuen</p>
+<div style="margin-top: 60px;">
+  <p style="font-family: 'Brush Script MT', 'Lucida Handwriting', cursive; font-size: 32px; font-style: italic; margin: 0; color: #1a1a2e;">Ow Fook Chuen</p>
   <p style="margin: 10px 0 0 0; font-size: 12px;">
     <strong>OW FOOK CHUEN</strong><br>
     COMPTROLLER OF INCOME TAX
@@ -298,10 +281,8 @@ export class TemplateService {
 </div>
 
 <!-- Footer -->
-<div style="margin-top: 60px; text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ddd; padding-top: 15px;">
+<div style="margin-top: 80px; font-size: 10px; color: #666; border-top: 1px solid #ddd; padding-top: 15px;">
   <p style="margin: 0;">Website: <a href="https://www.iras.gov.sg" style="color: #2d7bb9;">www.iras.gov.sg</a> • myTax Portal: <a href="https://mytax.iras.gov.sg" style="color: #2d7bb9;">mytax.iras.gov.sg</a></p>
-  <p style="margin: 5px 0;">Tel: 6351 3551</p>
-  <p style="margin: 5px 0;">Page 2 of 2 &nbsp;&nbsp;&nbsp; {{notice.number}}</p>
 </div>`
       },
       {
