@@ -25,6 +25,7 @@
         <div class="preview-section">
           <h3>Preview</h3>
           <app-notice-preview
+            #noticePreview
             [title]="title()"
             [content]="content()"
             [backgroundColor]="backgroundColor()"
@@ -42,6 +43,10 @@
     <mat-card-actions>
       <button mat-raised-button color="primary" (click)="saveNotice()" [disabled]="!title() || !content()">
         Save Notice
+      </button>
+      <button mat-raised-button color="accent" (click)="printNotice()" [disabled]="!title() || !content()">
+        <mat-icon>print</mat-icon>
+        Print / Save PDF
       </button>
       <button mat-button (click)="resetForm()">Reset</button>
     </mat-card-actions>
