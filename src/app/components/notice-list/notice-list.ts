@@ -9,6 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { NoticeService } from '../../services/notice';
 import { Notice } from '../../models/notice.model';
+import { IrasButton, IrasCard, IrasCardHeader, IrasCardContent, IrasCardActions, IrasBadge } from '../../design-system';
 
 @Component({
   selector: 'app-notice-list',
@@ -22,6 +23,12 @@ import { Notice } from '../../models/notice.model';
     MatCheckboxModule,
     MatTooltipModule,
     FormsModule,
+    IrasButton,
+    IrasCard,
+    IrasCardHeader,
+    IrasCardContent,
+    IrasCardActions,
+    IrasBadge,
   ],
   templateUrl: './notice-list.html',
   styleUrl: './notice-list.scss',

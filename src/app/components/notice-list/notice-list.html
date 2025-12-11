@@ -7,21 +7,19 @@
         <p class="subtitle">Manage and create notice templates for tax communications</p>
       </div>
       <div class="header-actions">
-        <button mat-stroked-button (click)="compareSelected()" [disabled]="!canCompare()">
-          <mat-icon>compare_arrows</mat-icon>
+        <iras-button variant="tertiary" icon="compare_arrows" [disabled]="!canCompare()" (click)="compareSelected()">
           Compare ({{ selectedNotices.size }}/2)
-        </button>
-        <button mat-flat-button color="primary" (click)="createNew()">
-          <mat-icon>add</mat-icon>
+        </iras-button>
+        <iras-button variant="primary" icon="add" (click)="createNew()">
           Create Notice
-        </button>
+        </iras-button>
       </div>
     </div>
   </div>
   
   <!-- Stats Cards -->
   <div class="stats-row">
-    <mat-card class="stat-card">
+    <iras-card variant="elevated" class="stat-card">
       <div class="stat-icon primary">
         <mat-icon>description</mat-icon>
       </div>
@@ -29,8 +27,8 @@
         <span class="stat-value">{{ notices().length }}</span>
         <span class="stat-label">Total Notices</span>
       </div>
-    </mat-card>
-    <mat-card class="stat-card">
+    </iras-card>
+    <iras-card variant="elevated" class="stat-card">
       <div class="stat-icon teal">
         <mat-icon>check_circle</mat-icon>
       </div>
@@ -38,8 +36,8 @@
         <span class="stat-value">{{ notices().length }}</span>
         <span class="stat-label">Published</span>
       </div>
-    </mat-card>
-    <mat-card class="stat-card">
+    </iras-card>
+    <iras-card variant="elevated" class="stat-card">
       <div class="stat-icon warning">
         <mat-icon>edit_note</mat-icon>
       </div>
@@ -47,8 +45,8 @@
         <span class="stat-value">0</span>
         <span class="stat-label">Drafts</span>
       </div>
-    </mat-card>
-    <mat-card class="stat-card">
+    </iras-card>
+    <iras-card variant="elevated" class="stat-card">
       <div class="stat-icon grey">
         <mat-icon>archive</mat-icon>
       </div>
@@ -56,22 +54,21 @@
         <span class="stat-value">0</span>
         <span class="stat-label">Archived</span>
       </div>
-    </mat-card>
+    </iras-card>
   </div>
   
   @if (notices().length === 0) {
     <!-- Empty State -->
-    <mat-card class="empty-state">
+    <iras-card variant="elevated" class="empty-state">
       <div class="empty-illustration">
         <mat-icon>note_add</mat-icon>
       </div>
       <h2>No Notices Yet</h2>
       <p>Start creating professional tax notice templates for IRAS communications.</p>
-      <button mat-flat-button color="primary" (click)="createNew()">
-        <mat-icon>add</mat-icon>
+      <iras-button variant="primary" icon="add" (click)="createNew()">
         Create Your First Notice
-      </button>
-    </mat-card>
+      </iras-button>
+    </iras-card>
   } @else {
     <!-- Notices Grid -->
     <div class="section-header">
@@ -88,25 +85,25 @@
     
     <div class="notices-grid">
       @for (notice of notices(); track notice.id) {
-        <mat-card class="notice-card" [class.selected]="isSelected(notice.id)">
+        <iras-card variant="elevated" [hoverable]="true" class="notice-card" [class.selected]="isSelected(notice.id)">
           <div class="card-selection">
             <mat-checkbox
               [checked]="isSelected(notice.id)"
               (change)="toggleSelection(notice.id)"
               color="primary">
             </mat-checkbox>
-            <span class="status-badge published">Published</span>
+            <iras-badge variant="success">Published</iras-badge>
           </div>
           
-          <mat-card-header>
-            <mat-card-title>{{ notice.title }}</mat-card-title>
-            <mat-card-subtitle>
+          <iras-card-header>
+            <h3>{{ notice.title }}</h3>
+            <p class="subtitle">
               <mat-icon class="subtitle-icon">schedule</mat-icon>
               Updated {{ notice.updatedAt | date:'medium' }}
-            </mat-card-subtitle>
-          </mat-card-header>
+            </p>
+          </iras-card-header>
           
-          <mat-card-content>
+          <iras-card-content>
             <div class="preview-wrapper">
               <div class="mini-document-preview">
                 <div class="mini-doc-header">
@@ -119,23 +116,21 @@
                 </div>
               </div>
             </div>
-          </mat-card-content>
+          </iras-card-content>
           
-          <mat-card-actions>
-            <button mat-button color="primary" [routerLink]="['/editor', notice.id]">
-              <mat-icon>edit</mat-icon>
+          <iras-card-actions>
+            <iras-button variant="ghost" icon="edit" size="small" [routerLink]="['/editor', notice.id]">
               Edit
-            </button>
-            <button mat-button (click)="duplicateNotice(notice)">
-              <mat-icon>content_copy</mat-icon>
+            </iras-button>
+            <iras-button variant="ghost" icon="content_copy" size="small" (click)="duplicateNotice(notice)">
               Duplicate
-            </button>
+            </iras-button>
             <span class="spacer"></span>
             <button mat-icon-button color="warn" (click)="deleteNotice(notice.id)" matTooltip="Delete">
               <mat-icon>delete_outline</mat-icon>
             </button>
-          </mat-card-actions>
-        </mat-card>
+          </iras-card-actions>
+        </iras-card>
       }
     </div>
   }

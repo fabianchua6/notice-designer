@@ -63,10 +63,10 @@ export interface TemplateVariable {
 
 export const TEMPLATE_VARIABLES: TemplateVariable[] = [
   // Taxpayer Information
-  { key: '{{taxpayer.name}}', label: 'Taxpayer Name', category: 'Taxpayer', sampleValue: 'FABIAN CHUA SHENG YONG' },
-  { key: '{{taxpayer.taxRef}}', label: 'Tax Reference No.', category: 'Taxpayer', sampleValue: 'S9938669Z' },
-  { key: '{{taxpayer.nric}}', label: 'NRIC/FIN', category: 'Taxpayer', sampleValue: 'S9938669Z' },
-  { key: '{{taxpayer.address}}', label: 'Address', category: 'Taxpayer', sampleValue: '650 JLN TENAGA\n#06-28\nSINGAPORE 410650' },
+  { key: '{{taxpayer.name}}', label: 'Taxpayer Name', category: 'Taxpayer', sampleValue: 'TAN AH KOW' },
+  { key: '{{taxpayer.taxRef}}', label: 'Tax Reference No.', category: 'Taxpayer', sampleValue: 'S1234567A' },
+  { key: '{{taxpayer.nric}}', label: 'NRIC/FIN', category: 'Taxpayer', sampleValue: 'S1234567A' },
+  { key: '{{taxpayer.address}}', label: 'Address', category: 'Taxpayer', sampleValue: '123 ORCHARD ROAD\n#12-34\nSINGAPORE 238888' },
   { key: '{{taxpayer.email}}', label: 'Email', category: 'Taxpayer', sampleValue: 'john.doe@email.com' },
   { key: '{{taxpayer.salutation}}', label: 'Salutation', category: 'Taxpayer', sampleValue: 'Sir' },
   
