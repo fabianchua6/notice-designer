@@ -163,7 +163,7 @@ export class TemplateService {
         </div>
         <div style="padding: 8px;">
           <p style="margin: 0; text-align: right; font-size: 14px;"><strong>{{income.chargeable}}</strong></p>
-          <table style="width: 100%; margin-top: 8px; font-size: 10px; border: 1px solid #ddd;">
+          <table style="width: 100%; margin-top: 8px; font-size: 10px;">
             <tr style="background-color: #ffeb3b;">
               <td style="padding: 6px;"><strong>Tax Payable</strong></td>
               <td style="text-align: right; padding: 6px; font-size: 14px;"><strong>{{payment.amount}}</strong></td>
@@ -205,20 +205,20 @@ export class TemplateService {
 <!-- Simple Data Table -->
 <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12px;">
   <tr style="background-color: #f5f5f5;">
-    <th style="padding: 10px; border: 1px solid #ddd; text-align: left; width: 40%;">Description</th>
-    <th style="padding: 10px; border: 1px solid #ddd; text-align: right;">Amount (S$)</th>
+    <th style="padding: 10px; text-align: left; width: 40%;">Description</th>
+    <th style="padding: 10px; text-align: right;">Amount (S$)</th>
   </tr>
   <tr>
-    <td style="padding: 10px; border: 1px solid #ddd;">Item 1</td>
-    <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">0.00</td>
+    <td style="padding: 10px;">Item 1</td>
+    <td style="padding: 10px; text-align: right;">0.00</td>
   </tr>
   <tr>
-    <td style="padding: 10px; border: 1px solid #ddd;">Item 2</td>
-    <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">0.00</td>
+    <td style="padding: 10px;">Item 2</td>
+    <td style="padding: 10px; text-align: right;">0.00</td>
   </tr>
   <tr style="background-color: #f5f5f5; font-weight: bold;">
-    <td style="padding: 10px; border: 1px solid #ddd;">Total</td>
-    <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">0.00</td>
+    <td style="padding: 10px;">Total</td>
+    <td style="padding: 10px; text-align: right;">0.00</td>
   </tr>
 </table>
 

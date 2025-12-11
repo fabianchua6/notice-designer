@@ -157,7 +157,6 @@ export class DocumentRendererService {
       
       .document-body td,
       .document-body th {
-        border: 1px solid #ddd;
         padding: 8px;
       }
       
@@ -186,7 +185,6 @@ export class DocumentRendererService {
       .document-footer {
         margin-top: 40px;
         padding-top: 16px;
-        border-top: 1px solid #ddd;
         font-size: 10px;
         color: #666;
         text-align: center;
