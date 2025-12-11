@@ -27,7 +27,7 @@ export class NoticePreview implements OnChanges {
   @Input() showPageNumbers: boolean = true;
   @Input() showRuler: boolean = true;
   
-  zoom: number = 70; // Default to 70% to fit better in preview panel
+  zoom: number = 50; // Default to 50% to fit in half-width panel
 
   // A4 dimensions at 96 DPI: 794px x 1123px
   readonly pageWidth = 794;
