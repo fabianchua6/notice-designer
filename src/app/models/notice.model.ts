@@ -1,7 +1,22 @@
+// Letter header configuration
+export interface LetterHeader {
+  showHeader: boolean;
+  taxRef: string;
+  date: string;
+  recipientName: string;
+  addressLine1: string;
+  addressLine2?: string;
+  addressLine3?: string;
+  addressLine4?: string;
+  showQuoteNote: boolean;
+  showBarcode: boolean;
+}
+
 export interface Notice {
   id: string;
   title: string;
   content: string;
+  header?: LetterHeader;
   createdAt: Date;
   updatedAt: Date;
   backgroundColor?: string;
@@ -16,6 +31,20 @@ export interface Notice {
   templateId?: string;
 }
 
+// TODO: Future Enhancement - Component Library
+// Create a reusable component library system for common document elements:
+// - Header templates (letterhead, official header, simple header)
+// - Table templates (key-value, data grid, summary table, income breakdown)
+// - Info boxes (notice, warning, success, action required)
+// - Signature blocks (officer, comptroller, system-generated)
+// - Footer templates (IRAS standard, page numbers, contact info)
+// Implementation approach:
+// 1. Create ComponentLibrary interface with categories
+// 2. Build drag-drop UI in editor
+// 3. Store as JSON templates with preview thumbnails
+// 4. Allow users to save custom components
+// 5. Version control for system components
+
 // Master Template - reusable templates for creating notices
 export interface MasterTemplate {
   id: string;
@@ -23,6 +52,7 @@ export interface MasterTemplate {
   description: string;
   category: TemplateCategory;
   content: string;
+  header?: LetterHeader;
   thumbnail?: string;
   createdAt: Date;
   updatedAt: Date;
