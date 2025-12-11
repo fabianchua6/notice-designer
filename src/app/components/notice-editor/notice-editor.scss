@@ -125,6 +125,96 @@
   }
 }
 
+// Reusable Components Panel
+.components-panel {
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+  overflow: hidden;
+  
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #20b4af, #17a2b8);
+    color: white;
+    font-weight: 500;
+    
+    mat-icon {
+      font-size: 20px;
+    }
+    
+    .hint {
+      margin-left: auto;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+  }
+  
+  .component-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 16px;
+  }
+  
+  .component-category {
+    h4 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: var(--iras-primary);
+      }
+    }
+    
+    .component-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .component-item {
+      font-size: 12px;
+      padding: 8px 12px;
+      height: auto;
+      line-height: 1.4;
+      border-radius: 8px;
+      background: #f8f9fa;
+      border: 1px solid #e8e8e8;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: #e8f4fc;
+        border-color: var(--iras-primary);
+        transform: translateY(-1px);
+      }
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-right: 6px;
+        color: var(--iras-primary);
+      }
+      
+      span {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
 // Editor Layout - balanced 50/50 split
 .editor-layout {
   display: grid;
@@ -220,14 +310,45 @@
       color: var(--iras-primary);
     }
     
-    .preview-badge {
+    .toggle-data-btn {
       margin-left: auto;
-      font-size: 11px;
-      padding: 3px 8px;
-      background: #e8f5e9;
-      color: #2e7d32;
-      border-radius: 100px;
-      font-weight: 500;
+      font-size: 12px;
+      padding: 4px 12px;
+      min-height: 32px;
+      border-radius: 16px;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+      }
+    }
+    
+    .zoom-controls {
+      margin-left: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      
+      .zoom-level {
+        font-size: 12px;
+        min-width: 40px;
+        text-align: center;
+        color: #666;
+      }
+      
+      button {
+        width: 28px;
+        height: 28px;
+        
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          color: #666;
+        }
+      }
     }
   }
   
@@ -235,80 +356,123 @@
     padding: 20px;
     max-height: calc(100vh - 180px);
     overflow: auto;
-    background: #fafafa;
+    background: #525659;
     
-    &.html-preview {
-      background: #525659;
+    &.a4-preview {
       padding: 24px;
     }
   }
   
-  // Rendered Document Preview
-  .rendered-document {
+  .pages-wrapper {
+    transition: transform 0.2s ease;
+  }
+  
+  // A4 Page Styling
+  .a4-page {
+    width: 794px;
+    min-height: 1123px;
     background: white;
-    padding: 40px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    border-radius: 4px;
-    min-height: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
     
-    .doc-header {
+    .page-content {
+      flex: 1;
+      padding: 60px 70px;
+      font-family: Arial, sans-serif;
+      font-size: 12pt;
+      line-height: 1.6;
+      color: #333;
+    }
+    
+    // IRAS Header
+    .iras-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 2px solid var(--iras-primary);
+      margin-bottom: 30px;
       
-      .iras-brand {
+      .header-left {
+        p {
+          margin: 0;
+          font-size: 11px;
+          color: #333;
+          
+          strong {
+            font-weight: 600;
+          }
+        }
+      }
+      
+      .header-right {
         display: flex;
-        align-items: center;
-        gap: 12px;
+        align-items: flex-start;
+        gap: 10px;
         
-        .logo {
-          background: linear-gradient(135deg, var(--iras-primary), var(--iras-teal));
-          color: white;
-          font-weight: 700;
-          font-size: 14px;
-          padding: 6px 10px;
-          border-radius: 4px;
-          letter-spacing: 1px;
+        .iras-logo {
+          svg {
+            display: block;
+          }
         }
         
-        .ministry {
-          font-size: 13px;
-          font-weight: 600;
-          color: #1a1a2e;
+        .iras-text {
+          display: flex;
+          flex-direction: column;
+          text-align: right;
+          
+          .iras-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #2d7bb9;
+            line-height: 1.3;
+          }
         }
       }
     }
     
-    .doc-title {
-      text-align: center;
-      font-size: 18px;
-      font-weight: 600;
-      color: #1a1a2e;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 16px;
-      margin-bottom: 24px;
-      background: #f8f9fa;
-      border-top: 1px solid #ddd;
-      border-bottom: 1px solid #ddd;
+    // Document Title Bar
+    .doc-title-bar {
+      background: linear-gradient(135deg, #2d7bb9, #1173c0);
+      color: white;
+      padding: 12px 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 500;
     }
     
-    .doc-content {
-      font-size: 13px;
-      line-height: 1.7;
-      color: #333;
+    // Document Body - Match TinyMCE styles
+    // Use ::ng-deep to ensure inline styles from TinyMCE are rendered
+    .doc-body {
+      // Reset and match TinyMCE content styles
+      font-family: Arial, sans-serif;
+      font-size: 12pt;
+      line-height: 1.6;
       
-      h3 {
-        color: #1a1a2e;
-        font-size: 15px;
-        margin: 20px 0 12px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 6px;
+      // Variable value highlighting (sample data mode)
+      :host ::ng-deep .variable-value {
+        background-color: #e8f5e9;
+        border: 1px solid #4caf50;
+        border-radius: 3px;
+        padding: 1px 4px;
+        color: #2e7d32;
+        font-weight: 500;
       }
       
+      // Variable placeholder highlighting (variables mode)
+      :host ::ng-deep .variable-placeholder {
+        background-color: #fff3e0;
+        border: 1px solid #ff9800;
+        border-radius: 3px;
+        padding: 1px 4px;
+        color: #e65100;
+        font-weight: 500;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.9em;
+      }
+      
+      // Tables
       table {
         width: 100%;
         border-collapse: collapse;
@@ -316,16 +480,13 @@
         
         td, th {
           border: 1px solid #ddd;
-          padding: 10px 12px;
+          padding: 8px 12px;
           text-align: left;
-        }
-        
-        td:first-child {
-          background: #f8f9fa;
-          width: 40%;
+          font-size: 11px;
         }
       }
       
+      // Lists
       ul, ol {
         padding-left: 24px;
         margin: 12px 0;
@@ -335,13 +496,96 @@
         }
       }
       
-      // Variable highlighting in preview
-      .variable-value {
-        background: #e8f5e9;
-        padding: 1px 4px;
+      // Headings
+      h1, h2, h3, h4, h5, h6 {
+        margin: 16px 0 8px;
+        color: #1a1a2e;
+      }
+      
+      h1 { font-size: 24px; }
+      h2 { font-size: 20px; }
+      h3 { font-size: 16px; }
+      h4 { font-size: 14px; }
+      
+      // Paragraphs
+      p {
+        margin: 8px 0;
+      }
+      
+      // Links
+      a {
+        color: #2d7bb9;
+        text-decoration: none;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      
+      // Strong/Bold
+      strong, b {
+        font-weight: 600;
+      }
+      
+      // Variable highlighting
+      .variable {
+        background-color: #e3f2fd;
+        border: 1px solid #2196f3;
         border-radius: 3px;
-        color: #2e7d32;
-        font-weight: 500;
+        padding: 1px 4px;
+        color: #1565c0;
+        font-family: monospace;
+        font-size: 0.9em;
+      }
+    }
+    
+    // IMPORTANT: Use ng-deep to allow inline styles from TinyMCE to render
+    :host ::ng-deep .doc-body {
+      // Allow all inline styles to pass through from TinyMCE
+      * {
+        // Preserve all styles
+      }
+      
+      // Colored boxes/divs
+      div[style*="background"],
+      div[style*="border"],
+      div[style*="padding"] {
+        // These will use their inline styles
+      }
+      
+      // Tables with colors
+      table[style],
+      td[style],
+      tr[style] {
+        // Allow inline table styles
+      }
+      
+      // Spans with colors
+      span[style] {
+        // Allow inline span styles
+      }
+    }
+    
+    // Page Footer
+    .page-footer {
+      padding: 20px 70px;
+      text-align: center;
+      font-size: 10px;
+      color: #666;
+      border-top: 1px solid #ddd;
+      margin-top: auto;
+      
+      p {
+        margin: 4px 0;
+      }
+      
+      a {
+        color: #2d7bb9;
+        text-decoration: none;
+      }
+      
+      .page-number {
+        margin-top: 8px;
       }
     }
   }

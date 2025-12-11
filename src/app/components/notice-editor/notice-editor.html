@@ -11,6 +11,10 @@
       </div>
     </div>
     <div class="header-actions">
+      <button mat-stroked-button (click)="toggleComponentsPanel()" [class.active]="showComponentsPanel">
+        <mat-icon>widgets</mat-icon>
+        Components
+      </button>
       <button mat-stroked-button (click)="toggleVariablePanel()" [class.active]="showVariablePanel">
         <mat-icon>code</mat-icon>
         Variables
@@ -61,6 +65,39 @@
     </div>
   }
 
+  <!-- Reusable Components Panel (Collapsible) -->
+  @if (showComponentsPanel) {
+    <div class="components-panel">
+      <div class="panel-header">
+        <mat-icon>widgets</mat-icon>
+        <span>Reusable Components</span>
+        <span class="hint">Click a component to insert it into your content</span>
+      </div>
+      <div class="component-categories">
+        @for (category of componentLibrary; track category.category) {
+          <div class="component-category">
+            <h4>
+              <mat-icon>{{ category.icon }}</mat-icon>
+              {{ category.category }}
+            </h4>
+            <div class="component-items">
+              @for (item of category.items; track item.name) {
+                <button 
+                  mat-stroked-button 
+                  class="component-item"
+                  (click)="insertComponent(item)"
+                  [matTooltip]="'Insert ' + item.name">
+                  <mat-icon>{{ item.icon }}</mat-icon>
+                  <span>{{ item.name }}</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
   <!-- Editor Layout -->
   <div class="editor-layout">
     <!-- Left Panel - Form -->
@@ -78,13 +115,12 @@
             <mat-icon matSuffix>title</mat-icon>
           </mat-form-field>
           
-          <!-- TinyMCE Rich Text Editor -->
+          <!-- TinyMCE Rich Text Editor (Self-hosted, no API key needed) -->
           <div class="editor-wrapper">
             <label class="editor-label">Notice Content</label>
             <editor
               [(ngModel)]="content"
-              [init]="editorConfig"
-              apiKey="no-api-key">
+              [init]="editorConfig">
             </editor>
             <div class="editor-hint">
               <mat-icon>info</mat-icon>
@@ -99,24 +135,63 @@
     <div class="preview-panel">
       <div class="preview-header">
         <mat-icon>visibility</mat-icon>
-        <span>Rendered Preview</span>
-        <span class="preview-badge">With Sample Data</span>
+        <span>Document Preview</span>
+        <button mat-stroked-button class="toggle-data-btn" (click)="toggleSampleData()" [matTooltip]="showSampleData ? 'Click to show variable names' : 'Click to show sample values'">
+          <mat-icon>{{ showSampleData ? 'data_object' : 'text_fields' }}</mat-icon>
+          {{ showSampleData ? 'Sample Data' : 'Variables' }}
+        </button>
+        <div class="zoom-controls">
+          <button mat-icon-button (click)="zoomOut()" matTooltip="Zoom Out">
+            <mat-icon>remove</mat-icon>
+          </button>
+          <span class="zoom-level">{{ zoom }}%</span>
+          <button mat-icon-button (click)="zoomIn()" matTooltip="Zoom In">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
       </div>
-      <div class="preview-content html-preview">
-        <div class="rendered-document">
-          <!-- IRAS Header -->
-          <div class="doc-header">
-            <div class="iras-brand">
-              <span class="logo">IRAS</span>
-              <span class="ministry">Inland Revenue Authority of Singapore</span>
+      <div class="preview-content a4-preview">
+        <div class="pages-wrapper" [style.transform]="'scale(' + (zoom/100) + ')'" [style.transform-origin]="'top center'">
+          <!-- A4 Page -->
+          <div class="a4-page">
+            <!-- Page Content -->
+            <div class="page-content">
+              <!-- IRAS Header -->
+              <div class="iras-header">
+                <div class="header-left">
+                  <p class="tax-ref">Tax Reference Number: <strong>S9938669Z</strong></p>
+                  <p class="date">Date: {{ getCurrentDate() }}</p>
+                </div>
+                <div class="header-right">
+                  <div class="iras-logo">
+                    <img src="assets/irasLogo.png" alt="IRAS Logo" height="50">
+                  </div>
+                  <div class="iras-text">
+                    <span class="iras-name">INLAND REVENUE</span>
+                    <span class="iras-name">AUTHORITY</span>
+                    <span class="iras-name">OF SINGAPORE</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Document Title -->
+              @if (title()) {
+                <div class="doc-title-bar">
+                  {{ title() }}
+                </div>
+              }
+              
+              <!-- Content with rendered HTML and sample data -->
+              <div class="doc-body" [innerHTML]="getPreviewContent()"></div>
+            </div>
+            
+            <!-- Page Footer -->
+            <div class="page-footer">
+              <p>Website: <a href="#">www.iras.gov.sg</a> • myTax Portal: <a href="#">mytax.iras.gov.sg</a></p>
+              <p>Tel: 6351 3551</p>
+              <p class="page-number">Page 1 of 1</p>
             </div>
           </div>
-          
-          <!-- Title -->
-          <div class="doc-title">{{ title() || 'Untitled Notice' }}</div>
-          
-          <!-- Content with variables replaced -->
-          <div class="doc-content" [innerHTML]="getPreviewContent()"></div>
         </div>
       </div>
     </div>

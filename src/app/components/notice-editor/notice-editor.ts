@@ -1,6 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +14,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { CommonModule } from '@angular/common';
 import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { NoticeService } from '../../services/notice';
+import { TemplateService } from '../../services/template.service';
 import { TEMPLATE_VARIABLES, TemplateVariable } from '../../models/notice.model';
 
 @Component({
@@ -33,10 +35,13 @@ import { TEMPLATE_VARIABLES, TemplateVariable } from '../../models/notice.model'
     EditorModule,
   ],
   providers: [
-    { provide: TINYMCE_SCRIPT_SRC, useValue: 'https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js' }
+    // Self-hosted TinyMCE - no API key required, fully open source (LGPL)
+    { provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' }
   ],
   templateUrl: './notice-editor.html',
   styleUrl: './notice-editor.scss',
+  // Use None to allow TinyMCE inline styles to render in preview
+  encapsulation: ViewEncapsulation.None,
 })
 export class NoticeEditor implements OnInit {
   // Editor state
@@ -55,13 +60,246 @@ export class NoticeEditor implements OnInit {
   borderWidth = signal(0);
   padding = signal(0);
   
+  // Preview zoom
+  zoom = 100; // Start at 100% for accurate preview
+  
+  // Toggle for showing variables vs sample data
+  showSampleData = true;
+  
   // Variable insertion
   templateVariables = TEMPLATE_VARIABLES;
   variableCategories: string[] = [];
   showVariablePanel = false;
+  showComponentsPanel = false;
   
-  // TinyMCE configuration
+  // Reusable components library
+  componentLibrary = [
+    {
+      category: 'Headers',
+      icon: 'title',
+      items: [
+        {
+          name: 'IRAS Letterhead',
+          icon: 'business',
+          html: `<table style="width: 100%; border: none; margin-bottom: 20px;">
+  <tr>
+    <td style="width: 70%;">
+      <p style="margin: 0; font-size: 11px;">Tax Reference Number: <strong>{{taxpayer.taxRef}}</strong></p>
+      <p style="margin: 0; font-size: 11px;">Date: {{notice.date}}</p>
+    </td>
+    <td style="width: 30%; text-align: right; vertical-align: top;">
+      <p style="font-size: 11px; color: #666; text-align: right;">
+        <strong style="color: #2d7bb9;">INLAND REVENUE</strong><br>
+        <strong style="color: #2d7bb9;">AUTHORITY</strong><br>
+        <strong style="color: #2d7bb9;">OF SINGAPORE</strong>
+      </p>
+    </td>
+  </tr>
+</table>`
+        },
+        {
+          name: 'Title Banner (Blue)',
+          icon: 'label',
+          html: `<div style="background: linear-gradient(135deg, #2d7bb9, #1173c0); color: white; padding: 12px 20px; margin: 20px 0; border-radius: 4px;">
+  <h2 style="margin: 0; font-size: 18px; font-weight: 500;">[Title Here]</h2>
+</div>`
+        },
+        {
+          name: 'Section Header',
+          icon: 'text_fields',
+          html: `<h3 style="margin: 16px 0 8px; color: #1a1a2e; font-size: 14px; border-bottom: 2px solid #2d7bb9; padding-bottom: 4px;">[Section Title]</h3>`
+        }
+      ]
+    },
+    {
+      category: 'Tables',
+      icon: 'table_chart',
+      items: [
+        {
+          name: 'Key-Value Table',
+          icon: 'view_list',
+          html: `<table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+  <tr>
+    <td style="background-color: #f5f5f5; padding: 8px 12px; border: 1px solid #ddd; width: 40%;"><strong>Label 1</strong></td>
+    <td style="padding: 8px 12px; border: 1px solid #ddd;">Value 1</td>
+  </tr>
+  <tr>
+    <td style="background-color: #f5f5f5; padding: 8px 12px; border: 1px solid #ddd;"><strong>Label 2</strong></td>
+    <td style="padding: 8px 12px; border: 1px solid #ddd;">Value 2</td>
+  </tr>
+  <tr>
+    <td style="background-color: #f5f5f5; padding: 8px 12px; border: 1px solid #ddd;"><strong>Label 3</strong></td>
+    <td style="padding: 8px 12px; border: 1px solid #ddd;">Value 3</td>
+  </tr>
+</table>`
+        },
+        {
+          name: 'Data Table with Header',
+          icon: 'grid_on',
+          html: `<table style="width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 11px;">
+  <tr style="background-color: #2d7bb9; color: white;">
+    <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Column 1</th>
+    <th style="padding: 10px; border: 1px solid #ddd; text-align: right;">Amount (S$)</th>
+  </tr>
+  <tr>
+    <td style="padding: 8px 10px; border: 1px solid #ddd;">Item 1</td>
+    <td style="padding: 8px 10px; border: 1px solid #ddd; text-align: right;">1,000.00</td>
+  </tr>
+  <tr>
+    <td style="padding: 8px 10px; border: 1px solid #ddd;">Item 2</td>
+    <td style="padding: 8px 10px; border: 1px solid #ddd; text-align: right;">2,000.00</td>
+  </tr>
+  <tr style="background-color: #f5f5f5; font-weight: bold;">
+    <td style="padding: 8px 10px; border: 1px solid #ddd;">Total</td>
+    <td style="padding: 8px 10px; border: 1px solid #ddd; text-align: right;">3,000.00</td>
+  </tr>
+</table>`
+        },
+        {
+          name: 'Income Summary (3-Column)',
+          icon: 'account_balance',
+          html: `<table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+  <tr>
+    <td style="width: 33%; vertical-align: top; padding-right: 10px;">
+      <div style="border: 2px solid #2d7bb9; border-radius: 4px; overflow: hidden;">
+        <div style="background-color: #2d7bb9; color: white; padding: 8px; text-align: center;">
+          <strong>+ INCOME</strong>
+        </div>
+        <div style="padding: 8px; text-align: right; font-size: 14px;"><strong>$30,000.00</strong></div>
+      </div>
+    </td>
+    <td style="width: 33%; vertical-align: top; padding: 0 5px;">
+      <div style="border: 2px solid #ff9800; border-radius: 4px; overflow: hidden;">
+        <div style="background-color: #ff9800; color: white; padding: 8px; text-align: center;">
+          <strong>- DEDUCTIONS</strong>
+        </div>
+        <div style="padding: 8px; text-align: right; font-size: 14px;"><strong>$5,000.00</strong></div>
+      </div>
+    </td>
+    <td style="width: 33%; vertical-align: top; padding-left: 10px;">
+      <div style="border: 2px solid #4caf50; border-radius: 4px; overflow: hidden;">
+        <div style="background-color: #4caf50; color: white; padding: 8px; text-align: center;">
+          <strong>= CHARGEABLE</strong>
+        </div>
+        <div style="padding: 8px; text-align: right; font-size: 14px;"><strong>$25,000.00</strong></div>
+      </div>
+    </td>
+  </tr>
+</table>`
+        }
+      ]
+    },
+    {
+      category: 'Boxes & Callouts',
+      icon: 'crop_square',
+      items: [
+        {
+          name: 'Info Box (Blue)',
+          icon: 'info',
+          html: `<div style="background-color: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+  <p style="margin: 0; font-size: 12px; color: #1565c0;"><strong>Note:</strong> [Your information here]</p>
+</div>`
+        },
+        {
+          name: 'Warning Box (Yellow)',
+          icon: 'warning',
+          html: `<div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+  <p style="margin: 0; font-size: 12px; color: #856404;"><strong>⚠️ Important:</strong> [Your warning here]</p>
+</div>`
+        },
+        {
+          name: 'Success Box (Green)',
+          icon: 'check_circle',
+          html: `<div style="background-color: #d4edda; border-left: 4px solid #28a745; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+  <p style="margin: 0; font-size: 12px; color: #155724;"><strong>✓</strong> [Success message here]</p>
+</div>`
+        },
+        {
+          name: 'Action Required Box',
+          icon: 'assignment',
+          html: `<div style="background: linear-gradient(135deg, #2d7bb9, #1173c0); color: white; padding: 10px 15px; margin: 20px 0 0 0; border-radius: 4px 4px 0 0;">
+  <h3 style="margin: 0; font-size: 14px; font-weight: 500;">What do you need to do?</h3>
+</div>
+<div style="background-color: #e8f4fc; padding: 15px; border: 1px solid #2d7bb9; border-top: none; margin-bottom: 20px;">
+  <ul style="font-size: 12px; line-height: 1.8; margin: 0; padding-left: 20px;">
+    <li>Action item 1</li>
+    <li>Action item 2</li>
+    <li>Action item 3</li>
+  </ul>
+</div>`
+        },
+        {
+          name: 'Payment Due Box',
+          icon: 'payment',
+          html: `<div style="background-color: #e8f4fc; border-left: 4px solid #2d7bb9; padding: 15px 20px; margin: 20px 0;">
+  <h3 style="margin: 0 0 8px 0; color: #1a1a2e; font-size: 16px;">What do you need to do?</h3>
+  <p style="margin: 0; font-size: 14px;">
+    Please pay <strong style="font-size: 20px;">{{payment.amount}}</strong> by <strong>{{payment.dueDate}}</strong>.
+  </p>
+</div>`
+        }
+      ]
+    },
+    {
+      category: 'Signatures',
+      icon: 'draw',
+      items: [
+        {
+          name: 'Officer Signature Block',
+          icon: 'person',
+          html: `<div style="margin-top: 30px;">
+  <p style="font-size: 12px;">Yours faithfully</p>
+  <p style="margin: 20px 0 0 0; font-size: 12px;">
+    <strong>[OFFICER NAME]</strong><br>
+    [TITLE]<br>
+    [DIVISION]<br>
+    for COMPTROLLER OF INCOME TAX
+  </p>
+  <p style="font-size: 10px; color: #666; font-style: italic; margin-top: 10px;">
+    This is a system-generated letter and no signature is required.
+  </p>
+</div>`
+        },
+        {
+          name: 'Comptroller Signature',
+          icon: 'verified',
+          html: `<div style="margin-top: 40px;">
+  <p style="font-family: 'Brush Script MT', cursive; font-size: 28px; margin: 0;">OwFookChuen</p>
+  <p style="margin: 10px 0 0 0; font-size: 12px;">
+    <strong>OW FOOK CHUEN</strong><br>
+    COMPTROLLER OF INCOME TAX
+  </p>
+</div>`
+        }
+      ]
+    },
+    {
+      category: 'Footers',
+      icon: 'call_to_action',
+      items: [
+        {
+          name: 'IRAS Footer',
+          icon: 'web',
+          html: `<div style="margin-top: 40px; text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ddd; padding-top: 15px;">
+  <p style="margin: 0;">Website: <a href="https://www.iras.gov.sg" style="color: #2d7bb9;">www.iras.gov.sg</a> • myTax Portal: <a href="https://mytax.iras.gov.sg" style="color: #2d7bb9;">mytax.iras.gov.sg</a></p>
+  <p style="margin: 5px 0;">Tel: 6351 3551</p>
+  <p style="margin: 5px 0;">Page 1 of 1 &nbsp;&nbsp;&nbsp; {{notice.number}}</p>
+</div>`
+        },
+        {
+          name: 'Page Break',
+          icon: 'insert_page_break',
+          html: `<div style="page-break-after: always;"></div>
+<p style="margin-top: 40px;">&nbsp;</p>`
+        }
+      ]
+    }
+  ];
+  
+  // TinyMCE configuration - Self-hosted open source version (LGPL)
   editorConfig: any = {
+    base_url: '/tinymce',
+    suffix: '.min',
     height: 500,
     menubar: true,
     plugins: [
@@ -101,13 +339,15 @@ export class NoticeEditor implements OnInit {
     font_family_formats: 'Arial=arial,helvetica,sans-serif; Times New Roman=times new roman,times,serif; Courier New=courier new,courier,monospace; Georgia=georgia,palatino,serif; Verdana=verdana,geneva,sans-serif',
     branding: false,
     promotion: false,
-    license_key: 'gpl',
+    license_key: 'gpl',  // Open source license
   };
   
   constructor(
     private noticeService: NoticeService,
+    private templateService: TemplateService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private sanitizer: DomSanitizer
   ) {
     // Get unique categories
     this.variableCategories = [...new Set(TEMPLATE_VARIABLES.map(v => v.category))];
@@ -122,10 +362,28 @@ export class NoticeEditor implements OnInit {
         this.noticeId = id;
         this.loadNotice(id);
       } else {
-        // Set default content for new notices
-        this.setDefaultContent();
+        // Check for template to use
+        this.route.queryParams.subscribe(queryParams => {
+          const templateId = queryParams['templateId'];
+          if (templateId) {
+            this.loadFromTemplate(templateId);
+          } else {
+            // Set default content for new notices
+            this.setDefaultContent();
+          }
+        });
       }
     });
+  }
+  
+  loadFromTemplate(templateId: string): void {
+    const template = this.templateService.getTemplateById(templateId);
+    if (template) {
+      this.title.set(`New ${template.name}`);
+      this.content.set(template.content);
+    } else {
+      this.setDefaultContent();
+    }
   }
   
   loadNotice(id: string): void {
@@ -206,6 +464,24 @@ export class NoticeEditor implements OnInit {
     return this.templateVariables.filter(v => v.category === category);
   }
   
+  // Zoom controls for preview
+  zoomIn(): void {
+    this.zoom = Math.min(150, this.zoom + 10);
+  }
+  
+  zoomOut(): void {
+    this.zoom = Math.max(25, this.zoom - 10);
+  }
+  
+  getCurrentDate(): string {
+    const now = new Date();
+    const day = now.getDate().toString().padStart(2, '0');
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[now.getMonth()];
+    const year = now.getFullYear();
+    return `${day} ${month} ${year}`;
+  }
+  
   insertVariable(variable: TemplateVariable): void {
     const currentContent = this.content();
     this.content.set(currentContent + ` ${variable.key} `);
@@ -213,6 +489,21 @@ export class NoticeEditor implements OnInit {
   
   toggleVariablePanel(): void {
     this.showVariablePanel = !this.showVariablePanel;
+    if (this.showVariablePanel) {
+      this.showComponentsPanel = false;
+    }
+  }
+  
+  toggleComponentsPanel(): void {
+    this.showComponentsPanel = !this.showComponentsPanel;
+    if (this.showComponentsPanel) {
+      this.showVariablePanel = false;
+    }
+  }
+  
+  insertComponent(component: { name: string; html: string }): void {
+    const currentContent = this.content();
+    this.content.set(currentContent + '\n' + component.html + '\n');
   }
   
   getPlainTextContent(): string {
@@ -221,13 +512,29 @@ export class NoticeEditor implements OnInit {
     return temp.textContent || temp.innerText || '';
   }
   
-  getPreviewContent(): string {
+  getPreviewContent(): SafeHtml {
     let content = this.content();
-    for (const variable of this.templateVariables) {
-      content = content.replace(new RegExp(this.escapeRegex(variable.key), 'g'), 
-        `<span class="variable-value">${variable.sampleValue}</span>`);
+    
+    if (this.showSampleData) {
+      // Replace template variables with sample values
+      for (const variable of this.templateVariables) {
+        content = content.replace(new RegExp(this.escapeRegex(variable.key), 'g'), 
+          `<span class="variable-value">${variable.sampleValue}</span>`);
+      }
+    } else {
+      // Show variables as-is but styled
+      for (const variable of this.templateVariables) {
+        content = content.replace(new RegExp(this.escapeRegex(variable.key), 'g'), 
+          `<span class="variable-placeholder">${variable.key}</span>`);
+      }
     }
-    return content;
+    
+    // Use DomSanitizer to trust the HTML and preserve inline styles
+    return this.sanitizer.bypassSecurityTrustHtml(content);
+  }
+  
+  toggleSampleData(): void {
+    this.showSampleData = !this.showSampleData;
   }
   
   private escapeRegex(string: string): string {
