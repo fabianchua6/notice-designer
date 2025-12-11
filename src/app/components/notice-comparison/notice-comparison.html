@@ -1,80 +1,98 @@
 <div class="comparison-container">
-  <div class="header">
-    <h1>Notice Comparison</h1>
-    <button mat-raised-button (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-      Back to List
-    </button>
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button mat-icon-button (click)="goBack()" matTooltip="Back to Dashboard">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-text">
+        <h1>Compare Notices</h1>
+        <p class="subtitle">Side-by-side comparison of two notice templates</p>
+      </div>
+    </div>
   </div>
   
   @if (notice1() && notice2()) {
     <div class="comparison-grid">
+      <!-- Notice 1 -->
       <mat-card class="comparison-card">
+        <div class="card-badge left">Notice A</div>
         <mat-card-header>
           <mat-card-title>{{ notice1()!.title }}</mat-card-title>
           <mat-card-subtitle>
-            Created: {{ notice1()!.createdAt | date:'short' }}
+            <mat-icon class="subtitle-icon">schedule</mat-icon>
+            Created: {{ notice1()!.createdAt | date:'medium' }}
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <app-notice-preview
-            [title]="notice1()!.title"
-            [content]="notice1()!.content"
-            [backgroundColor]="notice1()!.backgroundColor || '#ffffff'"
-            [textColor]="notice1()!.textColor || '#000000'"
-            [fontSize]="notice1()!.fontSize || 16"
-            [fontFamily]="notice1()!.fontFamily || 'Arial'"
-            [borderStyle]="notice1()!.borderStyle || 'solid'"
-            [borderColor]="notice1()!.borderColor || '#000000'"
-            [borderWidth]="notice1()!.borderWidth || 1"
-            [padding]="notice1()!.padding || 16">
-          </app-notice-preview>
+          <div class="preview-wrapper">
+            <app-notice-preview
+              [title]="notice1()!.title"
+              [content]="notice1()!.content"
+              [backgroundColor]="notice1()!.backgroundColor || '#ffffff'"
+              [textColor]="notice1()!.textColor || '#000000'"
+              [fontSize]="14"
+              [fontFamily]="notice1()!.fontFamily || 'Arial'"
+              [borderStyle]="notice1()!.borderStyle || 'solid'"
+              [borderColor]="notice1()!.borderColor || '#e0e0e0'"
+              [borderWidth]="1"
+              [padding]="16">
+            </app-notice-preview>
+          </div>
         </mat-card-content>
       </mat-card>
       
+      <!-- Notice 2 -->
       <mat-card class="comparison-card">
+        <div class="card-badge right">Notice B</div>
         <mat-card-header>
           <mat-card-title>{{ notice2()!.title }}</mat-card-title>
           <mat-card-subtitle>
-            Created: {{ notice2()!.createdAt | date:'short' }}
+            <mat-icon class="subtitle-icon">schedule</mat-icon>
+            Created: {{ notice2()!.createdAt | date:'medium' }}
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <app-notice-preview
-            [title]="notice2()!.title"
-            [content]="notice2()!.content"
-            [backgroundColor]="notice2()!.backgroundColor || '#ffffff'"
-            [textColor]="notice2()!.textColor || '#000000'"
-            [fontSize]="notice2()!.fontSize || 16"
-            [fontFamily]="notice2()!.fontFamily || 'Arial'"
-            [borderStyle]="notice2()!.borderStyle || 'solid'"
-            [borderColor]="notice2()!.borderColor || '#000000'"
-            [borderWidth]="notice2()!.borderWidth || 1"
-            [padding]="notice2()!.padding || 16">
-          </app-notice-preview>
+          <div class="preview-wrapper">
+            <app-notice-preview
+              [title]="notice2()!.title"
+              [content]="notice2()!.content"
+              [backgroundColor]="notice2()!.backgroundColor || '#ffffff'"
+              [textColor]="notice2()!.textColor || '#000000'"
+              [fontSize]="14"
+              [fontFamily]="notice2()!.fontFamily || 'Arial'"
+              [borderStyle]="notice2()!.borderStyle || 'solid'"
+              [borderColor]="notice2()!.borderColor || '#e0e0e0'"
+              [borderWidth]="1"
+              [padding]="16">
+            </app-notice-preview>
+          </div>
         </mat-card-content>
       </mat-card>
     </div>
     
+    <!-- Differences Analysis -->
     <mat-card class="differences-card">
       <mat-card-header>
-        <mat-card-title>
-          <mat-icon>difference</mat-icon>
-          Differences Analysis
-        </mat-card-title>
+        <mat-icon mat-card-avatar class="diff-icon">compare_arrows</mat-icon>
+        <mat-card-title>Differences Analysis</mat-card-title>
+        <mat-card-subtitle>Comparing properties between the two notices</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         @if (getDifferences().length > 0) {
-          <ul class="differences-list">
+          <div class="differences-list">
             @for (diff of getDifferences(); track diff) {
-              <li>{{ diff }}</li>
+              <div class="diff-item">
+                <mat-icon class="diff-icon-item">remove_circle_outline</mat-icon>
+                <span>{{ diff }}</span>
+              </div>
             }
-          </ul>
+          </div>
         } @else {
-          <p class="no-differences">
+          <div class="no-differences">
             <mat-icon>check_circle</mat-icon>
-            These notices have identical styling properties!
-          </p>
+            <span>These notices have identical styling properties!</span>
+          </div>
         }
       </mat-card-content>
     </mat-card>

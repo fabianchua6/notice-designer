@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NoticeService } from '../../services/notice';
 import { Notice } from '../../models/notice.model';
 import { NoticePreview } from '../notice-preview/notice-preview';
@@ -15,6 +16,7 @@ import { NoticePreview } from '../notice-preview/notice-preview';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
+    MatTooltipModule,
     NoticePreview,
   ],
   templateUrl: './notice-comparison.html',
