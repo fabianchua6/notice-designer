@@ -103,6 +103,10 @@ export class NoticePreviewEnhanced implements OnChanges {
   
   /**
    * Sanitize HTML content for safe rendering
+   * Note: Using bypassSecurityTrustHtml as the content comes from TinyMCE editor
+   * which is already within the application's trust boundary. In production,
+   * consider adding server-side sanitization or using DomSanitizer.sanitize()
+   * with SecurityContext.HTML for untrusted user content.
    */
   sanitizeHtml(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html);

@@ -24,6 +24,12 @@ export interface PaginationConfig {
   footerHeight: number;
   fontSize: number;
   lineHeight: number;
+  
+  // Advanced configuration
+  headingOrphanThreshold?: number; // Height threshold for heading orphan prevention (default: 50px)
+  pageBottomThreshold?: number; // Percentage of page height to consider "near bottom" (default: 0.8)
+  imageMargin?: number; // Margin to leave around scaled images (default: 40px)
+  defaultImageHeight?: number; // Fallback height for images without dimensions (default: 400px)
 }
 
 /**
@@ -86,9 +92,11 @@ export class PaginationService {
         if (measurement.type === 'heading') {
           // Headings should not be orphaned - move to next page if near bottom
           // Also check if next element is small enough to keep with heading
-          const keepWithNext = i < measurements.length - 1 && remainingHeight < 50;
+          const orphanThreshold = config.headingOrphanThreshold || 50;
+          const bottomThreshold = config.pageBottomThreshold || 0.8;
+          const keepWithNext = i < measurements.length - 1 && remainingHeight < orphanThreshold;
           
-          if (keepWithNext || currentPageHeight > availableHeight * 0.8) {
+          if (keepWithNext || currentPageHeight > availableHeight * bottomThreshold) {
             // Move heading to next page
             this.finalizePage(pages, currentPageNumber, currentPageContent);
             currentPageNumber++;
@@ -430,12 +438,18 @@ export class PaginationService {
     container.style.textAlign = 'center';
     container.style.margin = '16px 0';
     
-    // Calculate scale factor
-    const originalHeight = image.offsetHeight || parseInt(image.style.height) || 400;
+    // Try to get actual image dimensions
+    // Priority: naturalHeight > offsetHeight > style.height > fallback
+    const originalHeight = image.naturalHeight || 
+                          image.offsetHeight || 
+                          (image.style.height ? parseInt(image.style.height) : 0) || 
+                          400; // Fallback for images without dimensions
+    
     const scale = maxHeight / originalHeight;
+    const imageMargin = 40; // Leave margin around image
     
     if (scale < 1) {
-      scaledImage.style.maxHeight = `${maxHeight - 40}px`; // Leave some margin
+      scaledImage.style.maxHeight = `${maxHeight - imageMargin}px`;
       scaledImage.style.height = 'auto';
       scaledImage.style.width = 'auto';
     }
