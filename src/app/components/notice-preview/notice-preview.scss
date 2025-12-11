@@ -1,27 +1,352 @@
-.notice-preview {
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  min-height: 100px;
-  word-wrap: break-word;
-  transition: box-shadow 0.2s ease;
+// Document Preview Container - Word-like appearance
+.document-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// Preview Toolbar
+.preview-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  border: 1px solid #ddd;
   
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  .zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    .zoom-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid #ccc;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      
+      &:hover {
+        background: #e8e8e8;
+        border-color: #999;
+      }
+    }
+    
+    .zoom-level {
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      min-width: 45px;
+      text-align: center;
+    }
+  }
+  
+  .page-info {
+    .page-count {
+      font-size: 12px;
+      color: #666;
+      background: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+    }
   }
 }
 
-.notice-title {
-  margin: 0 0 16px 0;
-  font-weight: 600;
-  font-size: 1.1em;
-  color: inherit;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding-bottom: 12px;
+// Pages Wrapper
+.pages-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  padding: 16px 0;
+  transition: transform 0.2s ease;
 }
 
-.notice-content {
-  white-space: pre-wrap;
-  line-height: 1.6;
-  font-size: 0.95em;
-  font-family: 'Roboto Mono', 'Courier New', monospace;
+// Page Container with Shadow
+.page-container {
+  position: relative;
+  
+  .page-shadow {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: -4px;
+    bottom: -4px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 2px;
+  }
+}
+
+// A4 Page - Actual page styling
+.a4-page {
+  position: relative;
+  width: 794px; // A4 at 96 DPI
+  min-height: 1123px;
+  background: white;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
+  border: 1px solid #d0d0d0;
+  overflow: hidden;
+  
+  // Print-like paper texture
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      repeating-linear-gradient(
+        transparent,
+        transparent 27px,
+        rgba(0, 0, 0, 0.02) 27px,
+        rgba(0, 0, 0, 0.02) 28px
+      );
+    pointer-events: none;
+  }
+}
+
+// Page Ruler
+.page-ruler {
+  position: absolute;
+  top: 0;
+  left: 96px;
+  right: 96px;
+  height: 24px;
+  background: linear-gradient(180deg, #f8f8f8, #f0f0f0);
+  border-bottom: 1px solid #ccc;
+  
+  .ruler-marks {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 4px;
+    
+    .ruler-mark {
+      position: relative;
+      width: 1px;
+      height: 100%;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 1px;
+        height: 8px;
+        background: #999;
+      }
+      
+      .ruler-number {
+        position: absolute;
+        top: 2px;
+        left: -4px;
+        font-size: 9px;
+        color: #666;
+      }
+    }
+  }
+}
+
+// Page Content
+.page-content {
+  position: relative;
+  min-height: calc(1123px - 40px); // Full height minus footer
+}
+
+// Document Header (IRAS branding)
+.document-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--iras-primary, #2d7bb9);
+  
+  .iras-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    .logo-icon {
+      background: linear-gradient(135deg, var(--iras-primary, #2d7bb9), var(--iras-teal, #20b4af));
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+    
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      
+      .ministry {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1a1a2e;
+        letter-spacing: 0.3px;
+      }
+    }
+  }
+  
+  .document-date {
+    font-size: 12px;
+    color: #666;
+    text-align: right;
+  }
+}
+
+// Document Title
+.document-title {
+  margin-bottom: 24px;
+  
+  h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a2e;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 16px 0;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background: #fafafa;
+  }
+}
+
+// Document Body
+.document-body {
+  &.continued {
+    padding-top: 16px;
+  }
+  
+  .continuation-marker {
+    font-size: 10px;
+    font-style: italic;
+    color: #999;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  .content-line {
+    min-height: 1.6em;
+    word-wrap: break-word;
+    
+    &.empty-line {
+      height: 1.6em;
+    }
+  }
+  
+  .placeholder-content {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    padding: 40px 0;
+  }
+}
+
+// Page Footer
+.page-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 96px 16px;
+  
+  .page-number {
+    font-size: 11px;
+    color: #666;
+  }
+  
+  .footer-line {
+    width: 100%;
+    height: 1px;
+    background: #ddd;
+    margin-top: 8px;
+  }
+}
+
+// Page Break Indicator
+.page-break-indicator {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e8f4fd;
+  border: 1px dashed var(--iras-primary, #2d7bb9);
+  padding: 2px 12px;
+  border-radius: 10px;
+  z-index: 10;
+  
+  span {
+    font-size: 10px;
+    color: var(--iras-primary, #2d7bb9);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// Print Styles
+@media print {
+  .preview-toolbar {
+    display: none !important;
+  }
+  
+  .pages-wrapper {
+    transform: none !important;
+    gap: 0;
+    padding: 0;
+  }
+  
+  .page-container {
+    page-break-after: always;
+    
+    .page-shadow {
+      display: none;
+    }
+    
+    &:last-child {
+      page-break-after: auto;
+    }
+  }
+  
+  .a4-page {
+    box-shadow: none;
+    border: none;
+    width: 100%;
+    min-height: auto;
+    
+    &::before {
+      display: none;
+    }
+  }
+  
+  .page-ruler {
+    display: none;
+  }
+  
+  .page-break-indicator {
+    display: none;
+  }
 }

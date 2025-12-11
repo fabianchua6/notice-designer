@@ -111,12 +111,12 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
 ═══════════════════════════════════════════════════════════════`);
   backgroundColor = signal('#ffffff');
   textColor = signal('#000000');
-  fontSize = signal(16);
+  fontSize = signal(12); // Standard document font size
   fontFamily = signal('Arial');
-  borderStyle = signal('solid');
+  borderStyle = signal('none');
   borderColor = signal('#000000');
-  borderWidth = signal(1);
-  padding = signal(16);
+  borderWidth = signal(0);
+  padding = signal(0);
   
   constructor(
     private noticeService: NoticeService,
@@ -149,15 +149,21 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
       return;
     }
     
-    // Create a print-friendly window
-    const printWindow = window.open('', '', 'width=800,height=600');
+    // Create a print-friendly window with A4 page styling
+    const printWindow = window.open('', '', 'width=900,height=700');
     
     if (!printWindow) {
       alert('Please allow popups to print/save as PDF');
       return;
     }
     
-    // Build the HTML content for printing
+    const currentDate = new Date().toLocaleDateString('en-SG', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+    
+    // Build the HTML content for printing with proper A4 formatting
     const printContent = `
       <!DOCTYPE html>
       <html>
@@ -166,58 +172,133 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
           <style>
             @page {
               size: A4;
-              margin: 20mm;
+              margin: 25mm 25mm 25mm 25mm;
+            }
+            
+            * {
+              box-sizing: border-box;
             }
             
             body {
               font-family: ${this.fontFamily()}, Arial, sans-serif;
+              font-size: ${this.fontSize()}pt;
               margin: 0;
               padding: 0;
               color: ${this.textColor()};
               background-color: white;
+              line-height: 1.6;
             }
             
-            .notice-container {
-              background-color: ${this.backgroundColor()};
-              color: ${this.textColor()};
-              font-size: ${this.fontSize()}px;
-              font-family: ${this.fontFamily()}, Arial, sans-serif;
-              border-style: ${this.borderStyle()};
-              border-color: ${this.borderColor()};
-              border-width: ${this.borderWidth()}px;
-              padding: ${this.padding()}px;
-              white-space: pre-wrap;
-              word-wrap: break-word;
-              line-height: 1.5;
-              max-width: 100%;
-              box-sizing: border-box;
+            .page {
+              page-break-after: always;
+              min-height: 100vh;
             }
             
-            .notice-title {
-              font-size: ${this.fontSize() * 1.5}px;
-              font-weight: bold;
-              margin-bottom: ${this.padding()}px;
+            .page:last-child {
+              page-break-after: auto;
+            }
+            
+            .document-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin-bottom: 24pt;
+              padding-bottom: 12pt;
+              border-bottom: 2pt solid #2d7bb9;
+            }
+            
+            .iras-logo {
+              display: flex;
+              align-items: center;
+              gap: 12pt;
+            }
+            
+            .logo-icon {
+              background: linear-gradient(135deg, #2d7bb9, #20b4af);
+              color: white;
+              font-weight: 700;
+              font-size: 14pt;
+              padding: 6pt 10pt;
+              border-radius: 3pt;
+              letter-spacing: 1pt;
+            }
+            
+            .ministry {
+              font-size: 11pt;
+              font-weight: 600;
+              color: #1a1a2e;
+            }
+            
+            .document-date {
+              font-size: 10pt;
+              color: #666;
+            }
+            
+            .document-title {
+              text-align: center;
+              margin-bottom: 20pt;
+            }
+            
+            .document-title h1 {
+              margin: 0;
+              font-size: 16pt;
+              font-weight: 600;
+              color: #1a1a2e;
+              text-transform: uppercase;
+              letter-spacing: 1pt;
+              padding: 12pt 0;
+              border-top: 1pt solid #ddd;
+              border-bottom: 1pt solid #ddd;
+              background: #fafafa;
             }
             
             .notice-content {
               white-space: pre-wrap;
               word-wrap: break-word;
+              font-size: ${this.fontSize()}pt;
+              line-height: 1.6;
+            }
+            
+            .page-footer {
+              position: fixed;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              text-align: center;
+              font-size: 9pt;
+              color: #666;
+              padding: 10pt 25mm;
+              border-top: 1pt solid #ddd;
             }
             
             @media print {
               body {
-                background-color: white;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
               }
               
-              .notice-container {
-                border: ${this.borderWidth()}px ${this.borderStyle()} ${this.borderColor()};
+              .page-footer {
+                position: fixed;
               }
             }
           </style>
         </head>
         <body>
-          <div class="notice-container">
-            <div class="notice-title">${this.escapeHtml(this.title())}</div>
+          <div class="page">
+            <div class="document-header">
+              <div class="iras-logo">
+                <div class="logo-icon">IRAS</div>
+                <div class="logo-text">
+                  <span class="ministry">Inland Revenue Authority of Singapore</span>
+                </div>
+              </div>
+              <div class="document-date">${currentDate}</div>
+            </div>
+            
+            <div class="document-title">
+              <h1>${this.escapeHtml(this.title())}</h1>
+            </div>
+            
             <div class="notice-content">${this.escapeHtml(this.content())}</div>
           </div>
         </body>
@@ -249,11 +330,11 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
     this.content.set('');
     this.backgroundColor.set('#ffffff');
     this.textColor.set('#000000');
-    this.fontSize.set(16);
+    this.fontSize.set(12);
     this.fontFamily.set('Arial');
-    this.borderStyle.set('solid');
+    this.borderStyle.set('none');
     this.borderColor.set('#000000');
-    this.borderWidth.set(1);
-    this.padding.set(16);
+    this.borderWidth.set(0);
+    this.padding.set(0);
   }
 }

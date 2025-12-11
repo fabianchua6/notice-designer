@@ -26,18 +26,14 @@
         </mat-card-header>
         <mat-card-content>
           <div class="preview-wrapper">
-            <app-notice-preview
-              [title]="notice1()!.title"
-              [content]="notice1()!.content"
-              [backgroundColor]="notice1()!.backgroundColor || '#ffffff'"
-              [textColor]="notice1()!.textColor || '#000000'"
-              [fontSize]="14"
-              [fontFamily]="notice1()!.fontFamily || 'Arial'"
-              [borderStyle]="notice1()!.borderStyle || 'solid'"
-              [borderColor]="notice1()!.borderColor || '#e0e0e0'"
-              [borderWidth]="1"
-              [padding]="16">
-            </app-notice-preview>
+            <div class="mini-document-preview">
+              <div class="mini-doc-header">
+                <span class="mini-logo">IRAS</span>
+                <span class="mini-date">{{ notice1()!.createdAt | date:'shortDate' }}</span>
+              </div>
+              <div class="mini-doc-title">{{ notice1()!.title }}</div>
+              <div class="mini-doc-content">{{ notice1()!.content }}</div>
+            </div>
           </div>
         </mat-card-content>
       </mat-card>
@@ -54,18 +50,14 @@
         </mat-card-header>
         <mat-card-content>
           <div class="preview-wrapper">
-            <app-notice-preview
-              [title]="notice2()!.title"
-              [content]="notice2()!.content"
-              [backgroundColor]="notice2()!.backgroundColor || '#ffffff'"
-              [textColor]="notice2()!.textColor || '#000000'"
-              [fontSize]="14"
-              [fontFamily]="notice2()!.fontFamily || 'Arial'"
-              [borderStyle]="notice2()!.borderStyle || 'solid'"
-              [borderColor]="notice2()!.borderColor || '#e0e0e0'"
-              [borderWidth]="1"
-              [padding]="16">
-            </app-notice-preview>
+            <div class="mini-document-preview">
+              <div class="mini-doc-header">
+                <span class="mini-logo">IRAS</span>
+                <span class="mini-date">{{ notice2()!.createdAt | date:'shortDate' }}</span>
+              </div>
+              <div class="mini-doc-title">{{ notice2()!.title }}</div>
+              <div class="mini-doc-content">{{ notice2()!.content }}</div>
+            </div>
           </div>
         </mat-card-content>
       </mat-card>

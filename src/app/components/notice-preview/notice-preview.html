@@ -1,4 +1,92 @@
-<div class="notice-preview" [ngStyle]="getNoticeStyle()">
-  <h2 class="notice-title">{{ title || 'Untitled Notice' }}</h2>
-  <div class="notice-content">{{ content || 'No content yet...' }}</div>
+<div class="document-preview-container">
+  <!-- Zoom Controls -->
+  <div class="preview-toolbar">
+    <div class="zoom-controls">
+      <button class="zoom-btn" (click)="zoomOut()">
+        <span>−</span>
+      </button>
+      <span class="zoom-level">{{ zoom }}%</span>
+      <button class="zoom-btn" (click)="zoomIn()">
+        <span>+</span>
+      </button>
+    </div>
+    <div class="page-info">
+      <span class="page-count">{{ pages.length }} page{{ pages.length !== 1 ? 's' : '' }}</span>
+    </div>
+  </div>
+
+  <!-- Document Pages -->
+  <div class="pages-wrapper" [style.transform]="'scale(' + (zoom/100) + ')'" [style.transform-origin]="'top center'">
+    @for (page of pages; track page.pageNumber) {
+      <div class="page-container">
+        <!-- Page Shadow Effect -->
+        <div class="page-shadow"></div>
+        
+        <!-- The Page -->
+        <div class="a4-page" [ngStyle]="getPageStyle()">
+          <!-- Ruler (optional) -->
+          @if (showRuler && page.isFirstPage) {
+            <div class="page-ruler">
+              <div class="ruler-marks">
+                @for (mark of [0,1,2,3,4,5,6,7]; track mark) {
+                  <div class="ruler-mark">
+                    <span class="ruler-number">{{ mark + 1 }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Page Content Area -->
+          <div class="page-content" [ngStyle]="getContentStyle()">
+            <!-- IRAS Header - First Page Only -->
+            @if (page.isFirstPage) {
+              <div class="document-header">
+                <div class="iras-logo">
+                  <div class="logo-icon">IRAS</div>
+                  <div class="logo-text">
+                    <span class="ministry">Inland Revenue Authority of Singapore</span>
+                  </div>
+                </div>
+                <div class="document-date">{{ getCurrentDate() }}</div>
+              </div>
+
+              <!-- Title -->
+              <div class="document-title">
+                <h1>{{ title || 'Untitled Notice' }}</h1>
+              </div>
+            }
+
+            <!-- Content Lines -->
+            <div class="document-body" [class.continued]="!page.isFirstPage">
+              @if (!page.isFirstPage) {
+                <div class="continuation-marker">(continued from previous page)</div>
+              }
+              @for (line of page.lines; track $index) {
+                <div class="content-line" [class.empty-line]="line.trim() === ''">{{ line || ' ' }}</div>
+              }
+              @if (page.lines.length === 0 && page.isFirstPage) {
+                <div class="placeholder-content">No content yet...</div>
+              }
+            </div>
+          </div>
+
+          <!-- Page Footer -->
+          <div class="page-footer">
+            @if (showPageNumbers) {
+              <div class="page-number">Page {{ page.pageNumber }} of {{ pages.length }}</div>
+            }
+            <div class="footer-line"></div>
+          </div>
+
+          <!-- Page Break Indicator -->
+          @if (page.pageNumber < pages.length) {
+            <div class="page-break-indicator">
+              <span>Page Break</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
 </div>

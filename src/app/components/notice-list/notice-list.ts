@@ -1,5 +1,5 @@
 import { Component, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, SlicePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,19 +8,18 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { NoticeService } from '../../services/notice';
-import { NoticePreview } from '../notice-preview/notice-preview';
 
 @Component({
   selector: 'app-notice-list',
   imports: [
     CommonModule,
+    SlicePipe,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
     MatTooltipModule,
     FormsModule,
-    NoticePreview,
   ],
   templateUrl: './notice-list.html',
   styleUrl: './notice-list.scss',

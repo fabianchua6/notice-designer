@@ -1,6 +1,6 @@
 .editor-container {
   padding: 24px 32px;
-  max-width: 1800px;
+  max-width: 2000px;
   margin: 0 auto;
   min-height: calc(100vh - 64px - 48px);
 }
@@ -43,10 +43,10 @@
   }
 }
 
-// Editor Layout
+// Editor Layout - wider preview panel for A4
 .editor-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(400px, 500px) 1fr;
   gap: 24px;
   align-items: start;
 }
@@ -89,14 +89,14 @@
   }
 }
 
-// Preview Panel
+// Preview Panel - Updated for Word-like document preview
 .preview-panel {
   position: sticky;
   top: 24px;
-  background: white;
+  background: #525659; // Dark gray like Word's background
   border-radius: 12px;
   box-shadow: var(--shadow);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   overflow: hidden;
   
   .preview-header {
@@ -104,29 +104,55 @@
     align-items: center;
     gap: 8px;
     padding: 12px 16px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #e8e8e8;
+    background: #3d4043;
+    border-bottom: 1px solid #2d2d2d;
     font-size: 14px;
     font-weight: 500;
-    color: #666;
+    color: #e0e0e0;
     
     mat-icon {
       font-size: 18px;
       width: 18px;
       height: 18px;
-      color: var(--iras-primary);
+      color: #20b4af;
     }
   }
   
   .preview-content {
     padding: 20px;
-    max-height: calc(100vh - 200px);
-    overflow-y: auto;
-    background: #fafafa;
+    max-height: calc(100vh - 180px);
+    overflow: auto;
+    background: #525659;
+    
+    // Custom scrollbar for the preview area
+    &::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #3d4043;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #6d7073;
+      border-radius: 6px;
+      border: 2px solid #3d4043;
+      
+      &:hover {
+        background: #8d9093;
+      }
+    }
   }
 }
 
 // Responsive
+@media (max-width: 1400px) {
+  .editor-layout {
+    grid-template-columns: minmax(350px, 450px) 1fr;
+  }
+}
+
 @media (max-width: 1200px) {
   .editor-layout {
     grid-template-columns: 1fr;
@@ -136,7 +162,7 @@
     position: static;
     
     .preview-content {
-      max-height: 500px;
+      max-height: 700px;
     }
   }
 }

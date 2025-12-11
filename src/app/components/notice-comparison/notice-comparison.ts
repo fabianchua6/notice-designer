@@ -7,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NoticeService } from '../../services/notice';
 import { Notice } from '../../models/notice.model';
-import { NoticePreview } from '../notice-preview/notice-preview';
 
 @Component({
   selector: 'app-notice-comparison',
@@ -17,7 +16,6 @@ import { NoticePreview } from '../notice-preview/notice-preview';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    NoticePreview,
   ],
   templateUrl: './notice-comparison.html',
   styleUrl: './notice-comparison.scss',

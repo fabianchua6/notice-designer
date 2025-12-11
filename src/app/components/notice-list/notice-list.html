@@ -108,18 +108,16 @@
           
           <mat-card-content>
             <div class="preview-wrapper">
-              <app-notice-preview
-                [title]="notice.title"
-                [content]="notice.content"
-                [backgroundColor]="notice.backgroundColor || '#ffffff'"
-                [textColor]="notice.textColor || '#000000'"
-                [fontSize]="12"
-                [fontFamily]="notice.fontFamily || 'Arial'"
-                [borderStyle]="notice.borderStyle || 'solid'"
-                [borderColor]="notice.borderColor || '#e0e0e0'"
-                [borderWidth]="1"
-                [padding]="12">
-              </app-notice-preview>
+              <div class="mini-document-preview">
+                <div class="mini-doc-header">
+                  <span class="mini-logo">IRAS</span>
+                  <span class="mini-date">{{ notice.updatedAt | date:'shortDate' }}</span>
+                </div>
+                <div class="mini-doc-title">{{ notice.title }}</div>
+                <div class="mini-doc-content">
+                  {{ notice.content | slice:0:200 }}{{ notice.content.length > 200 ? '...' : '' }}
+                </div>
+              </div>
             </div>
           </mat-card-content>
           
