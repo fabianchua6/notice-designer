@@ -1,6 +1,6 @@
 import { Component, computed } from '@angular/core';
 import { CommonModule, SlicePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,12 +8,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { NoticeService } from '../../services/notice';
+import { Notice } from '../../models/notice.model';
 
 @Component({
   selector: 'app-notice-list',
   imports: [
     CommonModule,
     SlicePipe,
+    RouterLink,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -55,6 +57,21 @@ export class NoticeList {
       this.noticeService.deleteNotice(noticeId);
       this.selectedNotices.delete(noticeId);
     }
+  }
+  
+  duplicateNotice(notice: Notice): void {
+    this.noticeService.addNotice({
+      title: `${notice.title} (Copy)`,
+      content: notice.content,
+      backgroundColor: notice.backgroundColor,
+      textColor: notice.textColor,
+      fontSize: notice.fontSize,
+      fontFamily: notice.fontFamily,
+      borderStyle: notice.borderStyle,
+      borderColor: notice.borderColor,
+      borderWidth: notice.borderWidth,
+      padding: notice.padding,
+    });
   }
   
   compareSelected(): void {

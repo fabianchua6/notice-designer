@@ -40,6 +40,88 @@
     button mat-icon {
       margin-right: 4px;
     }
+    
+    button.active {
+      background: rgba(45, 123, 185, 0.1);
+      border-color: var(--iras-primary);
+      color: var(--iras-primary);
+    }
+  }
+}
+
+// Variable Panel
+.variable-panel {
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+  overflow: hidden;
+  
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, var(--iras-primary), var(--iras-teal));
+    color: white;
+    font-weight: 500;
+    
+    mat-icon {
+      font-size: 20px;
+    }
+    
+    .hint {
+      margin-left: auto;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+  }
+  
+  .variable-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .variable-category {
+    h4 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .variable-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .variable-chip {
+      font-size: 12px;
+      padding: 4px 8px;
+      height: auto;
+      line-height: 1.4;
+      
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+        margin-right: 4px;
+      }
+      
+      code {
+        margin-left: 6px;
+        font-size: 10px;
+        color: #888;
+        background: #f0f0f0;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+    }
   }
 }
 
@@ -79,21 +161,42 @@
   width: 100%;
 }
 
-.content-field {
-  margin-top: 8px;
+// TinyMCE Editor Wrapper
+.editor-wrapper {
+  margin-top: 16px;
   
-  .content-textarea {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 13px;
-    line-height: 1.5;
+  .editor-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  
+  .editor-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #e3f2fd;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #1565c0;
+    
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
   }
 }
 
-// Preview Panel - Updated for Word-like document preview
+// Preview Panel
 .preview-panel {
   position: sticky;
   top: 24px;
-  background: #525659; // Dark gray like Word's background
+  background: white;
   border-radius: 12px;
   box-shadow: var(--shadow);
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -104,17 +207,27 @@
     align-items: center;
     gap: 8px;
     padding: 12px 16px;
-    background: #3d4043;
-    border-bottom: 1px solid #2d2d2d;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e8e8e8;
     font-size: 14px;
     font-weight: 500;
-    color: #e0e0e0;
+    color: #333;
     
     mat-icon {
       font-size: 18px;
       width: 18px;
       height: 18px;
-      color: #20b4af;
+      color: var(--iras-primary);
+    }
+    
+    .preview-badge {
+      margin-left: auto;
+      font-size: 11px;
+      padding: 3px 8px;
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-radius: 100px;
+      font-weight: 500;
     }
   }
   
@@ -122,25 +235,113 @@
     padding: 20px;
     max-height: calc(100vh - 180px);
     overflow: auto;
-    background: #525659;
+    background: #fafafa;
     
-    // Custom scrollbar for the preview area
-    &::-webkit-scrollbar {
-      width: 12px;
-      height: 12px;
+    &.html-preview {
+      background: #525659;
+      padding: 24px;
     }
+  }
+  
+  // Rendered Document Preview
+  .rendered-document {
+    background: white;
+    padding: 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border-radius: 4px;
+    min-height: 400px;
     
-    &::-webkit-scrollbar-track {
-      background: #3d4043;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background: #6d7073;
-      border-radius: 6px;
-      border: 2px solid #3d4043;
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--iras-primary);
       
-      &:hover {
-        background: #8d9093;
+      .iras-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        
+        .logo {
+          background: linear-gradient(135deg, var(--iras-primary), var(--iras-teal));
+          color: white;
+          font-weight: 700;
+          font-size: 14px;
+          padding: 6px 10px;
+          border-radius: 4px;
+          letter-spacing: 1px;
+        }
+        
+        .ministry {
+          font-size: 13px;
+          font-weight: 600;
+          color: #1a1a2e;
+        }
+      }
+    }
+    
+    .doc-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a2e;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 16px;
+      margin-bottom: 24px;
+      background: #f8f9fa;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .doc-content {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #333;
+      
+      h3 {
+        color: #1a1a2e;
+        font-size: 15px;
+        margin: 20px 0 12px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+      }
+      
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        
+        td, th {
+          border: 1px solid #ddd;
+          padding: 10px 12px;
+          text-align: left;
+        }
+        
+        td:first-child {
+          background: #f8f9fa;
+          width: 40%;
+        }
+      }
+      
+      ul, ol {
+        padding-left: 24px;
+        margin: 12px 0;
+        
+        li {
+          margin: 6px 0;
+        }
+      }
+      
+      // Variable highlighting in preview
+      .variable-value {
+        background: #e8f5e9;
+        padding: 1px 4px;
+        border-radius: 3px;
+        color: #2e7d32;
+        font-weight: 500;
       }
     }
   }

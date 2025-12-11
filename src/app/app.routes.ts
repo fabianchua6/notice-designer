@@ -6,6 +6,7 @@ import { NoticeComparison } from './components/notice-comparison/notice-comparis
 export const routes: Routes = [
   { path: '', component: NoticeList },
   { path: 'editor', component: NoticeEditor },
+  { path: 'editor/:id', component: NoticeEditor },  // Edit existing notice
   { path: 'compare/:id1/:id2', component: NoticeComparison },
   { path: '**', redirectTo: '' }
 ];

@@ -1,19 +1,24 @@
-import { Component, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Router } from '@angular/router';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatTabsModule } from '@angular/material/tabs';
+import { CommonModule } from '@angular/common';
+import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { NoticeService } from '../../services/notice';
-import { NoticePreview } from '../notice-preview/notice-preview';
+import { TEMPLATE_VARIABLES, TemplateVariable } from '../../models/notice.model';
 
 @Component({
   selector: 'app-notice-editor',
   imports: [
+    CommonModule,
     FormsModule,
     RouterLink,
     MatFormFieldModule,
@@ -22,113 +27,219 @@ import { NoticePreview } from '../notice-preview/notice-preview';
     MatCardModule,
     MatIconModule,
     MatTooltipModule,
-    NoticePreview,
+    MatMenuModule,
+    MatChipsModule,
+    MatTabsModule,
+    EditorModule,
+  ],
+  providers: [
+    { provide: TINYMCE_SCRIPT_SRC, useValue: 'https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js' }
   ],
   templateUrl: './notice-editor.html',
   styleUrl: './notice-editor.scss',
 })
-export class NoticeEditor {
-  @ViewChild('noticePreview', { read: ElementRef }) noticePreviewElement!: ElementRef;
+export class NoticeEditor implements OnInit {
+  // Editor state
+  isEditMode = false;
+  noticeId: string | null = null;
   
-  title = signal('Official Notice Template');
-  content = signal(`═══════════════════════════════════════════════════════════════
-                    COMPANY LETTERHEAD
-                       Acme Corporation
-                    123 Business Avenue
-                  City, State, ZIP 12345
-                  Phone: (555) 123-4567
-═══════════════════════════════════════════════════════════════
-
-NOTICE NO: 2024-001                                  Date: December 11, 2024
-
-TO: All Employees
-FROM: Human Resources Department
-RE: Important Company Update
-
-═══════════════════════════════════════════════════════════════
-                         MAIN CONTENT
-═══════════════════════════════════════════════════════════════
-
-Dear Team Members,
-
-This notice serves as a template demonstrating the proper structure and formatting of official company communications.
-
-SECTION 1: HEADER INFORMATION
-------------------------------
-The header contains essential identification details including:
-• Document number and tracking reference
-• Issue date and validity period
-• Recipient information
-• Subject matter
-
-SECTION 2: BODY CONTENT
------------------------
-Key information should be organized in clear, numbered sections:
-
-1. Primary Announcement
-   - Main point of the notice
-   - Relevant details and specifications
-   - Action items required
-
-2. Important Details
-   - Deadlines and timelines
-   - Contact information
-   - Reference materials
-
-3. Additional Information
-   - Supporting documentation
-   - FAQs and clarifications
-   - Resources available
-
-SECTION 3: BARCODE & TRACKING
-------------------------------
-Document Tracking: [BARCODE: *DOC2024001*]
-Verification Code: ABC-123-XYZ-789
-QR Code: [Scan for digital copy]
-
-═══════════════════════════════════════════════════════════════
-                         FOOTER SECTION
-═══════════════════════════════════════════════════════════════
-
-SIGNATURES:
-
-_____________________              _____________________
-Department Manager                 Date
-John Smith
-
-_____________________              _____________________
-HR Director                        Date
-Jane Doe
-
-───────────────────────────────────────────────────────────────
-CONFIDENTIALITY NOTICE: This document contains confidential 
-information intended only for the designated recipients.
-───────────────────────────────────────────────────────────────
-
-Page 1 of 1                        Document ID: DOC-2024-001
-Issued: 12/11/2024                 Valid Until: 12/31/2024
-
-═══════════════════════════════════════════════════════════════`);
+  // Form fields
+  title = signal('');
+  content = signal('');
   backgroundColor = signal('#ffffff');
   textColor = signal('#000000');
-  fontSize = signal(12); // Standard document font size
+  fontSize = signal(12);
   fontFamily = signal('Arial');
   borderStyle = signal('none');
   borderColor = signal('#000000');
   borderWidth = signal(0);
   padding = signal(0);
   
+  // Variable insertion
+  templateVariables = TEMPLATE_VARIABLES;
+  variableCategories: string[] = [];
+  showVariablePanel = false;
+  
+  // TinyMCE configuration
+  editorConfig: any = {
+    height: 500,
+    menubar: true,
+    plugins: [
+      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+      'insertdatetime', 'media', 'table', 'help', 'wordcount', 'pagebreak'
+    ],
+    toolbar: 'undo redo | blocks fontfamily fontsize | ' +
+      'bold italic underline strikethrough | forecolor backcolor | ' +
+      'alignleft aligncenter alignright alignjustify | ' +
+      'bullist numlist outdent indent | ' +
+      'table | pagebreak | removeformat | help',
+    content_style: `
+      body { 
+        font-family: Arial, sans-serif; 
+        font-size: 12pt; 
+        line-height: 1.6;
+        padding: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .variable {
+        background-color: #e3f2fd;
+        border: 1px solid #2196f3;
+        border-radius: 3px;
+        padding: 1px 4px;
+        color: #1565c0;
+        font-family: monospace;
+        font-size: 0.9em;
+      }
+    `,
+    pagebreak_separator: '<div style="page-break-after: always;"></div>',
+    formats: {
+      variable: { inline: 'span', classes: 'variable' }
+    },
+    fontsize_formats: '8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 24pt 36pt',
+    font_family_formats: 'Arial=arial,helvetica,sans-serif; Times New Roman=times new roman,times,serif; Courier New=courier new,courier,monospace; Georgia=georgia,palatino,serif; Verdana=verdana,geneva,sans-serif',
+    branding: false,
+    promotion: false,
+    license_key: 'gpl',
+  };
+  
   constructor(
     private noticeService: NoticeService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    // Get unique categories
+    this.variableCategories = [...new Set(TEMPLATE_VARIABLES.map(v => v.category))];
+  }
+  
+  ngOnInit(): void {
+    // Check if we're editing an existing notice
+    this.route.params.subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        this.isEditMode = true;
+        this.noticeId = id;
+        this.loadNotice(id);
+      } else {
+        // Set default content for new notices
+        this.setDefaultContent();
+      }
+    });
+  }
+  
+  loadNotice(id: string): void {
+    const notice = this.noticeService.getNoticeById(id);
+    if (notice) {
+      this.title.set(notice.title);
+      this.content.set(notice.content);
+      this.backgroundColor.set(notice.backgroundColor || '#ffffff');
+      this.textColor.set(notice.textColor || '#000000');
+      this.fontSize.set(notice.fontSize || 12);
+      this.fontFamily.set(notice.fontFamily || 'Arial');
+      this.borderStyle.set(notice.borderStyle || 'none');
+      this.borderColor.set(notice.borderColor || '#000000');
+      this.borderWidth.set(notice.borderWidth || 0);
+      this.padding.set(notice.padding || 0);
+    } else {
+      // Notice not found, redirect to list
+      this.router.navigate(['/']);
+    }
+  }
+  
+  setDefaultContent(): void {
+    this.title.set('Tax Assessment Notice');
+    this.content.set(`<p>Dear <strong>{{taxpayer.name}}</strong>,</p>
+
+<p><strong>RE: Notice of Assessment for Year of Assessment {{assessment.year}}</strong></p>
+
+<p>This notice is to inform you of your tax assessment for the Year of Assessment {{assessment.year}}.</p>
+
+<h3>Assessment Details</h3>
+<table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+  <tr>
+    <td style="background-color: #f5f5f5;"><strong>Reference Number</strong></td>
+    <td>{{assessment.refNumber}}</td>
+  </tr>
+  <tr>
+    <td style="background-color: #f5f5f5;"><strong>Assessment Type</strong></td>
+    <td>{{assessment.type}}</td>
+  </tr>
+  <tr>
+    <td style="background-color: #f5f5f5;"><strong>Tax Amount Payable</strong></td>
+    <td><strong>{{assessment.amount}}</strong></td>
+  </tr>
+  <tr>
+    <td style="background-color: #f5f5f5;"><strong>Due Date</strong></td>
+    <td>{{assessment.dueDate}}</td>
+  </tr>
+</table>
+
+<h3>Payment Instructions</h3>
+<p>Please make payment by <strong>{{assessment.dueDate}}</strong> to avoid any late payment penalties.</p>
+
+<p><strong>Payment Methods:</strong></p>
+<ul>
+  <li>PayNow: Use reference {{payment.payNowRef}}</li>
+  <li>Bank Transfer: {{payment.bankName}} - {{payment.accountNo}}</li>
+  <li>GIRO: If you have existing GIRO arrangement</li>
+</ul>
+
+<h3>Important Notes</h3>
+<ol>
+  <li>Late payment will incur a 5% penalty.</li>
+  <li>If you disagree with this assessment, please file an objection within 30 days.</li>
+  <li>Keep this notice for your records.</li>
+</ol>
+
+<p>If you have any questions, please contact us at 1800-356-8300 or visit <a href="https://www.iras.gov.sg">www.iras.gov.sg</a>.</p>
+
+<p>Thank you for your cooperation.</p>
+
+<p><br></p>
+<p>Yours faithfully,</p>
+<p><strong>Inland Revenue Authority of Singapore</strong></p>
+<p>Notice Date: {{notice.date}}<br>Notice Number: {{notice.number}}</p>`);
+  }
+  
+  getVariablesByCategory(category: string): TemplateVariable[] {
+    return this.templateVariables.filter(v => v.category === category);
+  }
+  
+  insertVariable(variable: TemplateVariable): void {
+    const currentContent = this.content();
+    this.content.set(currentContent + ` ${variable.key} `);
+  }
+  
+  toggleVariablePanel(): void {
+    this.showVariablePanel = !this.showVariablePanel;
+  }
+  
+  getPlainTextContent(): string {
+    const temp = document.createElement('div');
+    temp.innerHTML = this.content();
+    return temp.textContent || temp.innerText || '';
+  }
+  
+  getPreviewContent(): string {
+    let content = this.content();
+    for (const variable of this.templateVariables) {
+      content = content.replace(new RegExp(this.escapeRegex(variable.key), 'g'), 
+        `<span class="variable-value">${variable.sampleValue}</span>`);
+    }
+    return content;
+  }
+  
+  private escapeRegex(string: string): string {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
   
   saveNotice(): void {
     if (!this.title() || !this.content()) {
       return;
     }
     
-    this.noticeService.addNotice({
+    const noticeData = {
       title: this.title(),
       content: this.content(),
       backgroundColor: this.backgroundColor(),
@@ -139,7 +250,13 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
       borderColor: this.borderColor(),
       borderWidth: this.borderWidth(),
       padding: this.padding(),
-    });
+    };
+    
+    if (this.isEditMode && this.noticeId) {
+      this.noticeService.updateNotice(this.noticeId, noticeData);
+    } else {
+      this.noticeService.addNotice(noticeData);
+    }
     
     this.router.navigate(['/']);
   }
@@ -149,7 +266,6 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
       return;
     }
     
-    // Create a print-friendly window with A4 page styling
     const printWindow = window.open('', '', 'width=900,height=700');
     
     if (!printWindow) {
@@ -163,7 +279,8 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
       year: 'numeric'
     });
     
-    // Build the HTML content for printing with proper A4 formatting
+    const previewContent = this.getPreviewContent();
+    
     const printContent = `
       <!DOCTYPE html>
       <html>
@@ -175,9 +292,7 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
               margin: 25mm 25mm 25mm 25mm;
             }
             
-            * {
-              box-sizing: border-box;
-            }
+            * { box-sizing: border-box; }
             
             body {
               font-family: ${this.fontFamily()}, Arial, sans-serif;
@@ -187,15 +302,6 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
               color: ${this.textColor()};
               background-color: white;
               line-height: 1.6;
-            }
-            
-            .page {
-              page-break-after: always;
-              min-height: 100vh;
-            }
-            
-            .page:last-child {
-              page-break-after: auto;
             }
             
             .document-header {
@@ -253,22 +359,22 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
             }
             
             .notice-content {
-              white-space: pre-wrap;
-              word-wrap: break-word;
               font-size: ${this.fontSize()}pt;
               line-height: 1.6;
             }
             
-            .page-footer {
-              position: fixed;
-              bottom: 0;
-              left: 0;
-              right: 0;
-              text-align: center;
-              font-size: 9pt;
-              color: #666;
-              padding: 10pt 25mm;
-              border-top: 1pt solid #ddd;
+            .notice-content table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            
+            .notice-content td, .notice-content th {
+              border: 1px solid #ddd;
+              padding: 8px;
+            }
+            
+            .variable-value {
+              font-weight: 500;
             }
             
             @media print {
@@ -276,31 +382,25 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
               }
-              
-              .page-footer {
-                position: fixed;
-              }
             }
           </style>
         </head>
         <body>
-          <div class="page">
-            <div class="document-header">
-              <div class="iras-logo">
-                <div class="logo-icon">IRAS</div>
-                <div class="logo-text">
-                  <span class="ministry">Inland Revenue Authority of Singapore</span>
-                </div>
+          <div class="document-header">
+            <div class="iras-logo">
+              <div class="logo-icon">IRAS</div>
+              <div class="logo-text">
+                <span class="ministry">Inland Revenue Authority of Singapore</span>
               </div>
-              <div class="document-date">${currentDate}</div>
             </div>
-            
-            <div class="document-title">
-              <h1>${this.escapeHtml(this.title())}</h1>
-            </div>
-            
-            <div class="notice-content">${this.escapeHtml(this.content())}</div>
+            <div class="document-date">${currentDate}</div>
           </div>
+          
+          <div class="document-title">
+            <h1>${this.escapeHtml(this.title())}</h1>
+          </div>
+          
+          <div class="notice-content">${previewContent}</div>
         </body>
       </html>
     `;
@@ -308,11 +408,9 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
     printWindow.document.write(printContent);
     printWindow.document.close();
     
-    // Wait for content to load then trigger print
     printWindow.onload = () => {
       printWindow.focus();
       printWindow.print();
-      // Close after a delay to allow print dialog to appear
       setTimeout(() => {
         printWindow.close();
       }, 250);
@@ -326,15 +424,10 @@ Issued: 12/11/2024                 Valid Until: 12/31/2024
   }
   
   resetForm(): void {
-    this.title.set('');
-    this.content.set('');
-    this.backgroundColor.set('#ffffff');
-    this.textColor.set('#000000');
-    this.fontSize.set(12);
-    this.fontFamily.set('Arial');
-    this.borderStyle.set('none');
-    this.borderColor.set('#000000');
-    this.borderWidth.set(0);
-    this.padding.set(0);
+    if (this.isEditMode && this.noticeId) {
+      this.loadNotice(this.noticeId);
+    } else {
+      this.setDefaultContent();
+    }
   }
 }
