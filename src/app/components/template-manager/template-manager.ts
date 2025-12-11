@@ -61,30 +61,17 @@ export class TemplateManager {
   }
   
   useTemplate(template: MasterTemplate): void {
-    // Navigate to editor with template content pre-filled
+    // Create a duplicate notice from this template for editing
     this.router.navigate(['/editor'], { 
       queryParams: { templateId: template.id } 
     });
   }
   
   editTemplate(template: MasterTemplate): void {
-    // For system templates, we duplicate and edit the copy
-    // For user templates, we edit directly
-    if (template.isSystem) {
-      const newTemplate = this.templateService.addTemplate({
-        name: `${template.name} (Custom)`,
-        description: template.description,
-        category: template.category,
-        content: template.content,
-      });
-      this.router.navigate(['/editor'], { 
-        queryParams: { templateId: newTemplate.id, editTemplate: 'true' } 
-      });
-    } else {
-      this.router.navigate(['/editor'], { 
-        queryParams: { templateId: template.id, editTemplate: 'true' } 
-      });
-    }
+    // Edit the template directly (opens in template edit mode)
+    this.router.navigate(['/editor'], { 
+      queryParams: { templateId: template.id, editTemplate: 'true' } 
+    });
   }
   
   deleteTemplate(template: MasterTemplate): void {
