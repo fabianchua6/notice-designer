@@ -2,6 +2,9 @@
 @use '@angular/material' as mat;
 @import './app/design-system/styles/variables';
 
+// IRAS uses Source Sans Pro as their official font
+$iras-font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+
 // CSS Custom Properties for runtime access
 :root {
   --iras-primary: #{$iras-primary};
@@ -27,6 +30,14 @@
   --radius: #{$radius-base};
   --radius-lg: #{$radius-lg};
   --radius-xl: #{$radius-xl};
+  
+  // Font
+  --font-family: #{$iras-font-family};
+}
+
+// Apply Source Sans Pro globally
+body {
+  font-family: $iras-font-family;
 }
 
 // Angular Material Theme Override
