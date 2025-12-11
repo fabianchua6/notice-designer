@@ -10,6 +10,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { TemplateService } from '../../services/template.service';
 import { MasterTemplate, TEMPLATE_CATEGORIES, TemplateCategory } from '../../models/notice.model';
+import { IrasButton, IrasCard, IrasCardHeader, IrasCardContent, IrasCardActions, IrasBadge } from '../../design-system';
 
 @Component({
   selector: 'app-template-manager',
@@ -22,6 +23,12 @@ import { MasterTemplate, TEMPLATE_CATEGORIES, TemplateCategory } from '../../mod
     MatTooltipModule,
     MatTabsModule,
     MatDialogModule,
+    IrasButton,
+    IrasCard,
+    IrasCardHeader,
+    IrasCardContent,
+    IrasCardActions,
+    IrasBadge,
   ],
   templateUrl: './template-manager.html',
   styleUrl: './template-manager.scss',

@@ -7,89 +7,83 @@
         <p class="subtitle">Reusable notice templates for quick document creation</p>
       </div>
       <div class="header-actions">
-        <button mat-flat-button color="primary" (click)="createNewTemplate()">
-          <mat-icon>add</mat-icon>
+        <iras-button variant="primary" icon="add" (click)="createNewTemplate()">
           Create Template
-        </button>
+        </iras-button>
       </div>
     </div>
   </div>
   
   <!-- Category Filter -->
   <div class="category-filter">
-    <button 
-      mat-stroked-button 
+    <iras-button 
+      variant="tertiary" 
       [class.active]="selectedCategory() === 'all'"
       (click)="selectCategory('all')">
-      <mat-icon>apps</mat-icon>
       All Templates
-    </button>
+    </iras-button>
     @for (cat of categories; track cat.value) {
-      <button 
-        mat-stroked-button 
+      <iras-button 
+        variant="tertiary" 
         [class.active]="selectedCategory() === cat.value"
         (click)="selectCategory(cat.value)">
-        <mat-icon>{{ cat.icon }}</mat-icon>
         {{ cat.label }}
-      </button>
+      </iras-button>
     }
   </div>
   
   <!-- Templates Grid -->
   <div class="templates-grid">
     @for (template of filteredTemplates; track template.id) {
-      <mat-card class="template-card" [class.system]="template.isSystem">
+      <iras-card variant="elevated" [hoverable]="true" class="template-card" [class.system]="template.isSystem">
         <!-- Category Badge -->
-        <div class="card-badge" [attr.data-category]="template.category">
-          <mat-icon>{{ getCategoryIcon(template.category) }}</mat-icon>
+        <iras-badge variant="info" class="card-badge">
           {{ getCategoryLabel(template.category) }}
-        </div>
+        </iras-badge>
         
         @if (template.isSystem) {
-          <div class="system-badge">
-            <mat-icon>lock</mat-icon>
+          <iras-badge variant="neutral" class="system-badge">
             System
-          </div>
+          </iras-badge>
         }
         
-        <mat-card-header>
-          <mat-card-title>{{ template.name }}</mat-card-title>
-          <mat-card-subtitle>{{ template.description }}</mat-card-subtitle>
-        </mat-card-header>
+        <iras-card-header>
+          <h3>{{ template.name }}</h3>
+          <p class="subtitle">{{ template.description }}</p>
+        </iras-card-header>
         
-        <mat-card-content>
+        <iras-card-content>
           <div class="template-preview">
             <div class="preview-content" [innerHTML]="template.content | slice:0:300"></div>
             <div class="preview-fade"></div>
           </div>
-        </mat-card-content>
+        </iras-card-content>
         
-        <mat-card-actions>
-          <button mat-flat-button color="primary" (click)="useTemplate(template)">
-            <mat-icon>add_circle</mat-icon>
+        <iras-card-actions>
+          <iras-button variant="primary" icon="add_circle" size="small" (click)="useTemplate(template)">
             Use Template
-          </button>
-          <button mat-button (click)="duplicateTemplate(template)" matTooltip="Duplicate">
-            <mat-icon>content_copy</mat-icon>
-          </button>
+          </iras-button>
+          <iras-button variant="ghost" icon="content_copy" size="small" (click)="duplicateTemplate(template)">
+            Duplicate
+          </iras-button>
           @if (!template.isSystem) {
-            <button mat-button (click)="editTemplate(template)" matTooltip="Edit">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-button color="warn" (click)="deleteTemplate(template)" matTooltip="Delete">
-              <mat-icon>delete</mat-icon>
-            </button>
+            <iras-button variant="ghost" icon="edit" size="small" (click)="editTemplate(template)">
+              Edit
+            </iras-button>
+            <iras-button variant="danger" icon="delete" size="small" (click)="deleteTemplate(template)">
+              Delete
+            </iras-button>
           }
-        </mat-card-actions>
-      </mat-card>
+        </iras-card-actions>
+      </iras-card>
     }
   </div>
   
   @if (filteredTemplates.length === 0) {
-    <div class="empty-state">
+    <iras-card variant="outlined" class="empty-state">
       <mat-icon>folder_open</mat-icon>
       <h3>No Templates Found</h3>
       <p>No templates match the selected category.</p>
-    </div>
+    </iras-card>
   }
 </div>

@@ -11,26 +11,21 @@
       </div>
     </div>
     <div class="header-actions">
-      <button mat-stroked-button (click)="toggleComponentsPanel()" [class.active]="showComponentsPanel">
-        <mat-icon>widgets</mat-icon>
+      <iras-button variant="tertiary" icon="widgets" [class.active]="showComponentsPanel" (click)="toggleComponentsPanel()">
         Components
-      </button>
-      <button mat-stroked-button (click)="toggleVariablePanel()" [class.active]="showVariablePanel">
-        <mat-icon>code</mat-icon>
+      </iras-button>
+      <iras-button variant="tertiary" icon="code" [class.active]="showVariablePanel" (click)="toggleVariablePanel()">
         Variables
-      </button>
-      <button mat-stroked-button (click)="resetForm()">
-        <mat-icon>refresh</mat-icon>
+      </iras-button>
+      <iras-button variant="tertiary" icon="refresh" (click)="resetForm()">
         Reset
-      </button>
-      <button mat-stroked-button (click)="printNotice()" [disabled]="!title() || !content()">
-        <mat-icon>print</mat-icon>
+      </iras-button>
+      <iras-button variant="secondary" icon="print" [disabled]="!title() || !content()" (click)="printNotice()">
         Print / PDF
-      </button>
-      <button mat-flat-button color="primary" (click)="saveNotice()" [disabled]="!title() || !content()">
-        <mat-icon>save</mat-icon>
+      </iras-button>
+      <iras-button variant="primary" icon="save" [disabled]="!title() || !content()" (click)="saveNotice()">
         {{ isEditMode ? 'Update Notice' : 'Save Notice' }}
-      </button>
+      </iras-button>
     </div>
   </div>
 

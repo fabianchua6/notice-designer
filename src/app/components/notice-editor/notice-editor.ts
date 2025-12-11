@@ -16,6 +16,7 @@ import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { NoticeService } from '../../services/notice';
 import { TemplateService } from '../../services/template.service';
 import { TEMPLATE_VARIABLES, TemplateVariable } from '../../models/notice.model';
+import { IrasButton, IrasCard, IrasCardHeader, IrasCardContent, IrasAlert } from '../../design-system';
 
 @Component({
   selector: 'app-notice-editor',
@@ -33,6 +34,11 @@ import { TEMPLATE_VARIABLES, TemplateVariable } from '../../models/notice.model'
     MatChipsModule,
     MatTabsModule,
     EditorModule,
+    IrasButton,
+    IrasCard,
+    IrasCardHeader,
+    IrasCardContent,
+    IrasAlert,
   ],
   providers: [
     // Self-hosted TinyMCE - no API key required, fully open source (LGPL)
