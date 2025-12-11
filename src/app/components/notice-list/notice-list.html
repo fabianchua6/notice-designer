@@ -1,70 +1,140 @@
 <div class="list-container">
-  <div class="header">
-    <h1>Notice Designer</h1>
-    <div class="actions">
-      <button mat-raised-button color="primary" (click)="createNew()">
-        <mat-icon>add</mat-icon>
-        Create New Notice
-      </button>
-      <button 
-        mat-raised-button 
-        color="accent" 
-        (click)="compareSelected()"
-        [disabled]="!canCompare()">
-        <mat-icon>compare_arrows</mat-icon>
-        Compare Selected ({{ selectedNotices.size }}/2)
-      </button>
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Notice Templates</h1>
+        <p class="subtitle">Manage and create notice templates for tax communications</p>
+      </div>
+      <div class="header-actions">
+        <button mat-stroked-button (click)="compareSelected()" [disabled]="!canCompare()">
+          <mat-icon>compare_arrows</mat-icon>
+          Compare ({{ selectedNotices.size }}/2)
+        </button>
+        <button mat-flat-button color="primary" (click)="createNew()">
+          <mat-icon>add</mat-icon>
+          Create Notice
+        </button>
+      </div>
     </div>
   </div>
   
+  <!-- Stats Cards -->
+  <div class="stats-row">
+    <mat-card class="stat-card">
+      <div class="stat-icon primary">
+        <mat-icon>description</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ notices().length }}</span>
+        <span class="stat-label">Total Notices</span>
+      </div>
+    </mat-card>
+    <mat-card class="stat-card">
+      <div class="stat-icon teal">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ notices().length }}</span>
+        <span class="stat-label">Published</span>
+      </div>
+    </mat-card>
+    <mat-card class="stat-card">
+      <div class="stat-icon warning">
+        <mat-icon>edit_note</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Drafts</span>
+      </div>
+    </mat-card>
+    <mat-card class="stat-card">
+      <div class="stat-icon grey">
+        <mat-icon>archive</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Archived</span>
+      </div>
+    </mat-card>
+  </div>
+  
   @if (notices().length === 0) {
+    <!-- Empty State -->
     <mat-card class="empty-state">
-      <mat-card-content>
-        <mat-icon class="empty-icon">note_add</mat-icon>
-        <h2>No Notices Yet</h2>
-        <p>Create your first notice to get started!</p>
-        <button mat-raised-button color="primary" (click)="createNew()">
-          Create Notice
-        </button>
-      </mat-card-content>
+      <div class="empty-illustration">
+        <mat-icon>note_add</mat-icon>
+      </div>
+      <h2>No Notices Yet</h2>
+      <p>Start creating professional tax notice templates for IRAS communications.</p>
+      <button mat-flat-button color="primary" (click)="createNew()">
+        <mat-icon>add</mat-icon>
+        Create Your First Notice
+      </button>
     </mat-card>
   } @else {
+    <!-- Notices Grid -->
+    <div class="section-header">
+      <h2>All Notices</h2>
+      <div class="view-options">
+        <button mat-icon-button matTooltip="Grid View" class="active">
+          <mat-icon>grid_view</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="List View">
+          <mat-icon>view_list</mat-icon>
+        </button>
+      </div>
+    </div>
+    
     <div class="notices-grid">
       @for (notice of notices(); track notice.id) {
-        <mat-card class="notice-card">
+        <mat-card class="notice-card" [class.selected]="isSelected(notice.id)">
+          <div class="card-selection">
+            <mat-checkbox
+              [checked]="isSelected(notice.id)"
+              (change)="toggleSelection(notice.id)"
+              color="primary">
+            </mat-checkbox>
+            <span class="status-badge published">Published</span>
+          </div>
+          
           <mat-card-header>
-            <div class="card-header-content">
-              <mat-checkbox
-                [checked]="isSelected(notice.id)"
-                (change)="toggleSelection(notice.id)"
-                color="primary">
-              </mat-checkbox>
-              <div class="notice-meta">
-                <mat-card-title>{{ notice.title }}</mat-card-title>
-                <mat-card-subtitle>
-                  Updated: {{ notice.updatedAt | date:'short' }}
-                </mat-card-subtitle>
-              </div>
-            </div>
+            <mat-card-title>{{ notice.title }}</mat-card-title>
+            <mat-card-subtitle>
+              <mat-icon class="subtitle-icon">schedule</mat-icon>
+              Updated {{ notice.updatedAt | date:'medium' }}
+            </mat-card-subtitle>
           </mat-card-header>
+          
           <mat-card-content>
-            <app-notice-preview
-              [title]="notice.title"
-              [content]="notice.content"
-              [backgroundColor]="notice.backgroundColor || '#ffffff'"
-              [textColor]="notice.textColor || '#000000'"
-              [fontSize]="notice.fontSize || 16"
-              [fontFamily]="notice.fontFamily || 'Arial'"
-              [borderStyle]="notice.borderStyle || 'solid'"
-              [borderColor]="notice.borderColor || '#000000'"
-              [borderWidth]="notice.borderWidth || 1"
-              [padding]="notice.padding || 16">
-            </app-notice-preview>
+            <div class="preview-wrapper">
+              <app-notice-preview
+                [title]="notice.title"
+                [content]="notice.content"
+                [backgroundColor]="notice.backgroundColor || '#ffffff'"
+                [textColor]="notice.textColor || '#000000'"
+                [fontSize]="12"
+                [fontFamily]="notice.fontFamily || 'Arial'"
+                [borderStyle]="notice.borderStyle || 'solid'"
+                [borderColor]="notice.borderColor || '#e0e0e0'"
+                [borderWidth]="1"
+                [padding]="12">
+              </app-notice-preview>
+            </div>
           </mat-card-content>
+          
           <mat-card-actions>
-            <button mat-button color="warn" (click)="deleteNotice(notice.id)">
-              <mat-icon>delete</mat-icon>
-              Delete
+            <button mat-button color="primary">
+              <mat-icon>edit</mat-icon>
+              Edit
+            </button>
+            <button mat-button>
+              <mat-icon>content_copy</mat-icon>
+              Duplicate
+            </button>
+            <span class="spacer"></span>
+            <button mat-icon-button color="warn" (click)="deleteNotice(notice.id)" matTooltip="Delete">
+              <mat-icon>delete_outline</mat-icon>
             </button>
           </mat-card-actions>
         </mat-card>

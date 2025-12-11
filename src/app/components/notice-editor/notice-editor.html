@@ -1,54 +1,84 @@
 <div class="editor-container">
-  <mat-card class="editor-card">
-    <mat-card-header>
-      <mat-card-title>Create New Notice</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="editor-layout">
-        <div class="form-section">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button mat-icon-button routerLink="/" matTooltip="Back to Dashboard">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-text">
+        <h1>Create Notice</h1>
+        <p class="subtitle">Design a new notice template</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-stroked-button (click)="resetForm()">
+        <mat-icon>refresh</mat-icon>
+        Reset
+      </button>
+      <button mat-stroked-button (click)="printNotice()" [disabled]="!title() || !content()">
+        <mat-icon>print</mat-icon>
+        Print / PDF
+      </button>
+      <button mat-flat-button color="primary" (click)="saveNotice()" [disabled]="!title() || !content()">
+        <mat-icon>save</mat-icon>
+        Save Notice
+      </button>
+    </div>
+  </div>
+
+  <!-- Editor Layout -->
+  <div class="editor-layout">
+    <!-- Left Panel - Form -->
+    <div class="form-panel">
+      <mat-card>
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="header-icon">edit_note</mat-icon>
+          <mat-card-title>Notice Content</mat-card-title>
+          <mat-card-subtitle>Enter the title and content for your notice</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Title</mat-label>
-            <input matInput [(ngModel)]="title" placeholder="Enter notice title">
+            <mat-label>Notice Title</mat-label>
+            <input matInput [(ngModel)]="title" placeholder="e.g., Income Tax Assessment Notice">
+            <mat-icon matSuffix>title</mat-icon>
           </mat-form-field>
           
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Content</mat-label>
+          <mat-form-field appearance="outline" class="full-width content-field">
+            <mat-label>Notice Content</mat-label>
             <textarea 
               matInput 
               [(ngModel)]="content" 
-              placeholder="Enter notice content"
-              rows="20">
+              placeholder="Enter the notice content here..."
+              rows="25"
+              class="content-textarea">
             </textarea>
+            <mat-hint>Use the default template as a guide for formatting</mat-hint>
           </mat-form-field>
-        </div>
-        
-        <div class="preview-section">
-          <h3>Preview</h3>
-          <app-notice-preview
-            #noticePreview
-            [title]="title()"
-            [content]="content()"
-            [backgroundColor]="backgroundColor()"
-            [textColor]="textColor()"
-            [fontSize]="fontSize()"
-            [fontFamily]="fontFamily()"
-            [borderStyle]="borderStyle()"
-            [borderColor]="borderColor()"
-            [borderWidth]="borderWidth()"
-            [padding]="padding()">
-          </app-notice-preview>
-        </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    
+    <!-- Right Panel - Preview -->
+    <div class="preview-panel">
+      <div class="preview-header">
+        <mat-icon>visibility</mat-icon>
+        <span>Live Preview</span>
       </div>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="saveNotice()" [disabled]="!title() || !content()">
-        Save Notice
-      </button>
-      <button mat-raised-button color="accent" (click)="printNotice()" [disabled]="!title() || !content()">
-        <mat-icon>print</mat-icon>
-        Print / Save PDF
-      </button>
-      <button mat-button (click)="resetForm()">Reset</button>
-    </mat-card-actions>
-  </mat-card>
+      <div class="preview-content">
+        <app-notice-preview
+          #noticePreview
+          [title]="title()"
+          [content]="content()"
+          [backgroundColor]="backgroundColor()"
+          [textColor]="textColor()"
+          [fontSize]="fontSize()"
+          [fontFamily]="fontFamily()"
+          [borderStyle]="borderStyle()"
+          [borderColor]="borderColor()"
+          [borderWidth]="borderWidth()"
+          [padding]="padding()">
+        </app-notice-preview>
+      </div>
+    </div>
+  </div>
 </div>

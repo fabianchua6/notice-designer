@@ -1,11 +1,176 @@
-/* You can add global styles to this file, and also import other style files */
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
+/* IRAS Notice Designer - Global Styles */
+@use '@angular/material' as mat;
 
-html, body {
-  height: 100%;
+// IRAS Brand Colors
+$iras-primary: #2d7bb9;
+$iras-primary-dark: #1e5a8a;
+$iras-primary-light: #4a9fd4;
+$iras-teal: #20b4af;
+$iras-teal-dark: #178a86;
+$iras-sapphire: #1173c0;
+$iras-grey: #a7a9ac;
+$iras-dark: #1a1a2e;
+$iras-success: #28a745;
+$iras-warning: #ffc107;
+$iras-danger: #dc3545;
+
+// CSS Custom Properties for runtime access
+:root {
+  --iras-primary: #{$iras-primary};
+  --iras-primary-dark: #{$iras-primary-dark};
+  --iras-primary-light: #{$iras-primary-light};
+  --iras-teal: #{$iras-teal};
+  --iras-teal-dark: #{$iras-teal-dark};
+  --iras-sapphire: #{$iras-sapphire};
+  --iras-grey: #{$iras-grey};
+  --iras-dark: #{$iras-dark};
+  --iras-success: #{$iras-success};
+  --iras-warning: #{$iras-warning};
+  --iras-danger: #{$iras-danger};
+  
+  // Shadows
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  
+  // Border radius
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
-body {
+// Angular Material Theme Override
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+// Override Material primary color
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-flat-button.mat-primary,
+.mat-mdc-unelevated-button.mat-primary {
+  --mdc-filled-button-container-color: #{$iras-primary};
+  --mdc-filled-button-label-text-color: white;
+}
+
+.mat-mdc-raised-button.mat-accent,
+.mat-mdc-flat-button.mat-accent,
+.mat-mdc-unelevated-button.mat-accent {
+  --mdc-filled-button-container-color: #{$iras-teal};
+  --mdc-filled-button-label-text-color: white;
+}
+
+// Global Styles
+html, body {
+  height: 100%;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Roboto', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f5f7fa;
+  color: #1a1a2e;
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+// Typography utilities
+.text-primary { color: $iras-primary !important; }
+.text-teal { color: $iras-teal !important; }
+.text-muted { color: #6c757d !important; }
+.text-success { color: $iras-success !important; }
+.text-warning { color: $iras-warning !important; }
+.text-danger { color: $iras-danger !important; }
+
+// Background utilities
+.bg-primary { background-color: $iras-primary !important; }
+.bg-teal { background-color: $iras-teal !important; }
+.bg-light { background-color: #f8f9fa !important; }
+.bg-white { background-color: #ffffff !important; }
+
+// Card enhancements
+.mat-mdc-card {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  
+  &:hover {
+    box-shadow: var(--shadow-md) !important;
+  }
+}
+
+// Button enhancements
+.mat-mdc-raised-button,
+.mat-mdc-flat-button,
+.mat-mdc-outlined-button {
+  border-radius: var(--radius) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em;
+}
+
+// Form field enhancements
+.mat-mdc-form-field {
+  .mdc-text-field--outlined {
+    border-radius: var(--radius) !important;
+  }
+}
+
+// Selection styling
+::selection {
+  background-color: rgba($iras-primary, 0.2);
+  color: $iras-dark;
+}
+
+// Focus ring
+*:focus-visible {
+  outline: 2px solid $iras-primary;
+  outline-offset: 2px;
+}
+
+// Page transitions
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// Status badges
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  
+  &.draft {
+    background-color: rgba(#6c757d, 0.1);
+    color: #6c757d;
+  }
+  
+  &.published {
+    background-color: rgba($iras-success, 0.1);
+    color: $iras-success;
+  }
+  
+  &.archived {
+    background-color: rgba($iras-warning, 0.1);
+    color: darken($iras-warning, 15%);
+  }
 }

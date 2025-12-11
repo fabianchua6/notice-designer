@@ -1,1 +1,217 @@
+// IRAS Notice Designer - App Shell Styles
 
+// Toolbar
+.app-toolbar {
+  background: linear-gradient(135deg, var(--iras-primary) 0%, var(--iras-sapphire) 100%);
+  color: white;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow-md);
+  
+  .menu-button {
+    margin-right: 8px;
+    
+    mat-icon {
+      color: white;
+    }
+  }
+  
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    .logo-box {
+      background: white;
+      color: var(--iras-primary);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+    
+    .app-title {
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    
+    .beta-badge {
+      background: var(--iras-teal);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+  }
+  
+  .spacer {
+    flex: 1;
+  }
+  
+  .toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    button mat-icon {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .user-section {
+      margin-left: 8px;
+      padding-left: 16px;
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      
+      .user-button {
+        color: white;
+        
+        mat-icon {
+          color: white;
+        }
+        
+        span {
+          margin: 0 4px;
+        }
+      }
+    }
+  }
+}
+
+// Sidenav Container
+.sidenav-container {
+  height: calc(100vh - 64px);
+}
+
+// Sidenav
+.sidenav {
+  width: 260px;
+  background: white;
+  border-right: 1px solid #e8e8e8;
+  
+  mat-nav-list {
+    padding-top: 8px;
+    
+    a.mat-mdc-list-item {
+      margin: 4px 8px;
+      border-radius: 8px;
+      height: 44px;
+      
+      mat-icon {
+        color: #666;
+        margin-right: 12px;
+      }
+      
+      span[matListItemTitle] {
+        font-size: 14px;
+        color: #333;
+      }
+      
+      &:hover {
+        background-color: rgba(45, 123, 185, 0.05);
+        
+        mat-icon {
+          color: var(--iras-primary);
+        }
+      }
+      
+      &.active-link {
+        background: linear-gradient(135deg, rgba(45, 123, 185, 0.1) 0%, rgba(32, 180, 175, 0.1) 100%);
+        
+        mat-icon {
+          color: var(--iras-primary);
+        }
+        
+        span[matListItemTitle] {
+          color: var(--iras-primary);
+          font-weight: 500;
+        }
+      }
+      
+      .badge {
+        margin-left: auto;
+        background: #e8e8e8;
+        color: #666;
+        padding: 2px 8px;
+        border-radius: 100px;
+        font-size: 11px;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .nav-divider {
+    margin: 12px 16px;
+  }
+  
+  .nav-section-title {
+    padding: 16px 24px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .nav-sub-item {
+    padding-left: 20px !important;
+  }
+  
+  .sidenav-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    
+    mat-divider {
+      margin: 0;
+    }
+    
+    .footer-content {
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #999;
+      
+      .version {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Main Content Area
+.main-content {
+  background: #f5f7fa;
+  padding: 0;
+  min-height: 100%;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .app-toolbar {
+    .brand {
+      .app-title {
+        display: none;
+      }
+    }
+    
+    .toolbar-actions {
+      .user-section span {
+        display: none;
+      }
+    }
+  }
+  
+  .sidenav {
+    width: 240px;
+  }
+}

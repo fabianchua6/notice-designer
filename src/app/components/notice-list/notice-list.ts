@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { NoticeService } from '../../services/notice';
 import { NoticePreview } from '../notice-preview/notice-preview';
@@ -17,6 +18,7 @@ import { NoticePreview } from '../notice-preview/notice-preview';
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
+    MatTooltipModule,
     FormsModule,
     NoticePreview,
   ],

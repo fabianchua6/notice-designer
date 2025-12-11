@@ -1,1 +1,93 @@
-<router-outlet />
+<mat-toolbar class="app-toolbar">
+  <button mat-icon-button (click)="sidenavOpened = !sidenavOpened" class="menu-button" matTooltip="Toggle Menu">
+    <mat-icon>{{ sidenavOpened ? 'menu_open' : 'menu' }}</mat-icon>
+  </button>
+  <div class="brand">
+    <div class="logo-box">IRAS</div>
+    <span class="app-title">Notice Designer</span>
+    <span class="beta-badge">BETA</span>
+  </div>
+  <span class="spacer"></span>
+  <div class="toolbar-actions">
+    <button mat-icon-button matTooltip="Documentation">
+      <mat-icon>menu_book</mat-icon>
+    </button>
+    <button mat-icon-button matTooltip="Help & Support">
+      <mat-icon>help_outline</mat-icon>
+    </button>
+    <div class="user-section">
+      <button mat-button class="user-button">
+        <mat-icon>account_circle</mat-icon>
+        <span>Admin User</span>
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+    </div>
+  </div>
+</mat-toolbar>
+
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav mode="side" [opened]="sidenavOpened" class="sidenav">
+    <mat-nav-list>
+      <a mat-list-item routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <span matListItemTitle>Dashboard</span>
+      </a>
+      <a mat-list-item routerLink="/editor" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>add_circle_outline</mat-icon>
+        <span matListItemTitle>Create Notice</span>
+      </a>
+      
+      <mat-divider class="nav-divider"></mat-divider>
+      <div class="nav-section-title">Notice Categories</div>
+      
+      <a mat-list-item class="nav-sub-item">
+        <mat-icon matListItemIcon>attach_money</mat-icon>
+        <span matListItemTitle>Income Tax</span>
+        <span class="badge">12</span>
+      </a>
+      <a mat-list-item class="nav-sub-item">
+        <mat-icon matListItemIcon>home_work</mat-icon>
+        <span matListItemTitle>Property Tax</span>
+        <span class="badge">8</span>
+      </a>
+      <a mat-list-item class="nav-sub-item">
+        <mat-icon matListItemIcon>receipt_long</mat-icon>
+        <span matListItemTitle>GST</span>
+        <span class="badge">5</span>
+      </a>
+      <a mat-list-item class="nav-sub-item">
+        <mat-icon matListItemIcon>gavel</mat-icon>
+        <span matListItemTitle>Stamp Duty</span>
+        <span class="badge">3</span>
+      </a>
+      
+      <mat-divider class="nav-divider"></mat-divider>
+      <div class="nav-section-title">Tools</div>
+      
+      <a mat-list-item>
+        <mat-icon matListItemIcon>compare</mat-icon>
+        <span matListItemTitle>Compare Notices</span>
+      </a>
+      <a mat-list-item>
+        <mat-icon matListItemIcon>history</mat-icon>
+        <span matListItemTitle>Version History</span>
+      </a>
+      <a mat-list-item>
+        <mat-icon matListItemIcon>analytics</mat-icon>
+        <span matListItemTitle>Usage Analytics</span>
+      </a>
+    </mat-nav-list>
+    
+    <div class="sidenav-footer">
+      <mat-divider></mat-divider>
+      <div class="footer-content">
+        <span class="version">v2.0.0 Phase 2</span>
+        <span class="copyright">© 2024 IRAS</span>
+      </div>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-content">
+    <router-outlet />
+  </mat-sidenav-content>
+</mat-sidenav-container>

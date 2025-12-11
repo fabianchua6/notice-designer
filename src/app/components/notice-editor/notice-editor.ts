@@ -1,10 +1,12 @@
 import { Component, signal, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { NoticeService } from '../../services/notice';
 import { NoticePreview } from '../notice-preview/notice-preview';
@@ -13,11 +15,13 @@ import { NoticePreview } from '../notice-preview/notice-preview';
   selector: 'app-notice-editor',
   imports: [
     FormsModule,
+    RouterLink,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+    MatTooltipModule,
     NoticePreview,
   ],
   templateUrl: './notice-editor.html',
