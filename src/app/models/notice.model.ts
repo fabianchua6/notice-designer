@@ -89,7 +89,69 @@ export interface TemplateVariable {
   description?: string;
   category: string;
   sampleValue: string;
+  isList?: boolean;  // Indicates this is a list/array variable
 }
+
+// List variable definition for arrays
+export interface ListVariable {
+  key: string;
+  label: string;
+  description: string;
+  category: string;
+  itemFields: { key: string; label: string; sampleValue: string }[];
+  sampleData: Record<string, any>[];
+}
+
+// Available list variables for loop templates
+export const LIST_VARIABLES: ListVariable[] = [
+  {
+    key: 'incomeItems',
+    label: 'Income Items',
+    description: 'List of income sources (employment, rental, etc.)',
+    category: 'Income',
+    itemFields: [
+      { key: 'source', label: 'Source', sampleValue: 'Employment Income' },
+      { key: 'employer', label: 'Employer/Payer', sampleValue: 'ABC Company Pte Ltd' },
+      { key: 'amount', label: 'Amount', sampleValue: '30,000.00' },
+    ],
+    sampleData: [
+      { source: 'Employment Income', employer: 'BINARY TECHNOLOGY PTE. LTD.', amount: '29,795.00' },
+      { source: 'NSman Pay', employer: 'MINDEF', amount: '223.00' },
+    ]
+  },
+  {
+    key: 'deductionItems',
+    label: 'Deduction Items',
+    description: 'List of tax deductions and reliefs',
+    category: 'Deductions',
+    itemFields: [
+      { key: 'type', label: 'Type', sampleValue: 'Earned Income Relief' },
+      { key: 'description', label: 'Description', sampleValue: 'Standard relief for earned income' },
+      { key: 'amount', label: 'Amount', sampleValue: '1,000.00' },
+    ],
+    sampleData: [
+      { type: 'Earned Income Relief', description: 'Standard relief for earned income', amount: '1,000.00' },
+      { type: 'CPF/Provident Fund Relief', description: 'CPF contributions', amount: '600.00' },
+      { type: 'NSman Relief', description: 'National Service relief', amount: '3,000.00' },
+    ]
+  },
+  {
+    key: 'paymentHistory',
+    label: 'Payment History',
+    description: 'List of past payments made',
+    category: 'Payment',
+    itemFields: [
+      { key: 'date', label: 'Date', sampleValue: '15 Oct 2025' },
+      { key: 'method', label: 'Method', sampleValue: 'GIRO' },
+      { key: 'amount', label: 'Amount', sampleValue: '100.00' },
+      { key: 'reference', label: 'Reference', sampleValue: 'PAY-2025-001' },
+    ],
+    sampleData: [
+      { date: '15 Oct 2025', method: 'GIRO', amount: '100.00', reference: 'PAY-2025-001' },
+      { date: '15 Nov 2025', method: 'GIRO', amount: '100.00', reference: 'PAY-2025-002' },
+    ]
+  },
+];
 
 export const TEMPLATE_VARIABLES: TemplateVariable[] = [
   // Taxpayer Information

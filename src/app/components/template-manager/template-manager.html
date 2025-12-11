@@ -19,33 +19,35 @@
   <div class="templates-grid">
     @for (template of filteredTemplates; track template.id) {
       <mat-card class="template-card" appearance="outlined">
-        <mat-card-content>
-          <div class="card-top">
-            <div class="template-icon">
-              <mat-icon>{{ getCategoryIcon(template.category) }}</mat-icon>
-            </div>
-            <div class="template-info">
-              <h3 class="template-name">{{ template.name }}</h3>
-              <span class="template-category">{{ getCategoryLabel(template.category) }}</span>
-            </div>
-            @if (template.isSystem) {
-              <span class="system-badge">System</span>
-            }
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="icon-wrapper">
+            <mat-icon>{{ getCategoryIcon(template.category) }}</mat-icon>
           </div>
+          @if (template.isSystem) {
+            <span class="system-chip">System</span>
+          }
+        </div>
+        
+        <!-- Card Body -->
+        <mat-card-content>
+          <h3 class="template-title">{{ template.name }}</h3>
+          <span class="template-category">{{ getCategoryLabel(template.category) }}</span>
           <p class="template-description">{{ template.description }}</p>
         </mat-card-content>
         
-        <mat-card-actions align="end">
-          <button mat-button (click)="editTemplate(template)" matTooltip="Edit this master template">
+        <!-- Card Actions -->
+        <mat-card-actions>
+          <button mat-stroked-button (click)="editTemplate(template)" matTooltip="Edit this master template">
             <mat-icon>edit</mat-icon>
             Edit
           </button>
           <button mat-flat-button color="primary" (click)="useTemplate(template)" matTooltip="Create a new notice from this template">
-            <mat-icon>content_copy</mat-icon>
-            Use
+            <mat-icon>add</mat-icon>
+            Use Template
           </button>
           @if (!template.isSystem) {
-            <button mat-icon-button color="warn" (click)="deleteTemplate(template)" matTooltip="Delete template">
+            <button mat-icon-button color="warn" (click)="deleteTemplate(template)" matTooltip="Delete template" class="delete-btn">
               <mat-icon>delete_outline</mat-icon>
             </button>
           }
