@@ -42,7 +42,8 @@ export type IrasAlertType = 'info' | 'success' | 'warning' | 'danger';
       </div>
     }
   `,
-  styles: [
+  styles: [`
+    @use 'sass:color';
     @use '../styles/variables' as *;
     
     :host {
@@ -221,7 +222,8 @@ export class IrasAlert {
       </div>
     }
   `,
-  styles: [
+  styles: [`
+    @use 'sass:color';
     @use '../styles/variables' as *;
     
     :host {

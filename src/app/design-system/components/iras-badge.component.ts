@@ -26,7 +26,7 @@ export type IrasBadgeSize = 'small' | 'medium' | 'large';
       <ng-content></ng-content>
     </span>
   `,
-  styles: [
+  styles: [`
     @use '../styles/variables' as *;
     
     :host {
@@ -173,7 +173,7 @@ export class IrasBadge {
       }
     </span>
   `,
-  styles: [
+  styles: [`
     @use '../styles/variables' as *;
     
     :host {
