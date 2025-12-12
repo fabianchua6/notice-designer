@@ -2,15 +2,17 @@
 
 A professional PDF template designer for creating IRAS (Inland Revenue Authority of Singapore) tax notices. Built with Angular 21, Angular Material, and TinyMCE.
 
-![IRAS Notice Designer](https://img.shields.io/badge/Angular-21-red) ![TinyMCE](https://img.shields.io/badge/TinyMCE-7-blue) ![License](https://img.shields.io/badge/License-MIT-green)
+![Angular](https://img.shields.io/badge/Angular-21-red) ![TinyMCE](https://img.shields.io/badge/TinyMCE-8-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Version](https://img.shields.io/badge/Version-2.0.0-brightgreen)
 
 ## 🚀 Features
 
 ### Core Features
-- **WYSIWYG Editor** - TinyMCE-powered rich text editor with full formatting capabilities
+- **WYSIWYG Editor** - TinyMCE 8-powered rich text editor with full formatting capabilities
 - **Live A4 Preview** - Real-time document preview with zoom controls and pagination
 - **Template Variables** - Dynamic content insertion with 50+ predefined IRAS variables
-- **Master Templates** - 8 pre-built IRAS notice templates ready to use
+- **List Variables** - Loop support with `{{#each}}...{{/each}}` syntax for repeating data
+- **Conditional Logic** - `{{#if}}...{{/if}}` syntax for conditional content
+- **Master Templates** - Pre-built IRAS notice templates ready to use
 - **Print/PDF Export** - Professional PDF generation via browser print
 
 ### Template Management
@@ -38,9 +40,10 @@ A professional PDF template designer for creating IRAS (Inland Revenue Authority
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Angular 21 (Standalone Components)
+- **Framework**: Angular 21 (Standalone Components with Signals)
 - **UI Library**: Angular Material (Indigo-Pink theme with IRAS overrides)
-- **Editor**: TinyMCE 7 (Self-hosted, LGPL licensed - no API key required)
+- **Editor**: TinyMCE 8 (Self-hosted, LGPL licensed - no API key required)
+- **Templating**: Custom Handlebars-like variable processor (lightweight, no dependencies)
 - **Styling**: SCSS with CSS Variables
 - **State**: Angular Signals + localStorage persistence
 - **Build**: Angular CLI with esbuild
@@ -115,19 +118,29 @@ npm run lint        # if configured
 | `/` | NoticeList | Dashboard with all notices |
 | `/editor` | NoticeEditor | Create new notice |
 | `/editor/:id` | NoticeEditor | Edit existing notice |
+| `/editor?templateId=X&editTemplate=true` | NoticeEditor | Edit master template |
 | `/templates` | TemplateManager | Browse master templates |
 | `/compare/:id1/:id2` | NoticeComparison | Compare two notices |
+| `/design-system` | DesignSystemShowcase | UI components demo |
 
 ## 🚧 Roadmap / TODO
 
+### Completed ✅
+- [x] Template variable system with Handlebars-like syntax
+- [x] List/loop variable support (`{{#each}}`)
+- [x] Conditional variable support (`{{#if}}`)
+- [x] Separate template edit vs notice creation workflows
+- [x] Material Design template cards
+- [x] Standard A4 margins (20mm)
+
 ### Planned Features
-- [ ] **Drag & Drop Components** - Reusable components library (tables, headers, signatures)
-- [ ] **Image Upload** - Upload and embed images/logos
-- [ ] **Multi-page Pagination** - Automatic page breaks with page numbers
-- [ ] **PDF Direct Export** - Generate PDF without browser print dialog
+- [ ] **Data Binding UI** - Upload JSON/CSV test data for preview
+- [ ] **Approval Workflow** - Draft → Review → Approved states
+- [ ] **Batch Processing** - Generate notices in bulk from data files
 - [ ] **Template Import/Export** - JSON-based template sharing
-- [ ] **Version History** - Track changes to notices
-- [ ] **Collaboration** - Multi-user editing support
+- [ ] **Version History** - Track changes to notices and templates
+- [ ] **Image Upload** - Embed custom images and logos
+- [ ] **PDF Direct Export** - Generate PDF without browser print dialog
 
 ### Known Issues
 - Preview may not perfectly match TinyMCE for complex layouts
@@ -141,6 +154,7 @@ This project is licensed under the MIT License.
 - **TinyMCE**: LGPL 2.1 (self-hosted, no API key required)
 - **Angular Material**: MIT
 - **Angular**: MIT
+- **JsBarcode**: MIT
 
 ## 🤝 Contributing
 
@@ -157,3 +171,5 @@ For issues and feature requests, please use the [GitHub Issues](https://github.c
 ---
 
 **Built with ❤️ for IRAS Notice Management**
+
+**Version 2.0.0** | © 2025 IRAS

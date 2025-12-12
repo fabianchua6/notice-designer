@@ -50,7 +50,7 @@ export class NoticeService {
   }
   
   private generateId(): string {
-    return `notice-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `notice-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
   
   private saveNotices(): void {

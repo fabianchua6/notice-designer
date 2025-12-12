@@ -57,7 +57,7 @@ export class TemplateService {
   }
   
   private generateId(): string {
-    return `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `template-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   }
   
   private saveTemplates(): void {

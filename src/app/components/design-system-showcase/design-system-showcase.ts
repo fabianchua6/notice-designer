@@ -48,10 +48,10 @@ export class DesignSystemShowcase {
   }
   
   onBannerAction(): void {
-    console.log('Banner action clicked');
+    // Banner action handler - implement as needed
   }
   
   onPillRemove(): void {
-    console.log('Pill removed');
+    // Pill remove handler - implement as needed
   }
 }
