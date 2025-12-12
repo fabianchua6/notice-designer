@@ -811,7 +811,6 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
   
   saveTemplate(): void {
     if (!this.title() || !this.content()) {
-      alert('Please provide both a title and content before saving.');
       return;
     }
     
@@ -823,23 +822,15 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
       header: this.headerConfig(),
     };
     
-    try {
-      if (this.templateId) {
-        // Update existing template
-        this.templateService.updateTemplate(this.templateId, templateData);
-        console.log('Template updated:', this.templateId);
-      } else {
-        // Add new template
-        const newTemplate = this.templateService.addTemplate(templateData);
-        console.log('Template saved:', newTemplate.id);
-      }
-      
-      // Navigate back to templates list
-      this.router.navigate(['/templates']);
-    } catch (error) {
-      console.error('Error saving template:', error);
-      alert('Failed to save template. Please try again.');
+    if (this.templateId) {
+      // Update existing template (including system templates for demo purposes)
+      this.templateService.updateTemplate(this.templateId, templateData);
+    } else {
+      // Add new template
+      this.templateService.addTemplate(templateData);
     }
+    
+    this.router.navigate(['/templates']);
   }
   
   saveAsMasterTemplate(): void {

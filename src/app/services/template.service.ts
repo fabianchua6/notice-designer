@@ -40,7 +40,7 @@ export class TemplateService {
   updateTemplate(id: string, updates: Partial<MasterTemplate>): void {
     this.templates.update(templates =>
       templates.map(template =>
-        template.id === id && !template.isSystem
+        template.id === id
           ? { ...template, ...updates, updatedAt: new Date() }
           : template
       )
@@ -62,17 +62,38 @@ export class TemplateService {
   
   private saveTemplates(): void {
     try {
-      // Only save non-system templates
+      // Save user templates
       const userTemplates = this.templates().filter(t => !t.isSystem);
       localStorage.setItem('masterTemplates', JSON.stringify(userTemplates));
+      
+      // Save modified system templates (for demo purposes - allows editing master templates)
+      const systemTemplates = this.templates().filter(t => t.isSystem);
+      localStorage.setItem('systemTemplatesOverrides', JSON.stringify(systemTemplates));
     } catch (error) {
       console.error('Failed to save templates to localStorage:', error);
     }
   }
   
   private loadTemplates(): void {
-    // Start with system templates
-    const systemTemplates = this.getSystemTemplates();
+    // Start with system templates (from code)
+    let systemTemplates = this.getSystemTemplates();
+    
+    // Check for saved overrides of system templates (demo: allows editing master templates)
+    try {
+      const overrides = localStorage.getItem('systemTemplatesOverrides');
+      if (overrides) {
+        const savedSystemTemplates = JSON.parse(overrides).map((t: any) => ({
+          ...t,
+          createdAt: new Date(t.createdAt),
+          updatedAt: new Date(t.updatedAt),
+          isSystem: true,
+        }));
+        // Use saved versions instead of hardcoded ones
+        systemTemplates = savedSystemTemplates;
+      }
+    } catch (error) {
+      console.error('Failed to load system template overrides:', error);
+    }
     
     // Load user templates from localStorage
     try {
