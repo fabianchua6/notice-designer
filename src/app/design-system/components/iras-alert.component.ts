@@ -42,8 +42,8 @@ export type IrasAlertType = 'info' | 'success' | 'warning' | 'danger';
       </div>
     }
   `,
-  styles: [`
-    @import '../styles/variables';
+  styles: [
+    @use '../styles/variables' as *;
     
     :host {
       display: block;
@@ -221,8 +221,8 @@ export class IrasAlert {
       </div>
     }
   `,
-  styles: [`
-    @import '../styles/variables';
+  styles: [
+    @use '../styles/variables' as *;
     
     :host {
       display: block;
@@ -270,7 +270,7 @@ export class IrasAlert {
     // ========================================
     
     .banner-info {
-      background: linear-gradient(135deg, lighten($info-light, 3%) 0%, $info-light 100%);
+      background: linear-gradient(135deg, color.adjust($info-light, $lightness: 3%) 0%, $info-light 100%);
       color: $info-dark;
       border-bottom: 1px solid $info;
       
@@ -282,7 +282,7 @@ export class IrasAlert {
     }
     
     .banner-success {
-      background: linear-gradient(135deg, lighten($success-light, 3%) 0%, $success-light 100%);
+      background: linear-gradient(135deg, color.adjust($success-light, $lightness: 3%) 0%, $success-light 100%);
       color: $success-dark;
       border-bottom: 1px solid $success;
       
@@ -294,7 +294,7 @@ export class IrasAlert {
     }
     
     .banner-warning {
-      background: linear-gradient(135deg, lighten($warning-light, 3%) 0%, $warning-light 100%);
+      background: linear-gradient(135deg, color.adjust($warning-light, $lightness: 3%) 0%, $warning-light 100%);
       color: $warning-dark;
       border-bottom: 1px solid $warning;
       
@@ -306,7 +306,7 @@ export class IrasAlert {
     }
     
     .banner-danger {
-      background: linear-gradient(135deg, lighten($danger-light, 3%) 0%, $danger-light 100%);
+      background: linear-gradient(135deg, color.adjust($danger-light, $lightness: 3%) 0%, $danger-light 100%);
       color: $danger-dark;
       border-bottom: 1px solid $danger;
       

@@ -1,6 +1,6 @@
 /* IRAS Notice Designer - Global Styles */
 @use '@angular/material' as mat;
-@import './app/design-system/styles/variables';
+@use './app/design-system/styles/variables' as *;
 
 // IRAS uses Source Sans Pro as their official font
 $iras-font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -170,6 +170,6 @@ html, body {
   
   &.archived {
     background-color: rgba($warning, 0.1);
-    color: darken($warning, 15%);
+    color: color.adjust($warning, $lightness: -15%);
   }
 }

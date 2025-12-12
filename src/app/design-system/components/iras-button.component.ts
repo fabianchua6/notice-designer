@@ -42,8 +42,8 @@ export type IrasButtonSize = 'small' | 'medium' | 'large';
       }
     </button>
   `,
-  styles: [`
-    @import '../styles/variables';
+  styles: [
+    @use '../styles/variables' as *;
     
     :host {
       display: inline-block;
@@ -105,7 +105,7 @@ export type IrasButtonSize = 'small' | 'medium' | 'large';
       box-shadow: $shadow-sm;
       
       &:hover:not(:disabled) {
-        background: linear-gradient(135deg, $iras-primary-dark 0%, darken($iras-sapphire, 5%) 100%);
+        background: linear-gradient(135deg, $iras-primary-dark 0%, color.adjust($iras-sapphire, $lightness: -5%) 100%);
         box-shadow: $shadow-base;
         transform: translateY(-1px);
       }
@@ -123,7 +123,7 @@ export type IrasButtonSize = 'small' | 'medium' | 'large';
       box-shadow: $shadow-sm;
       
       &:hover:not(:disabled) {
-        background: linear-gradient(135deg, darken($iras-teal, 5%) 0%, darken($iras-teal-dark, 5%) 100%);
+        background: linear-gradient(135deg, color.adjust($iras-teal, $lightness: -5%) 0%, color.adjust($iras-teal-dark, $lightness: -5%) 100%);
         box-shadow: $shadow-base;
         transform: translateY(-1px);
       }
@@ -146,7 +146,7 @@ export type IrasButtonSize = 'small' | 'medium' | 'large';
       }
       
       &:active:not(:disabled) {
-        background: darken($iras-primary-lighter, 5%);
+        background: color.adjust($iras-primary-lighter, $lightness: -5%);
       }
     }
     

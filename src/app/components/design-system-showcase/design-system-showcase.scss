@@ -1,4 +1,4 @@
-@import '../../design-system/styles/variables';
+@use '../../design-system/styles/variables' as *;
 
 .showcase-container {
   padding: $spacing-2xl;
