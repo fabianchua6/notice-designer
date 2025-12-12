@@ -121,10 +121,154 @@
 // Page Content
 .page-content {
   position: relative;
-  min-height: calc(1123px - 40px); // Full height minus footer
+  min-height: calc(1123px - 60px); // Full height minus footer
 }
 
-// Document Header (IRAS branding)
+// IRAS Header (Full header from main)
+.iras-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--iras-primary, #2d7bb9);
+  
+  .header-left {
+    flex: 1;
+    
+    .tax-ref {
+      font-size: 12px;
+      margin: 0 0 4px 0;
+      color: #333;
+      
+      strong {
+        color: #000;
+      }
+    }
+    
+    .date {
+      font-size: 12px;
+      margin: 0 0 8px 0;
+      color: #333;
+    }
+    
+    .quote-note {
+      font-size: 10px;
+      font-style: italic;
+      color: #666;
+      margin: 0 0 16px 0;
+      max-width: 400px;
+      line-height: 1.4;
+    }
+    
+    .taxpayer-info {
+      margin-top: 12px;
+      
+      p {
+        margin: 0 0 2px 0;
+        font-size: 12px;
+        color: #333;
+        
+        &.recipient-name {
+          font-size: 13px;
+          margin-bottom: 4px;
+        }
+      }
+    }
+    
+    .barcode-container {
+      margin-top: 12px;
+      
+      .preview-barcode {
+        max-width: 200px;
+        height: 35px;
+      }
+    }
+  }
+  
+  .header-right {
+    .iras-logo {
+      text-align: right;
+      
+      .logo-image {
+        max-width: 150px;
+        height: auto;
+      }
+      
+      .logo-fallback {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        
+        .logo-icon {
+          background: linear-gradient(135deg, var(--iras-primary, #2d7bb9), var(--iras-teal, #20b4af));
+          color: white;
+          font-weight: 700;
+          font-size: 18px;
+          padding: 8px 12px;
+          border-radius: 4px;
+          letter-spacing: 1px;
+        }
+        
+        .logo-text {
+          display: flex;
+          flex-direction: column;
+          
+          .ministry {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1a1a2e;
+            letter-spacing: 0.3px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Condensed Continuation Header - for pages 2+
+.iras-header-continuation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--iras-primary, #2d7bb9);
+  height: 40px;
+  
+  .header-left {
+    .tax-ref {
+      font-size: 11px;
+      margin: 0;
+      color: #333;
+      
+      strong {
+        color: #000;
+      }
+    }
+  }
+  
+  .header-right {
+    .iras-logo-small {
+      .logo-image-small {
+        max-width: 80px;
+        height: auto;
+      }
+      
+      .logo-fallback-small {
+        background: linear-gradient(135deg, var(--iras-primary, #2d7bb9), var(--iras-teal, #20b4af));
+        color: white;
+        font-weight: 700;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 3px;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+}
+
+// Legacy Document Header (keep for backwards compatibility)
 .document-header {
   display: flex;
   justify-content: space-between;

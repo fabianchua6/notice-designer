@@ -18,7 +18,7 @@ import { NoticeService } from '../../services/notice';
 import { TemplateService } from '../../services/template.service';
 import { DocumentRendererService, DocumentHeaderData } from '../../services/document-renderer.service';
 import { TEMPLATE_VARIABLES, TemplateVariable, LetterHeader } from '../../models/notice.model';
-import { IrasButton, IrasCard, IrasCardHeader, IrasCardContent, IrasAlert } from '../../design-system';
+import { IrasButton } from '../../design-system';
 import { NoticePreviewEnhanced } from '../notice-preview-enhanced/notice-preview-enhanced';
 import JsBarcode from 'jsbarcode';
 
@@ -40,10 +40,6 @@ import JsBarcode from 'jsbarcode';
     MatSlideToggleModule,
     EditorModule,
     IrasButton,
-    IrasCard,
-    IrasCardHeader,
-    IrasCardContent,
-    IrasAlert,
     NoticePreviewEnhanced,
   ],
   providers: [
@@ -79,6 +75,7 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
   showHeaderSettings = false;
   headerConfig = signal<LetterHeader>({
     showHeader: true,
+    showHeaderOnAllPages: true, // Show condensed header on pages 2+
     taxRef: 'S1234567A',
     date: new Date().toLocaleDateString('en-SG', {
       day: '2-digit',

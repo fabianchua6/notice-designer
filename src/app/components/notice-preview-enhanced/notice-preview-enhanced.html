@@ -26,21 +26,67 @@
         <div class="a4-page" [ngStyle]="getPageStyle()">
           <!-- Page Content Area -->
           <div class="page-content" [ngStyle]="getContentStyle()">
-            <!-- IRAS Header - First Page Only -->
-            @if (page.isFirstPage) {
-              <div class="document-header">
-                <div class="iras-logo">
-                  <div class="logo-icon">IRAS</div>
-                  <div class="logo-text">
-                    <span class="ministry">Inland Revenue Authority of Singapore</span>
+            <!-- IRAS Header - First Page Only (Full header from main) -->
+            @if (page.isFirstPage && headerConfig.showHeader) {
+              <div class="iras-header">
+                <div class="header-left">
+                  <p class="tax-ref">Tax Reference Number: <strong>{{ headerConfig.taxRef || 'SXXXXXXXXXA' }}</strong></p>
+                  <p class="date">Date: {{ headerConfig.date || getCurrentDate() }}</p>
+                  @if (headerConfig.showQuoteNote) {
+                    <p class="quote-note">Please quote the Tax Reference Number (e.g. NRIC, FIN etc.) in full when corresponding with us.</p>
+                  }
+                  <div class="taxpayer-info">
+                    <p class="recipient-name"><strong>{{ headerConfig.recipientName || 'Recipient Name' }}</strong></p>
+                    <p>{{ headerConfig.addressLine1 || 'Address Line 1' }}</p>
+                    @if (headerConfig.addressLine2) {
+                      <p>{{ headerConfig.addressLine2 }}</p>
+                    }
+                    @if (headerConfig.addressLine3) {
+                      <p>{{ headerConfig.addressLine3 }}</p>
+                    }
+                    @if (headerConfig.addressLine4) {
+                      <p>{{ headerConfig.addressLine4 }}</p>
+                    }
+                  </div>
+                  @if (headerConfig.showBarcode && headerConfig.taxRef) {
+                    <div class="barcode-container">
+                      <svg class="preview-barcode"></svg>
+                    </div>
+                  }
+                </div>
+                <div class="header-right">
+                  <div class="iras-logo">
+                    <img src="/assets/images/iras-logo.png" alt="IRAS Logo" class="logo-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="logo-fallback" style="display: none;">
+                      <div class="logo-icon">IRAS</div>
+                      <div class="logo-text">
+                        <span class="ministry">Inland Revenue Authority of Singapore</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="document-date">{{ getCurrentDate() }}</div>
               </div>
 
-              <!-- Title -->
-              <div class="document-title">
-                <h1>{{ title || 'Untitled Notice' }}</h1>
+              <!-- Document Title -->
+              @if (title) {
+                <div class="document-title">
+                  <h1>{{ title }}</h1>
+                </div>
+              }
+            }
+            
+            <!-- Condensed Continuation Header - Pages 2+ -->
+            @if (!page.isFirstPage && headerConfig.showHeader && headerConfig.showHeaderOnAllPages) {
+              <div class="iras-header-continuation">
+                <div class="header-left">
+                  <p class="tax-ref">Tax Ref: <strong>{{ headerConfig.taxRef || 'SXXXXXXXXXA' }}</strong></p>
+                </div>
+                <div class="header-right">
+                  <div class="iras-logo-small">
+                    <img src="/assets/images/iras-logo.png" alt="IRAS" class="logo-image-small" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="logo-fallback-small" style="display: none;">IRAS</div>
+                  </div>
+                </div>
               </div>
             }
 

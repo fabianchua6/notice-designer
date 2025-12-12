@@ -97,6 +97,15 @@
         
         @if (headerConfig().showHeader) {
           <div class="form-row">
+            <mat-slide-toggle 
+              [checked]="headerConfig().showHeaderOnAllPages" 
+              (change)="updateHeaderConfig('showHeaderOnAllPages', $event.checked)">
+              Show Header on All Pages
+            </mat-slide-toggle>
+            <span class="toggle-hint">Display condensed header on pages 2+</span>
+          </div>
+          
+          <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Tax Reference Number</mat-label>
               <input matInput [value]="headerConfig().taxRef" (input)="updateHeaderConfig('taxRef', $any($event.target).value)">
@@ -247,11 +256,12 @@
         <!-- Use enhanced preview component with pagination -->
         <app-notice-preview-enhanced
           [title]="title()"
-          [content]="getPreviewContent()"
+          [content]="getPreviewContentForPrint()"
           [fontSize]="fontSize()"
           [fontFamily]="fontFamily()"
           [backgroundColor]="backgroundColor()"
           [textColor]="textColor()"
+          [headerConfig]="headerConfig()"
           [showPageNumbers]="true"
           [showRuler]="false">
         </app-notice-preview-enhanced>

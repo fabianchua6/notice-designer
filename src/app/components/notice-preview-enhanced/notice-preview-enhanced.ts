@@ -1,7 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { PaginationService, Page, PaginationConfig } from '../../services/pagination.service';
+import { LetterHeader } from '../../models/notice.model';
+
+declare var JsBarcode: any;
 
 @Component({
   selector: 'app-notice-preview-enhanced',
@@ -10,7 +13,7 @@ import { PaginationService, Page, PaginationConfig } from '../../services/pagina
   styleUrl: './notice-preview-enhanced.scss',
   encapsulation: ViewEncapsulation.None, // Allow HTML styles to work
 })
-export class NoticePreviewEnhanced implements OnChanges {
+export class NoticePreviewEnhanced implements OnChanges, AfterViewChecked {
   @Input() title: string = '';
   @Input() content: string = ''; // HTML content
   @Input() backgroundColor: string = '#ffffff';
@@ -20,17 +23,34 @@ export class NoticePreviewEnhanced implements OnChanges {
   @Input() showPageNumbers: boolean = true;
   @Input() showRuler: boolean = false;
   
+  // Header configuration from main
+  @Input() headerConfig: LetterHeader = {
+    showHeader: true,
+    showHeaderOnAllPages: true,
+    taxRef: '',
+    date: '',
+    recipientName: '',
+    addressLine1: '',
+    addressLine2: '',
+    addressLine3: '',
+    addressLine4: '',
+    showQuoteNote: true,
+    showBarcode: false
+  };
+  
   zoom: number = 100;
+  private barcodeInitialized = false;
 
   // A4 dimensions at 96 DPI: 794px x 1123px
   readonly pageWidth = 794;
   readonly pageHeight = 1123;
-  readonly marginTop = 96; // ~1 inch
-  readonly marginBottom = 96;
-  readonly marginLeft = 96;
-  readonly marginRight = 96;
-  readonly headerHeight = 80;
-  readonly footerHeight = 40;
+  readonly marginTop = 56; // Match 20mm standard margin
+  readonly marginBottom = 56;
+  readonly marginLeft = 56;
+  readonly marginRight = 56;
+  readonly headerHeight = 200; // Full IRAS header height for first page
+  readonly continuationHeaderHeight = 60; // Condensed header for pages 2+
+  readonly footerHeight = 60;
   
   readonly lineHeight = 1.6;
   
@@ -50,12 +70,50 @@ export class NoticePreviewEnhanced implements OnChanges {
   }
   
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['content'] || changes['title'] || changes['fontSize'] || changes['fontFamily']) {
+    if (changes['content'] || changes['title'] || changes['fontSize'] || changes['fontFamily'] || changes['headerConfig']) {
       this.paginateContent();
+    }
+    // Reset barcode when header config changes
+    if (changes['headerConfig']) {
+      this.barcodeInitialized = false;
+    }
+  }
+  
+  ngAfterViewChecked(): void {
+    this.initializeBarcode();
+  }
+  
+  private initializeBarcode(): void {
+    if (this.barcodeInitialized || !this.headerConfig?.showBarcode || !this.headerConfig?.taxRef) {
+      return;
+    }
+    
+    const barcodeElements = document.querySelectorAll('.preview-barcode');
+    if (barcodeElements.length > 0 && typeof JsBarcode !== 'undefined') {
+      try {
+        barcodeElements.forEach((el) => {
+          JsBarcode(el, this.headerConfig.taxRef, {
+            format: 'CODE128',
+            width: 1.5,
+            height: 35,
+            displayValue: false,
+            margin: 0,
+          });
+        });
+        this.barcodeInitialized = true;
+      } catch (e) {
+        console.error('Barcode generation failed:', e);
+      }
     }
   }
   
   paginateContent(): void {
+    // Calculate header heights based on settings
+    const firstPageHeaderHeight = this.headerConfig?.showHeader ? this.headerHeight : 0;
+    const continuationHeaderHeight = (this.headerConfig?.showHeader && this.headerConfig?.showHeaderOnAllPages) 
+      ? this.continuationHeaderHeight 
+      : 0;
+    
     const config: PaginationConfig = {
       pageWidth: this.pageWidth,
       pageHeight: this.pageHeight,
@@ -63,7 +121,8 @@ export class NoticePreviewEnhanced implements OnChanges {
       marginBottom: this.marginBottom,
       marginLeft: this.marginLeft,
       marginRight: this.marginRight,
-      headerHeight: this.headerHeight,
+      headerHeight: firstPageHeaderHeight,
+      continuationHeaderHeight: continuationHeaderHeight,
       footerHeight: this.footerHeight,
       fontSize: this.fontSize,
       lineHeight: this.lineHeight

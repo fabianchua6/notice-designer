@@ -20,7 +20,8 @@ export interface PaginationConfig {
   marginBottom: number;
   marginLeft: number;
   marginRight: number;
-  headerHeight: number;
+  headerHeight: number; // First page header height
+  continuationHeaderHeight?: number; // Header height for pages 2+ (if different)
   footerHeight: number;
   fontSize: number;
   lineHeight: number;
@@ -64,8 +65,10 @@ export class PaginationService {
     }
     
     // Calculate available content height per page
+    // First page has full header, subsequent pages have continuation header (or no header)
+    const continuationHeaderHeight = config.continuationHeaderHeight ?? 0;
     const firstPageContentHeight = config.pageHeight - config.marginTop - config.marginBottom - config.headerHeight - config.footerHeight;
-    const subsequentPageContentHeight = config.pageHeight - config.marginTop - config.marginBottom - config.footerHeight;
+    const subsequentPageContentHeight = config.pageHeight - config.marginTop - config.marginBottom - continuationHeaderHeight - config.footerHeight;
     
     // Create a temporary container to measure content
     const measurements = this.measureContent(htmlContent, config);
@@ -236,6 +239,19 @@ export class PaginationService {
     
     let type: ContentMeasurement['type'] = 'other';
     let canSplit = false;
+    
+    // Check for keep-together markers (class, data attribute, or CSS break-inside)
+    const hasKeepTogether = this.shouldKeepTogether(element);
+    
+    if (hasKeepTogether) {
+      // Elements marked as keep-together should never be split
+      return {
+        element: element.cloneNode(true) as HTMLElement,
+        height,
+        canSplit: false,
+        type: 'other' // Treat as atomic unit
+      };
+    }
     
     switch (tagName) {
       case 'table':
@@ -456,6 +472,50 @@ export class PaginationService {
     
     container.appendChild(scaledImage);
     return container;
+  }
+  
+  /**
+   * Check if an element should be kept together (not split across pages)
+   * Detects:
+   * - .keep-together or .no-break class
+   * - data-keep-together attribute
+   * - CSS break-inside: avoid
+   * - data-component attribute (custom components)
+   */
+  private shouldKeepTogether(element: HTMLElement): boolean {
+    // Check for keep-together classes
+    if (element.classList.contains('keep-together') || 
+        element.classList.contains('no-break') ||
+        element.classList.contains('page-break-inside-avoid')) {
+      return true;
+    }
+    
+    // Check for data attributes
+    if (element.hasAttribute('data-keep-together') ||
+        element.hasAttribute('data-component') ||
+        element.hasAttribute('data-no-split')) {
+      return true;
+    }
+    
+    // Check computed style for break-inside
+    try {
+      const computedStyle = window.getComputedStyle(element);
+      const breakInside = computedStyle.getPropertyValue('break-inside') || 
+                          computedStyle.getPropertyValue('-webkit-break-inside');
+      if (breakInside === 'avoid' || breakInside === 'avoid-page') {
+        return true;
+      }
+      
+      // Also check page-break-inside (older property)
+      const pageBreakInside = computedStyle.getPropertyValue('page-break-inside');
+      if (pageBreakInside === 'avoid') {
+        return true;
+      }
+    } catch (e) {
+      // Ignore errors from getComputedStyle
+    }
+    
+    return false;
   }
   
   /**
