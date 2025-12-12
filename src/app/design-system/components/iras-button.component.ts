@@ -43,7 +43,7 @@ export type IrasButtonSize = 'small' | 'medium' | 'large';
     </button>
   `,
   styles: [`
-    @use 'sass:color';
+    @use 'sass:color' as color;
     @use '../styles/variables' as *;
     
     :host {

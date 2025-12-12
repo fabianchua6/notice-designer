@@ -43,7 +43,7 @@ export type IrasAlertType = 'info' | 'success' | 'warning' | 'danger';
     }
   `,
   styles: [`
-    @use 'sass:color';
+    @use 'sass:color' as color;
     @use '../styles/variables' as *;
     
     :host {
@@ -223,7 +223,7 @@ export class IrasAlert {
     }
   `,
   styles: [`
-    @use 'sass:color';
+    @use 'sass:color' as color;
     @use '../styles/variables' as *;
     
     :host {
