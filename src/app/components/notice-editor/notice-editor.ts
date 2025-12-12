@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewChecked, signal, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, signal, ViewEncapsulation, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -16,7 +16,8 @@ import { CommonModule } from '@angular/common';
 import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { NoticeService } from '../../services/notice';
 import { TemplateService } from '../../services/template.service';
-import { DocumentRendererService, DocumentHeaderData } from '../../services/document-renderer.service';
+import { DocumentRendererService, DocumentHeaderData, PrintPage } from '../../services/document-renderer.service';
+import { PaginationService, PaginationConfig } from '../../services/pagination.service';
 import { TEMPLATE_VARIABLES, TemplateVariable, LetterHeader } from '../../models/notice.model';
 import { IrasButton } from '../../design-system';
 import { NoticePreviewEnhanced } from '../notice-preview-enhanced/notice-preview-enhanced';
@@ -96,6 +97,11 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
   
   // Toggle for showing variables vs sample data
   showSampleData = true;
+  
+  // Page break visualization
+  showPageBreaks = signal(false);
+  pageBreakPositions: number[] = [];
+  private pageBreakUpdateTimeout: any;
   
   // Variable insertion
   templateVariables = TEMPLATE_VARIABLES;
@@ -377,12 +383,25 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
     private noticeService: NoticeService,
     private templateService: TemplateService,
     private documentRenderer: DocumentRendererService,
+    private paginationService: PaginationService,
     private router: Router,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer
   ) {
     // Get unique categories
     this.variableCategories = [...new Set(TEMPLATE_VARIABLES.map(v => v.category))];
+    
+    // Watch for content or header changes and update page breaks if visualization is on
+    effect(() => {
+      // Trigger recalculation when these change
+      const _ = this.content();
+      const __ = this.headerConfig();
+      const ___ = this.showPageBreaks();
+      
+      if (this.showPageBreaks()) {
+        this.updatePageBreakVisualization();
+      }
+    });
   }
   
   ngOnInit(): void {
@@ -688,6 +707,70 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
     this.showSampleData = !this.showSampleData;
   }
   
+  togglePageBreaksVisualization(): void {
+    this.showPageBreaks.set(!this.showPageBreaks());
+    if (this.showPageBreaks()) {
+      this.updatePageBreakVisualization();
+    }
+  }
+  
+  /**
+   * Calculate where page breaks occur based on pagination service
+   * Returns character positions where breaks should be inserted
+   */
+  private updatePageBreakVisualization(): void {
+    // Debounce to avoid excessive calculations
+    clearTimeout(this.pageBreakUpdateTimeout);
+    this.pageBreakUpdateTimeout = setTimeout(() => {
+      this.calculatePageBreaks();
+    }, 500);
+  }
+  
+  private calculatePageBreaks(): void {
+    const contentForCalculation = this.getContentForPrint();
+    
+    if (!contentForCalculation) {
+      this.pageBreakPositions = [];
+      return;
+    }
+    
+    // Use same config as preview
+    const config = this.headerConfig();
+    const paginationConfig: PaginationConfig = {
+      pageWidth: 794,
+      pageHeight: 1123,
+      marginTop: 56,
+      marginBottom: 56,
+      marginLeft: 56,
+      marginRight: 56,
+      headerHeight: config.showHeader ? 200 : 0,
+      continuationHeaderHeight: (config.showHeader && config.showHeaderOnAllPages) ? 40 : 0,
+      footerHeight: 60,
+      fontSize: this.fontSize(),
+      lineHeight: 1.6
+    };
+    
+    const pages = this.paginationService.paginateHtmlContent(contentForCalculation, paginationConfig);
+    
+    // Calculate cumulative character positions for page breaks
+    const positions: number[] = [];
+    let cumulativePosition = 0;
+    
+    pages.forEach((page, index) => {
+      if (index > 0) { // Don't add marker before first page
+        positions.push(cumulativePosition);
+      }
+      // Strip HTML to count characters
+      const temp = document.createElement('div');
+      temp.innerHTML = page.content;
+      cumulativePosition += (temp.textContent || '').length;
+    });
+    
+    this.pageBreakPositions = positions;
+    console.log('Page breaks at positions:', positions);
+    console.log('Total pages:', pages.length);
+  }
+  
   private escapeRegex(string: string): string {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
@@ -728,6 +811,7 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
   
   saveTemplate(): void {
     if (!this.title() || !this.content()) {
+      alert('Please provide both a title and content before saving.');
       return;
     }
     
@@ -739,15 +823,23 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
       header: this.headerConfig(),
     };
     
-    if (this.templateId) {
-      // Update existing template
-      this.templateService.updateTemplate(this.templateId, templateData);
-    } else {
-      // Add new template
-      this.templateService.addTemplate(templateData);
+    try {
+      if (this.templateId) {
+        // Update existing template
+        this.templateService.updateTemplate(this.templateId, templateData);
+        console.log('Template updated:', this.templateId);
+      } else {
+        // Add new template
+        const newTemplate = this.templateService.addTemplate(templateData);
+        console.log('Template saved:', newTemplate.id);
+      }
+      
+      // Navigate back to templates list
+      this.router.navigate(['/templates']);
+    } catch (error) {
+      console.error('Error saving template:', error);
+      alert('Failed to save template. Please try again.');
     }
-    
-    this.router.navigate(['/templates']);
   }
   
   saveAsMasterTemplate(): void {
@@ -791,10 +883,34 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
     const config = this.headerConfig();
     const headerData = config.showHeader ? this.getHeaderDataFromConfig() : undefined;
     
-    // Use DocumentRendererService for consistent print output
-    const printContent = this.documentRenderer.generatePrintHTML({
+    // Paginate content using same service as preview
+    const paginationConfig: PaginationConfig = {
+      pageWidth: 794,
+      pageHeight: 1123,
+      marginTop: 56,
+      marginBottom: 56,
+      marginLeft: 56,
+      marginRight: 56,
+      headerHeight: config.showHeader ? 200 : 0,
+      continuationHeaderHeight: (config.showHeader && config.showHeaderOnAllPages) ? 40 : 0,
+      footerHeight: 60,
+      fontSize: this.fontSize(),
+      lineHeight: 1.6
+    };
+    
+    const pages = this.paginationService.paginateHtmlContent(printableContent, paginationConfig);
+    
+    // Convert to PrintPage format
+    const printPages: PrintPage[] = pages.map(p => ({
+      pageNumber: p.pageNumber,
+      content: p.content,
+      isFirstPage: p.isFirstPage
+    }));
+    
+    // Generate multi-page print HTML
+    const printContent = this.documentRenderer.generateMultiPagePrintHTML(printPages, {
       title: this.title(),
-      content: printableContent,
+      content: '', // Not used in multi-page
       header: headerData,
       showBarcode: config.showBarcode,
       barcodeValue: config.taxRef,
@@ -802,29 +918,26 @@ export class NoticeEditor implements OnInit, AfterViewChecked {
       showFooter: true
     });
     
-    // Old inline HTML removed - using DocumentRendererService for single source of truth
-    // This ensures print output exactly matches preview
-    
     printWindow.document.write(printContent);
     printWindow.document.close();
     
     // Initialize barcode in print window after DOM is ready
     printWindow.onload = () => {
-      // Initialize barcode if JsBarcode is available
       const barcodeElements = printWindow.document.querySelectorAll('.barcode-svg');
-      if (barcodeElements.length > 0) {
+      if (barcodeElements.length > 0 && config.showBarcode) {
         try {
-          // Load JsBarcode script in print window
           const script = printWindow.document.createElement('script');
           script.src = 'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js';
           script.onload = () => {
             try {
               (printWindow as any).JsBarcode('.barcode-svg', config.taxRef, {
                 format: 'CODE128',
-                width: 1.5,
-                height: 35,
+                width: 2,
+                height: 40,
                 displayValue: false,
                 margin: 0,
+                background: '#ffffff',
+                lineColor: '#000000'
               });
             } catch (e) {
               console.error('Barcode generation failed:', e);
