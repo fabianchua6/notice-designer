@@ -1,0 +1,133 @@
+<div class="document-preview-container">
+  <!-- Zoom Controls -->
+  <div class="preview-toolbar">
+    <div class="zoom-controls">
+      <button class="zoom-btn" (click)="zoomOut()">
+        <span>−</span>
+      </button>
+      <span class="zoom-level">{{ zoom }}%</span>
+      <button class="zoom-btn" (click)="zoomIn()">
+        <span>+</span>
+      </button>
+    </div>
+    <div class="page-info">
+      <span class="page-count">{{ pages.length }} page{{ pages.length !== 1 ? 's' : '' }}</span>
+    </div>
+  </div>
+
+  <!-- Document Pages -->
+  <div class="pages-wrapper" [style.transform]="'scale(' + (zoom/100) + ')'" [style.transform-origin]="'top center'">
+    @for (page of pages; track page.pageNumber) {
+      <div class="page-container">
+        <!-- Page Shadow Effect -->
+        <div class="page-shadow"></div>
+        
+        <!-- The Page -->
+        <div class="a4-page" [ngStyle]="getPageStyle()">
+          <!-- Page Content Area -->
+          <div class="page-content" [ngStyle]="getContentStyle()">
+            <!-- IRAS Header - First Page Only (Full header from main) -->
+            @if (page.isFirstPage && headerConfig.showHeader) {
+              <div class="iras-header">
+                <div class="header-left">
+                  <p class="tax-ref">Tax Reference Number: <strong>{{ headerConfig.taxRef || 'SXXXXXXXXXA' }}</strong></p>
+                  <p class="date">Date: {{ headerConfig.date || getCurrentDate() }}</p>
+                  @if (headerConfig.showQuoteNote) {
+                    <p class="quote-note">Please quote the Tax Reference Number (e.g. NRIC, FIN etc.) in full when corresponding with us.</p>
+                  }
+                  <div class="taxpayer-info">
+                    <p class="recipient-name"><strong>{{ headerConfig.recipientName || 'Recipient Name' }}</strong></p>
+                    <p>{{ headerConfig.addressLine1 || 'Address Line 1' }}</p>
+                    @if (headerConfig.addressLine2) {
+                      <p>{{ headerConfig.addressLine2 }}</p>
+                    }
+                    @if (headerConfig.addressLine3) {
+                      <p>{{ headerConfig.addressLine3 }}</p>
+                    }
+                    @if (headerConfig.addressLine4) {
+                      <p>{{ headerConfig.addressLine4 }}</p>
+                    }
+                  </div>
+                  @if (headerConfig.showBarcode && headerConfig.taxRef) {
+                    <div class="barcode-container">
+                      <svg class="preview-barcode"></svg>
+                    </div>
+                  }
+                </div>
+                <div class="header-right">
+                  <div class="iras-logo">
+                    <img src="/assets/images/iras-logo.png" alt="IRAS Logo" class="logo-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="logo-fallback" style="display: none;">
+                      <div class="logo-icon">IRAS</div>
+                      <div class="logo-text">
+                        <span class="ministry">Inland Revenue Authority of Singapore</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Document Title -->
+              @if (title) {
+                <div class="document-title">
+                  <h1>{{ title }}</h1>
+                </div>
+              }
+            }
+            
+            <!-- Condensed Continuation Header - Pages 2+ -->
+            @if (!page.isFirstPage && headerConfig.showHeader && headerConfig.showHeaderOnAllPages) {
+              <div class="iras-header-continuation">
+                <div class="header-left">
+                  <p class="tax-ref">Tax Ref: <strong>{{ headerConfig.taxRef || 'SXXXXXXXXXA' }}</strong></p>
+                </div>
+                <div class="header-right">
+                  <div class="iras-logo-small">
+                    <img src="/assets/images/iras-logo.png" alt="IRAS" class="logo-image-small" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="logo-fallback-small" style="display: none;">IRAS</div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Content with HTML rendering -->
+            <div class="document-body" [class.continued]="!page.isFirstPage">
+              @if (!page.isFirstPage) {
+                <div class="continuation-marker">(continued from previous page)</div>
+              }
+              
+              <!-- Render HTML content -->
+              <div class="html-content" [innerHTML]="sanitizeHtml(page.content)"></div>
+              
+              @if (page.content === '' && page.isFirstPage) {
+                <div class="placeholder-content">No content yet...</div>
+              }
+              
+              <!-- Overflow warning -->
+              @if (page.hasOverflow) {
+                <div class="overflow-warning">
+                  <span>⚠️ Content overflow detected</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Page Footer -->
+          <div class="page-footer">
+            @if (showPageNumbers) {
+              <div class="page-number">Page {{ page.pageNumber }} of {{ pages.length }}</div>
+            }
+            <div class="footer-line"></div>
+          </div>
+
+          <!-- Page Break Indicator -->
+          @if (page.pageNumber < pages.length) {
+            <div class="page-break-indicator">
+              <span>Page Break</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

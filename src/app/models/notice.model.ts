@@ -1,6 +1,7 @@
 // Letter header configuration
 export interface LetterHeader {
   showHeader: boolean;
+  showHeaderOnAllPages: boolean; // Show condensed header on pages 2+
   taxRef: string;
   date: string;
   recipientName: string;

@@ -97,6 +97,15 @@
         
         @if (headerConfig().showHeader) {
           <div class="form-row">
+            <mat-slide-toggle 
+              [checked]="headerConfig().showHeaderOnAllPages" 
+              (change)="updateHeaderConfig('showHeaderOnAllPages', $event.checked)">
+              Show Header on All Pages
+            </mat-slide-toggle>
+            <span class="toggle-hint">Display condensed header on pages 2+</span>
+          </div>
+          
+          <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Tax Reference Number</mat-label>
               <input matInput [value]="headerConfig().taxRef" (input)="updateHeaderConfig('taxRef', $any($event.target).value)">
@@ -237,82 +246,25 @@
     <div class="preview-panel">
       <div class="preview-header">
         <mat-icon>visibility</mat-icon>
-        <span>Document Preview</span>
+        <span>Document Preview (with Pagination)</span>
         <button mat-stroked-button class="toggle-data-btn" (click)="toggleSampleData()" [matTooltip]="showSampleData ? 'Click to show variable names' : 'Click to show sample values'">
           <mat-icon>{{ showSampleData ? 'data_object' : 'text_fields' }}</mat-icon>
           {{ showSampleData ? 'Sample Data' : 'Variables' }}
         </button>
-        <div class="zoom-controls">
-          <button mat-icon-button (click)="zoomOut()" matTooltip="Zoom Out">
-            <mat-icon>remove</mat-icon>
-          </button>
-          <span class="zoom-level">{{ zoom }}%</span>
-          <button mat-icon-button (click)="zoomIn()" matTooltip="Zoom In">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
       </div>
-      <div class="preview-content a4-preview">
-        <div class="pages-wrapper" [style.transform]="'scale(' + (zoom/100) + ')'" [style.transform-origin]="'top center'">
-          <!-- A4 Page -->
-          <div class="a4-page">
-            <!-- Page Content -->
-            <div class="page-content">
-              <!-- IRAS Header -->
-              @if (headerConfig().showHeader) {
-                <div class="iras-header">
-                  <div class="header-left">
-                    <p class="tax-ref">Tax Reference Number: <strong>{{ headerConfig().taxRef }}</strong></p>
-                    <p class="date">Date: {{ headerConfig().date }}</p>
-                    @if (headerConfig().showQuoteNote) {
-                      <p class="quote-note">Please quote the Tax Reference Number (e.g. NRIC, FIN etc.) in full when corresponding with us.</p>
-                    }
-                    <div class="taxpayer-info">
-                      <p><strong>{{ headerConfig().recipientName }}</strong></p>
-                      <p>{{ headerConfig().addressLine1 }}</p>
-                      @if (headerConfig().addressLine2) {
-                        <p>{{ headerConfig().addressLine2 }}</p>
-                      }
-                      @if (headerConfig().addressLine3) {
-                        <p>{{ headerConfig().addressLine3 }}</p>
-                      }
-                      @if (headerConfig().addressLine4) {
-                        <p>{{ headerConfig().addressLine4 }}</p>
-                      }
-                    </div>
-                    @if (headerConfig().showBarcode) {
-                      <div class="barcode-container">
-                        <svg id="editor-barcode"></svg>
-                      </div>
-                    }
-                  </div>
-                  <div class="header-right">
-                    <div class="iras-logo">
-                      <img src="/assets/images/iras-logo.png" alt="IRAS Logo" class="logo-image" onerror="this.style.display='none'">
-                    </div>
-                  </div>
-                </div>
-              }
-              
-              <!-- Document Title -->
-              @if (title()) {
-                <div class="doc-title-bar">
-                  {{ title() }}
-                </div>
-              }
-              
-              <!-- Content with rendered HTML and sample data -->
-              <div class="doc-body" [innerHTML]="getPreviewContent()"></div>
-            </div>
-            
-            <!-- Page Footer -->
-            <div class="page-footer">
-              <p>Website: <a href="#">www.iras.gov.sg</a> • myTax Portal: <a href="#">mytax.iras.gov.sg</a></p>
-              <p>Tel: 6351 3551</p>
-              <p class="page-number">Page 1 of 1</p>
-            </div>
-          </div>
-        </div>
+      <div class="preview-content enhanced-preview">
+        <!-- Use enhanced preview component with pagination -->
+        <app-notice-preview-enhanced
+          [title]="title()"
+          [content]="getPreviewContentForPrint()"
+          [fontSize]="fontSize()"
+          [fontFamily]="fontFamily()"
+          [backgroundColor]="backgroundColor()"
+          [textColor]="textColor()"
+          [headerConfig]="headerConfig()"
+          [showPageNumbers]="true"
+          [showRuler]="false">
+        </app-notice-preview-enhanced>
       </div>
     </div>
   </div>
