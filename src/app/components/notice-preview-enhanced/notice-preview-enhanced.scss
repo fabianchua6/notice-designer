@@ -1,3 +1,21 @@
+// =============================================================================
+// Notice Preview Enhanced Styles
+// =============================================================================
+//
+// IMPORTANT: Key styling values should match document-styles.constants.ts
+// When updating colors, sizes, or spacing, ensure consistency with:
+// - src/app/services/document-styles.constants.ts (print/PDF output)
+// - src/app/design-system/styles/_variables.scss (design tokens)
+//
+// Key shared values:
+// - Primary color: #015AAD (IRAS blue)
+// - Title: blue background, white text, 20px border-radius
+// - Page dimensions: 794px x 1123px (A4 at 96 DPI)
+// - Margins: 56px
+// - Header height: 200px (first page), 80px (continuation)
+// - Footer height: 60px
+// =============================================================================
+
 // Document Preview Container - Enhanced with HTML support
 .document-preview-container {
   display: flex;
@@ -122,6 +140,7 @@
 .page-content {
   position: relative;
   min-height: calc(1123px - 60px); // Full height minus footer
+  padding-bottom: 60px; // Reserve space for footer to prevent overlap
 }
 
 // IRAS Header (Full header from main)
@@ -130,8 +149,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--iras-primary, #2d7bb9);
+  padding-bottom: 0;
   
   .header-left {
     flex: 1;
@@ -180,8 +198,8 @@
       margin-top: 12px;
       
       .preview-barcode {
-        max-width: 200px;
-        height: 35px;
+        max-width: 220px; // Match IRAS notice barcode width
+        height: 40px;
       }
     }
   }
@@ -232,9 +250,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--iras-primary, #2d7bb9);
-  height: 40px;
+  padding-bottom: 0;
+  height: 60px;
   
   .header-left {
     .tax-ref {
@@ -274,8 +291,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 32px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--iras-primary, #2d7bb9);
+  padding-bottom: 0;
   
   .iras-logo {
     display: flex;
@@ -318,16 +334,14 @@
   
   h1 {
     margin: 0;
-    font-size: 20px;
-    font-weight: 600;
-    color: #1a1a2e;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 16px 0;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    background: #fafafa;
+    background: #015AAD;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    border: none;
   }
 }
 
@@ -433,23 +447,52 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 40px;
+  height: 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding: 0 96px 16px;
+  padding: 0 56px 16px;
+  border-top: 1px solid #ddd;
+  background: white;
+  z-index: 10; // Ensure footer appears above content
   
-  .page-number {
-    font-size: 11px;
-    color: #666;
-  }
-  
-  .footer-line {
+  .footer-content {
     width: 100%;
-    height: 1px;
-    background: #ddd;
-    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .footer-right {
+      display: flex;
+      align-items: center;
+    }
+    
+    .footer-text {
+      font-size: 9px;
+      color: #333;
+      
+      a {
+        color: var(--iras-primary, #2d7bb9);
+        text-decoration: none;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    
+    .footer-separator {
+      font-size: 9px;
+      color: #999;
+    }
   }
 }
 

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { COLORS, PAGE_DIMENSIONS, HEADER, FOOTER, TITLE, TYPOGRAPHY } from './document-styles.constants';
 
 /**
  * Document Header Data - Information displayed in the document header
@@ -25,6 +26,15 @@ export interface DocumentRenderOptions {
   totalPages?: number;
   showFooter?: boolean;
   isForPrint?: boolean;
+}
+
+/**
+ * Page data for multi-page print
+ */
+export interface PrintPage {
+  pageNumber: number;
+  content: string;
+  isFirstPage: boolean;
 }
 
 /**
@@ -357,5 +367,362 @@ export class DocumentRendererService {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  /**
+   * Generate multi-page print HTML with pagination
+   * Uses same layout as preview for consistency
+   */
+  generateMultiPagePrintHTML(pages: PrintPage[], options: DocumentRenderOptions): string {
+    const totalPages = pages.length;
+    
+    const pagesHTML = pages.map(page => {
+      const showFullHeader = page.isFirstPage && options.header;
+      const showContinuationHeader = !page.isFirstPage && options.header;
+      
+      return `
+        <div class="print-page">
+          <div class="page-content">
+            ${showFullHeader ? this.generateFullPrintHeader(options.header!, options.title, options.showBarcode, options.barcodeValue) : ''}
+            ${showContinuationHeader ? this.generateContinuationPrintHeader(options.header!) : ''}
+            
+            <div class="document-body ${!page.isFirstPage ? 'continued' : ''}">
+              ${page.content}
+            </div>
+          </div>
+          
+          <!-- Footer on every page -->
+          <div class="page-footer">
+            <div class="footer-content">
+              <div class="footer-left">
+                <span class="footer-text">Website: <a href="https://www.iras.gov.sg" target="_blank">www.iras.gov.sg</a></span>
+                <span class="footer-separator">•</span>
+                <span class="footer-text">myTax Portal: <a href="https://mytax.iras.gov.sg" target="_blank">mytax.iras.gov.sg</a></span>
+              </div>
+              <div class="footer-right">
+                <span class="footer-text">Page ${page.pageNumber} of ${totalPages}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${this.escapeHtml(options.title)}</title>
+          <meta charset="UTF-8">
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+          <style>
+            @page {
+              size: A4;
+              margin: 0;
+            }
+            
+            * {
+              box-sizing: border-box;
+            }
+            
+            html, body {
+              margin: 0;
+              padding: 0;
+              width: 210mm;
+              height: 297mm;
+            }
+            
+            body {
+              font-family: 'Source Sans Pro', Arial, sans-serif;
+              font-size: 12px;
+              line-height: 1.6;
+              color: #333;
+            }
+            
+            .print-page {
+              position: relative;
+              width: 210mm;
+              height: 297mm;
+              padding: 14.8mm;
+              background: white;
+              overflow: hidden;
+              page-break-after: always;
+              page-break-inside: avoid;
+              display: flex;
+              flex-direction: column;
+            }
+            
+            .print-page:last-child {
+              page-break-after: auto;
+            }
+            
+            .page-content {
+              flex: 1;
+              min-height: 0;
+              overflow: hidden;
+              display: flex;
+              flex-direction: column;
+            }
+            
+            .document-body {
+              flex: 1;
+              min-height: 0;
+              overflow: hidden;
+            }
+            
+            /* Full Header - Page 1 */
+            .iras-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin-bottom: 16px;
+              padding-bottom: 0;
+              flex-shrink: 0;
+            }
+            
+            .header-left .tax-ref,
+            .header-left .date {
+              font-size: 12px;
+              margin: 0 0 4px 0;
+              color: #333;
+            }
+            
+            .header-left strong {
+              color: #000;
+              font-weight: 600;
+            }
+            
+            .header-left .quote-note {
+              font-size: 10px;
+              font-style: italic;
+              color: #666;
+              margin: 8px 0 16px 0;
+              max-width: 400px;
+              line-height: 1.4;
+            }
+            
+            .header-left .taxpayer-info p {
+              margin: 0 0 2px 0;
+              font-size: 12px;
+              color: #333;
+            }
+            
+            .header-left .barcode-container {
+              margin-top: 12px;
+            }
+            
+            .header-left .barcode-svg {
+              max-width: 220px;
+              height: 40px;
+            }
+            
+            .header-right img {
+              max-width: 150px;
+              max-height: 80px;
+              height: auto;
+              width: auto;
+              object-fit: contain;
+            }
+            
+            /* Continuation Header - Pages 2+ */
+            .iras-header-continuation {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 12px;
+              padding-bottom: 0;
+              min-height: 80px;
+              flex-shrink: 0;
+            }
+            
+            .iras-header-continuation .tax-ref {
+              font-size: 11px;
+              margin: 0;
+            }
+            
+            .iras-header-continuation img {
+              max-width: 150px;
+              max-height: 80px;
+              height: auto;
+              width: auto;
+              object-fit: contain;
+            }
+            
+            /* Document Title */
+            .document-title {
+              margin-bottom: 16px;
+              flex-shrink: 0;
+            }
+            
+            .document-title h1 {
+              margin: 0;
+              background: #015AAD !important;
+              background-color: #015AAD !important;
+              color: white !important;
+              padding: 8px 16px;
+              border-radius: 20px;
+              font-size: 16px;
+              font-weight: 500;
+              border: none;
+              box-shadow: inset 0 0 0 1000px #015AAD;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+            
+            /* Document Body */
+            .document-body {
+              font-size: 12px;
+              line-height: 1.6;
+              overflow: hidden;
+            }
+            
+            .document-body.continued {
+              padding-top: 0;
+            }
+            
+            .document-body table {
+              width: 100%;
+              border-collapse: collapse;
+              margin: 12px 0;
+              page-break-inside: avoid;
+            }
+            
+            .document-body td,
+            .document-body th {
+              border: 1px solid #ddd;
+              padding: 8px;
+            }
+            
+            .document-body th {
+              background-color: #f5f5f5;
+              font-weight: 600;
+            }
+            
+            .document-body p {
+              margin: 0 0 8px 0;
+            }
+            
+            .document-body img {
+              max-width: 100%;
+              height: auto;
+              page-break-inside: avoid;
+            }
+            
+            /* Footer - Sticky at bottom */
+            .page-footer {
+              position: relative;
+              height: 40px;
+              border-top: 1px solid #ddd;
+              background: white;
+              display: flex;
+              align-items: center;
+              margin-top: auto;
+              flex-shrink: 0;
+            }
+            
+            .footer-content {
+              width: 100%;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            
+            .footer-left {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+            
+            .footer-text {
+              font-size: 9px;
+              color: #333;
+            }
+            
+            .footer-text a {
+              color: #2d7bb9;
+              text-decoration: none;
+            }
+            
+            .footer-separator {
+              font-size: 9px;
+              color: #999;
+            }
+            
+            @media print {
+              body {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+              }
+              
+              .print-page {
+                margin: 0;
+                padding: 20mm;
+                page-break-before: auto;
+                page-break-after: always;
+                page-break-inside: avoid;
+              }
+              
+              .print-page:last-child {
+                page-break-after: auto;
+              }
+              
+              .page-content {
+                page-break-inside: avoid;
+              }
+              
+              .page-footer {
+                page-break-inside: avoid;
+              }
+              
+              .document-body table,
+              .document-body img {
+                page-break-inside: avoid;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${pagesHTML}
+        </body>
+      </html>
+    `;
+  }
+  
+  private generateFullPrintHeader(header: DocumentHeaderData, title: string, showBarcode?: boolean, barcodeValue?: string): string {
+    return `
+      <div class="iras-header">
+        <div class="header-left">
+          <p class="tax-ref">Tax Reference Number: <strong>${this.escapeHtml(header.taxRef)}</strong></p>
+          <p class="date">Date: ${this.escapeHtml(header.date)}</p>
+          ${header.showQuoteNote ? '<p class="quote-note">Please quote the Tax Reference Number (e.g. NRIC, FIN etc.) in full when corresponding with us.</p>' : ''}
+          <div class="taxpayer-info">
+            <p><strong>${this.escapeHtml(header.recipientName)}</strong></p>
+            ${header.recipientAddress.map(line => `<p>${this.escapeHtml(line)}</p>`).join('')}
+          </div>
+          ${showBarcode && barcodeValue ? '<div class="barcode-container"><svg class="barcode-svg"></svg></div>' : ''}
+        </div>
+        <div class="header-right">
+          <img src="${this.IRAS_LOGO_BASE64}" alt="IRAS Logo">
+        </div>
+      </div>
+      ${title ? `<div class="document-title"><h1>${this.escapeHtml(title)}</h1></div>` : ''}
+    `;
+  }
+  
+  private generateContinuationPrintHeader(header: DocumentHeaderData): string {
+    return `
+      <div class="iras-header-continuation">
+        <div class="header-left">
+          <p class="tax-ref">Tax Ref: <strong>${this.escapeHtml(header.taxRef)}</strong></p>
+        </div>
+        <div class="header-right">
+          <img src="${this.IRAS_LOGO_BASE64}" alt="IRAS">
+        </div>
+      </div>
+    `;
   }
 }
